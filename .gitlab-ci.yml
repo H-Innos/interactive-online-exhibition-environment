@@ -13,7 +13,7 @@ build-job:
 test-job:
   stage: test
   script:
-    - echo "Testing testing"
+    - echo "Testing testing "
 
 deploy-prod:
   stage: deploy
