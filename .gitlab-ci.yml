@@ -42,6 +42,8 @@ deploy_production:
   only:
     - main
   script:
+    - npm install -g pnpm
+    - pnpm install
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - vercel build --prod --token=$VERCEL_TOKEN
