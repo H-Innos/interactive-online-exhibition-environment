@@ -1,9 +1,11 @@
 import { db } from "~/server/db";
 import { HydrateClient } from "~/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const posts = await db.query.posts.findMany();
-  
+
   return (
     <HydrateClient>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#293957] to-[#c7c9eb] text-white">
