@@ -8,6 +8,9 @@
 default:
   image: node:22
 
+variables:
+  DATABASE_URL: "midagi..."
+
 stages:
   - build
   - test
