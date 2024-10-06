@@ -17,8 +17,8 @@ export const posts = createTable(
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }),
-    description: text("description").default(""), 
-    coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
+    description: text("description").default(""),
+    coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""), 
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -30,3 +30,4 @@ export const posts = createTable(
     nameIndex: index("name_idx").on(example.name),
   })
 );
+

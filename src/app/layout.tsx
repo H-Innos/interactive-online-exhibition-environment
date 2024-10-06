@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
-import Header from "~/app/_components/header"; // Adjust the path if needed
-import Footer from "~/app/_components/footer"; // Adjust the path if needed
+import Header from "~/app/_components/header"; 
+import Footer from "~/app/_components/footer"; 
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
@@ -18,9 +18,9 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <TRPCReactProvider>
-          <Header /> {/* Header should be here */}
+          <Header /> 
           <main>{children}</main>
-          <Footer /> {/* Footer should be here */}
+          <Footer /> 
         </TRPCReactProvider>
       </body>
     </html>
