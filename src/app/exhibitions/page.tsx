@@ -41,12 +41,25 @@ const ExhibitionsPage = () => {
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-  // total number of pages
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
+  };
+
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "UTC",
+    });
   };
 
   return (
@@ -61,7 +74,6 @@ const ExhibitionsPage = () => {
         Create a New Exhibition
       </button>
 
-      {/* creating a new exhibition */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
@@ -80,9 +92,8 @@ const ExhibitionsPage = () => {
               <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Description</label>
                 <textarea
-                  value={description ?? ""} 
+                  value={description ?? ""}
                   onChange={(e) => {
-                    // limit input to 170 characters
                     if (e.target.value.length <= descriptionMaxLength) {
                       setDescription(e.target.value);
                     }
@@ -132,18 +143,19 @@ const ExhibitionsPage = () => {
             <div key={post.id} className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px]">
               <div className="w-1/3 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
                 <img
-                  src={post.coverImageUrl ?? "/logos/museum.jpg"} 
-                  alt={post.name ?? "Exhibition"} 
+                  src={post.coverImageUrl ?? "/logos/museum.jpg"}
+                  alt={post.name ?? "Exhibition"}
                   className="w-full h-full object-cover"
                 />
               </div>
-              {/*post content */}
               <div className="w-2/3 pl-4">
                 <h2 className="text-lg font-semibold text-primary-dark">{post.name}</h2>
                 <p className="text-sm text-text-dark overflow-wrap break-words whitespace-normal">
-                  {truncateDescription(post.description ?? "", descriptionMaxLength)} {/* Ensure description is a string */}
+                  {truncateDescription(post.description ?? "", descriptionMaxLength)}
                 </p>
-                <p className="text-xs text-text-dark mt-2">Created: {new Date(post.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-text-dark mt-2">
+                  Created: {formatDate(post.createdAt)} {/* Consistent date formatting */}
+                </p>
               </div>
             </div>
           ))}
@@ -152,7 +164,6 @@ const ExhibitionsPage = () => {
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
-      {/* page controls  */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
           <button
@@ -162,7 +173,9 @@ const ExhibitionsPage = () => {
           >
             Previous
           </button>
-          <span className="text-lg">Page {currentPage} of {totalPages}</span>
+          <span className="text-lg">
+            Page {currentPage} of {totalPages}
+          </span>
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
