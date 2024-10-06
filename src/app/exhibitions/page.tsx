@@ -152,7 +152,7 @@ const ExhibitionsPage = () => {
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
-      {/* page controls */}
+      {/* page controls  */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
           <button
