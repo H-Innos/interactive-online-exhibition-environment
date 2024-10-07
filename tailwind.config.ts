@@ -1,5 +1,3 @@
-// tailwind.config.ts
-
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
@@ -8,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        sans: ['Rubik', ...fontFamily.sans],
       },
       colors: {
         primary: {

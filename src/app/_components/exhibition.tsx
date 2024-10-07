@@ -1,12 +1,15 @@
 "use client";
 
+import { useRouter } from 'next/navigation'; 
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
 export function LatestExhibition() {
-  const [latestExhibition] = api.post.getLatest.useSuspenseQuery();
+  const router = useRouter(); 
+  const [latestExhibition] = api.post.getLatest.useSuspenseQuery(); 
   const utils = api.useUtils();
   const [name, setName] = useState("");
+
   const createExhibition = api.post.create.useMutation({
     onSuccess: async () => {
       await utils.post.invalidate(); 
@@ -14,13 +17,21 @@ export function LatestExhibition() {
     },
   });
 
+  // handles navigation to the editor page
+  const handleExhibitionClick = (id: number) => {
+    void router.push(`/exhibitions/${id}`); 
+  };
+
   return (
     <div className="w-full max-w-2xl bg-white rounded-lg p-6 flex items-start space-x-6">
-      <div className="w-32 h-32 bg-gray-200 flex items-center justify-center rounded-lg">
+      <div
+        className="w-32 h-42 bg-gray-200 flex items-center justify-center rounded-lg cursor-pointer"
+        onClick={() => latestExhibition && handleExhibitionClick(latestExhibition.id)} 
+      >
         {latestExhibition?.coverImageUrl ? (
           <img
             src={latestExhibition.coverImageUrl}
-            alt={latestExhibition.name ?? "No title available"} 
+            alt={latestExhibition.name ?? "No title available"}
             className="w-full h-full object-cover rounded-lg"
           />
         ) : (
@@ -41,11 +52,14 @@ export function LatestExhibition() {
       <div className="flex-grow w-2/3">
         {latestExhibition ? (
           <>
-            <h2 className="text-xl font-semibold text-primary-dark mb-2 whitespace-normal break-words overflow-wrap">
-              {latestExhibition.name ?? "No title available"} 
+            <h2
+              className="text-xl font-semibold text-primary-dark mb-2 whitespace-normal break-words overflow-wrap cursor-pointer"
+              onClick={() => handleExhibitionClick(latestExhibition.id)} 
+            >
+              {latestExhibition.name ?? "No title available"}
             </h2>
             <p className="text-sm text-gray-600 mb-1 whitespace-normal break-words overflow-wrap">
-              {latestExhibition.description ?? "No description available."} 
+              {latestExhibition.description ?? "No description available."}
             </p>
             <p className="text-xs text-gray-400">
               Created at: {new Date(latestExhibition.createdAt).toLocaleString()}
@@ -59,7 +73,7 @@ export function LatestExhibition() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          createExhibition.mutate({ name });
+          createExhibition.mutate({ name }); 
         }}
         className="flex flex-col gap-2 w-1/3"
       >

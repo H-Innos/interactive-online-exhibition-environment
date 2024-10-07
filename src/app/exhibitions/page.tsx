@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter from next/navigation for App Router
 import { api } from "~/trpc/react";
 
 interface Exhibition {
@@ -13,6 +14,7 @@ interface Exhibition {
 }
 
 const ExhibitionsPage = () => {
+  const router = useRouter(); // Initialize the router from next/navigation
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,12 +22,12 @@ const ExhibitionsPage = () => {
   const [description, setDescription] = useState("");
   const [template, setTemplate] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
 
   const descriptionMaxLength = 130;
 
   // Pagination config
-  const exhibitionsPerPage = 12;
+  const exhibitionsPerPage = 24;
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
   const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
   const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
@@ -67,6 +69,11 @@ const ExhibitionsPage = () => {
       description,
       coverImageUrl: defaultCoverImageUrl,
     });
+  };
+
+  // Navigate to exhibition editor page when an exhibition is clicked
+  const handleExhibitionClick = (id: number) => {
+    router.push(`/exhibitions/${id}`); // Use router.push to navigate to the exhibition page with the given ID
   };
 
   // Shortens the description if it's too long
@@ -186,7 +193,11 @@ const ExhibitionsPage = () => {
       ) : currentExhibitions && currentExhibitions.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {currentExhibitions.map((exhibition) => (
-            <div key={exhibition.id} className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px]">
+            <div
+              key={exhibition.id}
+              className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px] cursor-pointer" // Make the card clickable
+              onClick={() => handleExhibitionClick(exhibition.id)} // Navigate to the editor page on click
+            >
               <div className="w-1/3 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
                 <img
                   src={exhibition.coverImageUrl ?? "/logos/museum.jpg"}
