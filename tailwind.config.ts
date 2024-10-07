@@ -12,11 +12,11 @@ export default {
         primary: {
           DEFAULT: "#fcfcfc", // Base primary color
           light: "#f8f4f4", // Lighter shade of primary
-          dark: "#305494", // Darker shade of primary
+          dark: "#2C5696", // Darker shade of primary
           dark_hover: "#5e8bdb", // Darker shade of primary hover (light blue)
         },
         background: "#f8f4f4", // Background color
-        accent: "#2074d4", // Accent color
+        accent: "#1a2630", // Accent color
         text: {
           dark: "#1d2026", // Default dark text
           light: "#FFFFFF", // Light text

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter from next/navigation for App Router
+import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
 interface Exhibition {
@@ -14,7 +14,7 @@ interface Exhibition {
 }
 
 const ExhibitionsPage = () => {
-  const router = useRouter(); // Initialize the router from next/navigation
+  const router = useRouter(); 
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,16 +73,14 @@ const ExhibitionsPage = () => {
 
   // Navigate to exhibition editor page when an exhibition is clicked
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/${id}`); // Use router.push to navigate to the exhibition page with the given ID
+    router.push(`/exhibitions/${id}`);
   };
 
-  // Shortens the description if it's too long
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
   };
 
-  // Utility function to format the date to a consistent string format
   const formatDate = (date: Date | string) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return dateObj.toLocaleString("en-gb", {
@@ -113,7 +111,7 @@ const ExhibitionsPage = () => {
       <button
         onClick={() => {
           setIsModalOpen(true);
-          setErrorMessage(""); // Reset error message when opening the modal
+          setErrorMessage(""); 
         }}
         className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
       >
