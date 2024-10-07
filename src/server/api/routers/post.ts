@@ -4,28 +4,28 @@ import { posts } from "~/server/db/schema";
 
 export const postRouter = createTRPCRouter({
   create: publicProcedure
-  .input(
-    z.object({
-      name: z.string().min(1),
-      description: z.string().optional(),
-      coverImageUrl: z.string().optional(),
-    })
-  )
-  .mutation(async ({ ctx, input }) => {
-    console.log("Received values in create mutation:", input);
+    .input(
+      z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        coverImageUrl: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      console.log("Received values in create mutation:", input);
 
-    await ctx.db.insert(posts).values({
-      name: input.name,
-      description: input.description || "",
-      coverImageUrl: input.coverImageUrl || "", 
-    });
-  }),
+      await ctx.db.insert(posts).values({
+        name: input.name,
+        description: input.description ?? "",
+        coverImageUrl: input.coverImageUrl ?? "",
+      });
+    }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allPosts = await ctx.db.query.posts.findMany({
       orderBy: (posts, { desc }) => [desc(posts.createdAt)],
     });
-    return allPosts ?? [];
+    return allPosts ?? []; 
   }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {

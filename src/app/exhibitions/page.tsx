@@ -1,20 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "~/trpc/react"; 
 
+interface Post {
+  id: number;
+  name: string | null;
+  description: string | null;
+  coverImageUrl: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | null;
+}
+
 const ExhibitionsPage = () => {
-  const [posts] = api.post.getAll.useSuspenseQuery();
-  const utils = api.useUtils();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [template, setTemplate] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const descriptionMaxLength = 170;
+  const descriptionMaxLength = 130;
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // pagination config
   const postsPerPage = 12;
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+
+  const { data, error, isLoading } = api.post.getAll.useQuery(undefined);
+  const utils = api.useUtils();
+
+  useEffect(() => {
+    if (data) {
+      setPosts(data);
+    }
+  }, [data]);
 
   const createPost = api.post.create.useMutation({
     onSuccess: async () => {
@@ -22,7 +44,7 @@ const ExhibitionsPage = () => {
       setName("");
       setDescription("");
       setTemplate("");
-      setIsModalOpen(false); 
+      setIsModalOpen(false);
     },
   });
 
@@ -37,20 +59,16 @@ const ExhibitionsPage = () => {
     });
   };
 
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const totalPages = Math.ceil(posts.length / postsPerPage);
-
+  // shortens the description if it's too long
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
   };
 
+  // utility function to format the date to a consistent string format
   const formatDate = (date: Date | string) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
-    return dateObj.toLocaleString("en-US", {
+    return dateObj.toLocaleString("en-gb", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -58,15 +76,17 @@ const ExhibitionsPage = () => {
       minute: "2-digit",
       second: "2-digit",
       hour12: false,
-      timeZone: "UTC",
+      timeZone: "Etc/GMT-3",
     });
   };
+
 
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
       <h1 className="text-3xl font-bold mb-2 text-primary-dark">All Exhibitions</h1>
       <p className="text-lg mb-6 text-light-gray">Manage</p>
 
+      {/* open the creator for creating a new exhibition */}
       <button
         onClick={() => setIsModalOpen(true)}
         className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
@@ -74,6 +94,7 @@ const ExhibitionsPage = () => {
         Create a New Exhibition
       </button>
 
+      {/* creating a new exhibition */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
@@ -137,7 +158,11 @@ const ExhibitionsPage = () => {
         </div>
       )}
 
-      {currentPosts && currentPosts.length > 0 ? (
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>Error loading posts.</div>
+      ) : currentPosts && currentPosts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {currentPosts.map((post) => (
             <div key={post.id} className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px]">
@@ -154,7 +179,7 @@ const ExhibitionsPage = () => {
                   {truncateDescription(post.description ?? "", descriptionMaxLength)}
                 </p>
                 <p className="text-xs text-text-dark mt-2">
-                  Created: {formatDate(post.createdAt)} {/* Consistent date formatting */}
+                  Created: {formatDate(post.createdAt)}
                 </p>
               </div>
             </div>
@@ -164,6 +189,7 @@ const ExhibitionsPage = () => {
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
+      {/* pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
           <button
@@ -173,9 +199,7 @@ const ExhibitionsPage = () => {
           >
             Previous
           </button>
-          <span className="text-lg">
-            Page {currentPage} of {totalPages}
-          </span>
+          <span className="text-lg">Page {currentPage} of {totalPages}</span>
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
