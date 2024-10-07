@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "~/trpc/react"; 
+import { api } from "~/trpc/react";
 
-interface Post {
+interface Exhibition {
   id: number;
   name: string | null;
   description: string | null;
@@ -13,59 +13,69 @@ interface Post {
 }
 
 const ExhibitionsPage = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [template, setTemplate] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); 
 
   const descriptionMaxLength = 130;
 
-  // pagination config
-  const postsPerPage = 12;
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+  // Pagination config
+  const exhibitionsPerPage = 12;
+  const indexOfLastExhibition = currentPage * exhibitionsPerPage;
+  const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
+  const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
+  const totalPages = Math.ceil(exhibitions.length / exhibitionsPerPage);
 
   const { data, error, isLoading } = api.post.getAll.useQuery(undefined);
   const utils = api.useUtils();
 
   useEffect(() => {
     if (data) {
-      setPosts(data);
+      setExhibitions(data);
     }
   }, [data]);
 
-  const createPost = api.post.create.useMutation({
+  const createExhibition = api.post.create.useMutation({
     onSuccess: async () => {
       await utils.post.invalidate();
       setName("");
       setDescription("");
       setTemplate("");
       setIsModalOpen(false);
+      setSuccessMessage("Exhibition created successfully!");
+      setErrorMessage("");
+      setTimeout(() => setSuccessMessage(""), 3000);
     },
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!name.trim()) {
+      setErrorMessage("Exhibition name is required.");
+      return;
+    }
+
     const defaultCoverImageUrl = "/logos/museum.jpg";
-    createPost.mutate({
+    createExhibition.mutate({
       name,
       description,
       coverImageUrl: defaultCoverImageUrl,
     });
   };
 
-  // shortens the description if it's too long
+  // Shortens the description if it's too long
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
   };
 
-  // utility function to format the date to a consistent string format
+  // Utility function to format the date to a consistent string format
   const formatDate = (date: Date | string) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return dateObj.toLocaleString("en-gb", {
@@ -80,21 +90,30 @@ const ExhibitionsPage = () => {
     });
   };
 
-
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
       <h1 className="text-3xl font-bold mb-2 text-primary-dark">All Exhibitions</h1>
       <p className="text-lg mb-6 text-light-gray">Manage</p>
 
-      {/* open the creator for creating a new exhibition */}
+      {/* Display success message if exhibition was successfully created */}
+      {successMessage && (
+        <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
+          {successMessage}
+        </div>
+      )}
+
+      {/* Open the creator for creating a new exhibition */}
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          setIsModalOpen(true);
+          setErrorMessage(""); // Reset error message when opening the modal
+        }}
         className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
       >
         Create a New Exhibition
       </button>
 
-      {/* creating a new exhibition */}
+      {/* Creating a new exhibition */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
@@ -109,6 +128,8 @@ const ExhibitionsPage = () => {
                   placeholder="Enter exhibition title"
                   className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
                 />
+                {/* Error message if name is not filled in */}
+                {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Description</label>
@@ -148,9 +169,9 @@ const ExhibitionsPage = () => {
                 <button
                   type="submit"
                   className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
-                  disabled={createPost.isPending}
+                  disabled={createExhibition.isPending}
                 >
-                  {createPost.isPending ? "Saving..." : "Publish"}
+                  {createExhibition.isPending ? "Saving..." : "Publish"}
                 </button>
               </div>
             </form>
@@ -161,25 +182,25 @@ const ExhibitionsPage = () => {
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
-        <div>Error loading posts.</div>
-      ) : currentPosts && currentPosts.length > 0 ? (
+        <div>Error loading exhibitions.</div>
+      ) : currentExhibitions && currentExhibitions.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {currentPosts.map((post) => (
-            <div key={post.id} className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px]">
+          {currentExhibitions.map((exhibition) => (
+            <div key={exhibition.id} className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px]">
               <div className="w-1/3 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
                 <img
-                  src={post.coverImageUrl ?? "/logos/museum.jpg"}
-                  alt={post.name ?? "Exhibition"}
+                  src={exhibition.coverImageUrl ?? "/logos/museum.jpg"}
+                  alt={exhibition.name ?? "Exhibition"}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="w-2/3 pl-4">
-                <h2 className="text-lg font-semibold text-primary-dark">{post.name}</h2>
+                <h2 className="text-lg font-semibold text-primary-dark">{exhibition.name}</h2>
                 <p className="text-sm text-text-dark overflow-wrap break-words whitespace-normal">
-                  {truncateDescription(post.description ?? "", descriptionMaxLength)}
+                  {truncateDescription(exhibition.description ?? "", descriptionMaxLength)}
                 </p>
                 <p className="text-xs text-text-dark mt-2">
-                  Created: {formatDate(post.createdAt)}
+                  Created: {formatDate(exhibition.createdAt)}
                 </p>
               </div>
             </div>
@@ -189,7 +210,7 @@ const ExhibitionsPage = () => {
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
-      {/* pagination controls */}
+      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
           <button
