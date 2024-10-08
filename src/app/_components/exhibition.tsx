@@ -1,97 +1,67 @@
 "use client";
 
-import { useRouter } from 'next/navigation'; 
-import { useState } from "react";
-import { api } from "~/trpc/react";
+import React from "react";
 
-export function LatestExhibition() {
-  const router = useRouter(); 
-  const [latestExhibition] = api.post.getLatest.useSuspenseQuery(); 
-  const utils = api.useUtils();
-  const [name, setName] = useState("");
+interface Exhibition {
+  id: number;
+  name: string | null;
+  description: string | null;
+  coverImageUrl: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | null;
+}
 
-  const createExhibition = api.post.create.useMutation({
-    onSuccess: async () => {
-      await utils.post.invalidate(); 
-      setName("");
-    },
-  });
+interface ExhibitionCardProps {
+  exhibition: Exhibition;
+  descriptionMaxLength: number;
+  onClick: (id: number) => void;
+}
 
-  // handles navigation to the editor page
-  const handleExhibitionClick = (id: number) => {
-    void router.push(`/exhibitions/${id}`); 
+const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, descriptionMaxLength, onClick }) => {
+  const truncateDescription = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + "...";
+  };
+
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return dateObj.toLocaleString("en-gb", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "Etc/GMT-3",
+    });
   };
 
   return (
-    <div className="w-full max-w-2xl bg-white rounded-lg p-6 flex items-start space-x-6">
-      <div
-        className="w-32 h-42 bg-gray-200 flex items-center justify-center rounded-lg cursor-pointer"
-        onClick={() => latestExhibition && handleExhibitionClick(latestExhibition.id)} 
-      >
-        {latestExhibition?.coverImageUrl ? (
-          <img
-            src={latestExhibition.coverImageUrl}
-            alt={latestExhibition.name ?? "No title available"}
-            className="w-full h-full object-cover rounded-lg"
-          />
-        ) : (
-          <svg
-            className="w-16 h-16 text-gray-400"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fillRule="evenodd"
-              d="M2 5a2 2 0 012-2h16a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm4.25 3a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5zM12 12l2.5-3 3.5 4.5H6l2-2.5 2 2.5z"
-              clipRule="evenodd"
-            />
-          </svg>
-        )}
-      </div>
-
-      <div className="flex-grow w-2/3">
-        {latestExhibition ? (
-          <>
-            <h2
-              className="text-xl font-semibold text-primary-dark mb-2 whitespace-normal break-words overflow-wrap cursor-pointer"
-              onClick={() => handleExhibitionClick(latestExhibition.id)} 
-            >
-              {latestExhibition.name ?? "No title available"}
-            </h2>
-            <p className="text-sm text-gray-600 mb-1 whitespace-normal break-words overflow-wrap">
-              {latestExhibition.description ?? "No description available."}
-            </p>
-            <p className="text-xs text-gray-400">
-              Created at: {new Date(latestExhibition.createdAt).toLocaleString()}
-            </p>
-          </>
-        ) : (
-          <p className="text-gray-600">You have no exhibitions yet.</p>
-        )}
-      </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          createExhibition.mutate({ name }); 
-        }}
-        className="flex flex-col gap-2 w-1/3"
-      >
-        <input
-          type="text"
-          placeholder="New Exhibition Title"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg px-4 py-2 text-black border border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50"
+    <div
+      key={exhibition.id}
+      className="flex bg-background_dark rounded-lg overflow-hidden p-6 h-64 w-full md:w-[450px] cursor-pointer" // Adjusted padding values
+      onClick={() => onClick(exhibition.id)}
+    >
+      <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+        <img
+          src={exhibition.coverImageUrl ?? "/logos/museum.jpg"}
+          alt={exhibition.name ?? "Exhibition"}
+          className="w-full h-full object-cover"
         />
-        <button
-          type="submit"
-          className="rounded-lg bg-primary-dark text-white px-4 py-2 font-semibold transition hover:bg-primary-dark_hover"
-          disabled={createExhibition.isPending}
-        >
-          {createExhibition.isPending ? "Submitting..." : "Submit"}
-        </button>
-      </form>
+      </div>
+      <div className="flex flex-col justify-between pl-4 pr-8 w-2/3">
+        <div>
+          <h2 className="text-2xl font-semibold text-dark">{exhibition.name}</h2>
+          <p className="text-lg text-text-dark overflow-wrap break-words whitespace-normal mt-2">
+            {truncateDescription(exhibition.description ?? "", descriptionMaxLength)}
+          </p>
+        </div>
+        {/*<p className="text-base text-text-dark mt-2 self-end">Created: {formatDate(exhibition.createdAt)}</p>*/}
+      </div>
     </div>
   );
-}
+  
+};
+
+export default ExhibitionCard;

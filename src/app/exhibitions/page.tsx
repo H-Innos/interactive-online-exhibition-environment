@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
+import ExhibitionCard from "~/app/_components/exhibition"; 
 
 interface Exhibition {
   id: number;
@@ -14,7 +15,7 @@ interface Exhibition {
 }
 
 const ExhibitionsPage = () => {
-  const router = useRouter(); 
+  const router = useRouter();
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,31 +77,12 @@ const ExhibitionsPage = () => {
     router.push(`/exhibitions/${id}`);
   };
 
-  const truncateDescription = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + "...";
-  };
-
-  const formatDate = (date: Date | string) => {
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    return dateObj.toLocaleString("en-gb", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-      timeZone: "Etc/GMT-3",
-    });
-  };
-
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
-      <h1 className="text-3xl font-bold mb-2 text-primary-dark">All Exhibitions</h1>
+      <h1 className="text-3xl font-bold mb-2 text-accent">All Exhibitions</h1>
       <p className="text-lg mb-6 text-light-gray">Manage</p>
 
-      {/* Display success message if exhibition was successfully created */}
+      {/* Display message if exhibition was successfully created */}
       {successMessage && (
         <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
           {successMessage}
@@ -111,11 +93,11 @@ const ExhibitionsPage = () => {
       <button
         onClick={() => {
           setIsModalOpen(true);
-          setErrorMessage(""); 
+          setErrorMessage("");
         }}
-        className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
+        className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
       >
-        Create a New Exhibition
+        New Exhibition
       </button>
 
       {/* Creating a new exhibition */}
@@ -191,28 +173,12 @@ const ExhibitionsPage = () => {
       ) : currentExhibitions && currentExhibitions.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {currentExhibitions.map((exhibition) => (
-            <div
+            <ExhibitionCard
               key={exhibition.id}
-              className="flex bg-primary-light rounded-lg overflow-hidden p-4 h-48 w-full md:w-[400px] cursor-pointer" // Make the card clickable
-              onClick={() => handleExhibitionClick(exhibition.id)} // Navigate to the editor page on click
-            >
-              <div className="w-1/3 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
-                <img
-                  src={exhibition.coverImageUrl ?? "/logos/museum.jpg"}
-                  alt={exhibition.name ?? "Exhibition"}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="w-2/3 pl-4">
-                <h2 className="text-lg font-semibold text-primary-dark">{exhibition.name}</h2>
-                <p className="text-sm text-text-dark overflow-wrap break-words whitespace-normal">
-                  {truncateDescription(exhibition.description ?? "", descriptionMaxLength)}
-                </p>
-                <p className="text-xs text-text-dark mt-2">
-                  Created: {formatDate(exhibition.createdAt)}
-                </p>
-              </div>
-            </div>
+              exhibition={exhibition}
+              descriptionMaxLength={descriptionMaxLength}
+              onClick={handleExhibitionClick}
+            />
           ))}
         </div>
       ) : (
@@ -222,23 +188,42 @@ const ExhibitionsPage = () => {
       {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
-            disabled={currentPage === 1}
+          {/* Previous text, styled as lighter gray when disabled */}
+          <span
+            onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+            className={`px-4 py-2 cursor-pointer text-xl ${
+              currentPage === 1 ? 'text-gray-400 cursor-default' : 'text-gray-700 hover:text-black'
+            }`}
           >
-            Previous
-          </button>
-          <span className="text-lg">Page {currentPage} of {totalPages}</span>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:bg-gray-200"
-            disabled={currentPage === totalPages}
+            ← Previous
+          </span>
+
+          {/* Page indicator boxes */}
+          <div className="flex space-x-2">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <span
+                key={index + 1}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-3 py-1 cursor-pointer ${
+                  index + 1 === currentPage ? 'bg-black text-white rounded-md' : 'text-gray-700 hover:bg-gray-200 rounded-md'
+                }`}
+              >
+                {index + 1}
+              </span>
+            ))}
+          </div>
+
+          <span
+            onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+            className={`px-4 py-2 cursor-pointer text-xl ${
+              currentPage === totalPages ? 'text-gray-400 cursor-default' : 'text-gray-700 hover:text-black'
+            }`}
           >
-            Next
-          </button>
+            Next →
+          </span>
         </div>
       )}
+
     </div>
   );
 };

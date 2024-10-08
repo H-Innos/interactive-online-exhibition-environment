@@ -15,10 +15,11 @@ export default {
           dark: "#2C5696", // Darker shade of primary
           dark_hover: "#5e8bdb", // Darker shade of primary hover (light blue)
         },
-        background: "#f8f4f4", // Background color
-        accent: "#1a2630", // Accent color
+        background_dark: "#f8f4f4", // Background color
+        background: "#FFFFFF", // Background color
+        accent: "#2e353b", // Accent color
         text: {
-          dark: "#1d2026", // Default dark text
+          dark: "#17181a", // Default dark text
           light: "#FFFFFF", // Light text
         },
         "light-gray": "#5c5f66", // Medium gray color
