@@ -1,10 +1,19 @@
-import { db } from "~/server/db";
+import { db } from "~/server/db"; 
 import { HydrateClient } from "~/trpc/server";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"; 
+
+interface Post {
+  id: number; 
+  name: string | null; 
+  description: string | null; 
+  coverImageUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
 
 export default async function Home() {
-  const posts = await db.query.posts.findMany();
+  const posts: Post[] = await db.query.posts.findMany();
 
   return (
     <HydrateClient>
@@ -15,8 +24,15 @@ export default async function Home() {
           </h1>
         </div>
         <div className="flex flex-wrap gap-4">
-          {/* database test */}
-          {posts.map(post => <div key={post.id}>{post.name}</div>)}
+          {posts && posts.length > 0 ? (
+            posts.map((post) => (
+              <div key={post.id} className="p-4 bg-gray-800 rounded-md">
+                {post.name}
+              </div>
+            ))
+          ) : (
+            <div>No posts found</div>
+          )}
         </div>
       </main>
     </HydrateClient>
