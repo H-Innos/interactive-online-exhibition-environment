@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import ExhibitionCard from "~/app/_components/exhibition"; 
+import ExhibitionCard from "~/app/_components/exhibition";
+import { truncate } from "fs";
 
 interface Exhibition {
   id: number;
@@ -21,6 +22,8 @@ const ExhibitionsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [template, setTemplate] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -49,6 +52,7 @@ const ExhibitionsPage = () => {
       setName("");
       setDescription("");
       setTemplate("");
+      setCoverImage("");
       setIsModalOpen(false);
       setSuccessMessage("Exhibition created successfully!");
       setErrorMessage("");
@@ -71,6 +75,30 @@ const ExhibitionsPage = () => {
       coverImageUrl: defaultCoverImageUrl,
     });
   };
+
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          // NB!    data:image/*;base64,
+          setCoverImage(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+  };
+
+  const handleRemoveImage = () => {
+    setCoverImage(""); 
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
+  };
+
+
 
   // Navigate to exhibition editor page when an exhibition is clicked
   const handleExhibitionClick = (id: number) => {
@@ -133,6 +161,28 @@ const ExhibitionsPage = () => {
                 <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
               </div>
               <div>
+              <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleCoverImageChange}
+                  accept="image/*"
+                  className="block w-full rounded-md shadow-sm bg-white font-medium text-sm border-gray-500 focus:ring-blue-600 focus:border-blue-600 mb-6"
+                />
+              </div>
+              {coverImage && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-500">Image Preview:</p>
+                    <img src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
+                    <span
+                        onClick={handleRemoveImage} // Reset the coverImage state
+                        className="text-black text-xs cursor-pointer hover:underline"
+                      >
+                      Discard
+                    </span>
+                  </div>
+                )}
+              <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Template</label>
                 <select
                   value={template}
@@ -148,7 +198,7 @@ const ExhibitionsPage = () => {
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {setIsModalOpen(false); handleRemoveImage();}}
                   className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
                 >
                   Cancel
