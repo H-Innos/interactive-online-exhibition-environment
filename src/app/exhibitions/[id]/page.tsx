@@ -1,10 +1,13 @@
 "use client"; 
 
 import { useParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { api } from "~/trpc/react";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CldImage } from 'next-cloudinary';
+
+import { Exhibition } from '../page';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
@@ -69,8 +72,17 @@ const ExhibitionEditorPage = () => {
   const params = useParams(); 
   const { id } = params;
 
+  const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [editorContent, setEditorContent] = useState<string>("");
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null); // stores uploaded image URL
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+
+  const { data, error, isLoading } = api.post.getOne.useQuery({ id: id });
+
+  useEffect(() => {
+    if (data) {
+      setExhibition(data);
+    }
+  }, [data]);
 
   const handleEditorChange = (event: any, editor: any) => {
     const data = editor.getData();
@@ -81,6 +93,21 @@ const ExhibitionEditorPage = () => {
   return (
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
+
+        {exhibition && (
+          <div>
+          <label className="block text-sm font-medium text-text-dark mb-1">Title</label>
+          <input
+            type="text"
+            value={exhibition.name || ""}
+            // onChange={(e) => setName(e.target.value)}
+            placeholder="Enter exhibition title"
+            className="w-full rounded-md border border-gray-300 focus:ring focus:ring-primary-dark focus:ring-opacity-90 px-4 py-2"
+          />
+          </div>
+        )}
+
+      <br/>
 
       {/* CKEditor with adapter for Cloudinary */}
       <CKEditor
@@ -99,16 +126,17 @@ const ExhibitionEditorPage = () => {
       </div>
 
       {/* display uploaded image*/}
-      {uploadedImageUrl && (
+      {exhibition && exhibition.coverImageUrl && (
         <div className="mt-8">
           <h2 className="text-xl font-semibold">Uploaded Image Preview:</h2>
-          <CldImage
-            src={uploadedImageUrl}
+          {/* <CldImage
+            src={exhibition.coverImageUrl}
             width="500"
             height="500"
             crop="fill"
             alt="Uploaded Image"
-          />
+          /> */}
+          <img src={exhibition.coverImageUrl} width="300px" />
         </div>
       )}
     </div>

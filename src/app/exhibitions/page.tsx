@@ -4,9 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import ExhibitionCard from "~/app/_components/exhibition";
-import { truncate } from "fs";
 
-interface Exhibition {
+
+export interface Exhibition {
   id: number;
   name: string | null;
   description: string | null;
@@ -72,7 +72,7 @@ const ExhibitionsPage = () => {
     createExhibition.mutate({
       name,
       description,
-      coverImageUrl: defaultCoverImageUrl,
+      coverImageUrl: coverImage || defaultCoverImageUrl,
     });
   };
 
