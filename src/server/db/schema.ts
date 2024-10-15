@@ -12,8 +12,8 @@ export const createTable = pgTableCreator(
   (name) => `interactive-online-exhibition-environment_${name}`
 );
 
-export const posts = createTable(
-  "post",
+export const exhibitions = createTable(
+  "exhibition",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }),
@@ -30,4 +30,3 @@ export const posts = createTable(
     nameIndex: index("name_idx").on(example.name),
   })
 );
-

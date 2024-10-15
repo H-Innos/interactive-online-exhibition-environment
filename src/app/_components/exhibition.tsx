@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 
 interface Exhibition {
@@ -10,14 +9,14 @@ interface Exhibition {
   createdAt: Date | string;
   updatedAt: Date | null;
 }
-
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   descriptionMaxLength: number;
   onClick: (id: number) => void;
+  onDelete: (id: number) => void; 
 }
 
-const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, descriptionMaxLength, onClick }) => {
+const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, descriptionMaxLength, onClick, onDelete }) => {
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
@@ -36,11 +35,10 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, description
       timeZone: "Etc/GMT-3",
     });
   };
-
   return (
     <div
       key={exhibition.id}
-      className="flex bg-background_dark rounded-lg overflow-hidden p-6 h-64 w-full md:w-[450px] cursor-pointer" // Adjusted padding values
+      className="flex bg-background_dark rounded-lg overflow-hidden p-6 h-64 w-full md:w-[450px] cursor-pointer"
       onClick={() => onClick(exhibition.id)}
     >
       <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
@@ -57,11 +55,21 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, description
             {truncateDescription(exhibition.description ?? "", descriptionMaxLength)}
           </p>
         </div>
+        <div className="flex justify-between items-center mt-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(exhibition.id);
+            }}
+            className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
         {/*<p className="text-base text-text-dark mt-2 self-end">Created: {formatDate(exhibition.createdAt)}</p>*/}
       </div>
     </div>
   );
-  
 };
 
 export default ExhibitionCard;
