@@ -13,7 +13,7 @@ export const createTable = pgTableCreator(
 );
 
 export const exhibitions = createTable(
-  "exhibition",
+  "post",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }),
