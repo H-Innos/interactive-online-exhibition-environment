@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { api } from "~/trpc/react";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -10,6 +10,7 @@ import { CldImage } from 'next-cloudinary';
 import { Exhibition } from '~/app/exhibitions/page';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
+// TODO separate place for this
 class Uploader {
   loader: any;
   constructor(loader: any) {
@@ -73,14 +74,25 @@ const ExhibitionEditorPage = () => {
   const { id } = params;
 
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+
   const [editorContent, setEditorContent] = useState<string>("");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { data, error, isLoading } = api.post.getOne.useQuery({ id: id });
 
   useEffect(() => {
     if (data) {
       setExhibition(data);
+      setName(data.name);
+      setDescription(data.description);
+      setCoverImage(data.coverImageUrl);
     }
   }, [data]);
 
@@ -90,32 +102,119 @@ const ExhibitionEditorPage = () => {
     console.log("Editor content:", data);
   };
 
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          // TODO use Cloudinary new POST upload endpoint 
+          setCoverImage(reader.result as string); 
+          setSuccessMessage("New cover image uploaded successfully!");
+          setTimeout(() => setSuccessMessage(""), 3000);
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+  };
+
+  const handleRemoveImage = () => {
+    setCoverImage(exhibition?.coverImageUrl || ""); 
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
+  };
+
   return (
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
 
-        {exhibition && (
+      {successMessage && (
+        <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
+          {successMessage}
+        </div>
+      )}
+
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>Error loading exhibitions.</div>
+      ) : exhibition ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
-          <label className="block text-sm font-medium text-text-dark mb-1">Title</label>
-          <input
-            type="text"
-            value={exhibition.name || ""}
-            // onChange={(e) => setName(e.target.value)}
-            placeholder="Enter exhibition title"
-            className="w-full rounded-md border border-gray-300 focus:ring focus:ring-primary-dark focus:ring-opacity-90 px-4 py-2"
-          />
+          <label className="block text-l font-bold text-text-dark mb-1">Title</label>
+            <input
+              type="text"
+              value={name || ""}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter exhibition title"
+              className="w-full rounded-md border border-gray-300 focus:ring focus:ring-primary-dark focus:ring-opacity-90 px-4 py-2"
+            />
+            
+            <br />
+
+            <div>
+              <label className="block text-l font-bold text-text-dark mb-1">Description</label>
+              <textarea
+                value={description ?? ""}
+                onChange={(e) => {
+                  if (e.target.value.length <= 500) {
+                    setDescription(e.target.value);
+                  }
+                }}
+                placeholder="Enter exhibition description"
+                className="w-full rounded-md border border-gray-300 focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
+              />
+              {/* <p className="text-xs text-gray-500 mt-1">{exhibition.description.length ?? 0}/{descriptionMaxLength} characters</p> */}
+            </div>
+
+            <div>
+              <label className="block text-l font-bold text-text-dark mb-1">Cover Image</label>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleCoverImageChange}
+                  accept="image/*"
+                  className="block w-full rounded-md shadow-sm bg-white font-medium text-sm border-gray-500 focus:ring-blue-600 focus:border-blue-600 mb-6"
+                />
+              </div>
+
           </div>
-        )}
 
-        {/* TODO description box, 
-        
-        cover image upload button,
-        
-        general save button */}
+          <div className="mt-8">
+            <h2 className="block text-l font-bold text-text-dark mb-1">Uploaded Cover Image:</h2>
+            {/* <CldImage
+              src={exhibition.coverImageUrl}
+              width="500"
+              height="500"
+              crop="fill"
+              alt="Uploaded Image"
+            /> */}
+            <img src={coverImage || ""} width="300px" />
 
+            {(coverImage != exhibition.coverImageUrl) &&(
+                <span
+                  onClick={handleRemoveImage}
+                  className="text-black text-xs cursor-pointer hover:underline"
+                  >
+                  Restore Image
+              </span>
+            )}
+
+          </div>
+
+        </div>
+      ) : (
+        <p className="text-red-600">Could not load exhibition entry.</p>
+      )}
+
+        
       <br/>
 
       {/* CKEditor with adapter for Cloudinary */}
+
+      <p className="text-xl font-semibold">Content editor</p>
 
       <CKEditor
         editor={ClassicEditor}
@@ -132,20 +231,20 @@ const ExhibitionEditorPage = () => {
         <div dangerouslySetInnerHTML={{ __html: editorContent }} />
       </div>
 
-      {/* display uploaded image*/}
-      {exhibition && exhibition.coverImageUrl && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold">Uploaded Image Preview:</h2>
-          {/* <CldImage
-            src={exhibition.coverImageUrl}
-            width="500"
-            height="500"
-            crop="fill"
-            alt="Uploaded Image"
-          /> */}
-          <img src={exhibition.coverImageUrl} width="300px" />
-        </div>
-      )}
+      <button
+        type="button"
+        className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
+        disabled={isLoading}
+      >
+        Save Changes
+      </button>
+
     </div>
   );
 };
