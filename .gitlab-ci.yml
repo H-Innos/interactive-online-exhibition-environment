@@ -9,21 +9,7 @@ default:
   image: node:22
 
 stages:
-  - build
-  - test
   - deploy
-
-build:
-  stage: build
-  script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
-    - npm install -g pnpm
-    - pnpm install
-
-test:
-  stage: test
-  script:
-    - echo "Testing testing "
 
 deploy:
   stage: deploy
@@ -36,7 +22,7 @@ deploy:
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - vercel build --prod --token=$VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
-    - drizzle-kit push
+    - pnpm db:push
   environment: production
 
 include:
