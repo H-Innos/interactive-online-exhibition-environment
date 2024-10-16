@@ -39,7 +39,7 @@ Because exhibition space in libraries is limited and some materials must be stor
  1. Clone the repository.
  2. Run `pnpm install`.
  3. Create a file called `.env` in the root directory.
- 4. Copy the following into the .env file:
+ 4. Copy the following into the `.env` file:
  ```
  POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local-db
  ```
