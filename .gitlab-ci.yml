@@ -9,6 +9,7 @@ default:
   image: node:22
 
 stages:
+  - test
   - deploy
 
 deploy:
