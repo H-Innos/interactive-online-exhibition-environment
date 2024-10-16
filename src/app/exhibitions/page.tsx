@@ -60,7 +60,7 @@ const ExhibitionsPage = () => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name.trim()) {
@@ -69,10 +69,43 @@ const ExhibitionsPage = () => {
     }
 
     const defaultCoverImageUrl = "/logos/museum.jpg";
+    let coverImageUrl = null;
+    let coverImageFile = null;
+
+    if (coverImage) {
+      const coverImageToBlobResponse = await fetch(coverImage);
+      coverImageFile = await coverImageToBlobResponse.blob();
+    }
+
+    if (coverImageFile) {
+      const formData = new FormData();
+      formData.append('file', coverImageFile);
+
+      try {
+        // Making a request
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        // Cloudinary response
+        const result = await uploadResponse.json();
+        if (result.url) {
+          console.log("File uploaded successfully:", result.url);
+          coverImageUrl = result.url;
+        } else {
+          console.error("No URL in the response.");
+        }
+        
+      } catch (e) {
+        console.error("Error during file upload:", e);
+      }
+    }
+
     createExhibition.mutate({
       name,
       description,
-      coverImageUrl: coverImage || defaultCoverImageUrl,
+      coverImageUrl: coverImageUrl || defaultCoverImageUrl,
     });
   };
 
@@ -84,9 +117,6 @@ const ExhibitionsPage = () => {
       reader.onloadend = () => {
         if (reader.result) {
           // NB!    data:image/*;base64,
-
-          // TODO use Cloudinary new POST upload endpoint 
-
           setCoverImage(reader.result as string); 
         }
       };
