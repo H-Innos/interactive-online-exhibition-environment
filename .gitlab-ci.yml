@@ -9,8 +9,18 @@ default:
   image: node:22
 
 stages:
+  - build
   - test
   - deploy
+
+build:
+  stage: build
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm build
+  except:
+    - main
 
 deploy:
   stage: deploy
