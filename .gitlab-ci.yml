@@ -21,6 +21,7 @@ build:
     - pnpm build
   except:
     - main
+  interruptible: true
 
 deploy:
   stage: deploy
