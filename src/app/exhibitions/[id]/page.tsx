@@ -102,6 +102,58 @@ const ExhibitionEditorPage = () => {
     console.log("Editor content:", data);
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    let coverImageUrl = null;
+    let coverImageFile = null;
+
+    // Cover image logic
+    if (coverImage && (exhibition && coverImage != exhibition.coverImageUrl)) {
+      const coverImageToBlobResponse = await fetch(coverImage);
+      coverImageFile = await coverImageToBlobResponse.blob();
+    }
+
+    if (coverImageFile) {
+      const formData = new FormData();
+      formData.append('file', coverImageFile);
+
+      try {
+        // Making a request
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        // Cloudinary response
+        const result = await uploadResponse.json();
+        if (result.url) {
+          console.log("File uploaded successfully:", result.url);
+          coverImageUrl = result.url;
+        } else {
+          console.error("No URL in the response.");
+        }
+        
+      } catch (e) {
+        console.error("Error during file upload:", e);
+      }
+    }
+
+    let updatedExhibition = {
+      name: name,
+      description: description,
+      coverImageUrl: coverImageUrl,
+      // content: editorContent ?
+    };
+
+    if (updatedExhibition != exhibition) { // TODO check only first 3 fields?
+      // modify entry... give id for post
+      // make API request
+    }
+
+  }
+  
+
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
@@ -135,6 +187,8 @@ const ExhibitionEditorPage = () => {
           {successMessage}
         </div>
       )}
+
+      <form onSubmit={handleSubmit}>
 
       {isLoading ? (
         <div>Loading...</div>
@@ -245,6 +299,7 @@ const ExhibitionEditorPage = () => {
         Save Changes
       </button>
 
+      </form>
     </div>
   );
 };
