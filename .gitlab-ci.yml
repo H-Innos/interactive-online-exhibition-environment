@@ -13,32 +13,17 @@ stages:
   - test
   - deploy
 
-build-application:
+build:
   stage: build
   script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
     - npm install -g pnpm
     - pnpm install
-
-test-application:
-  stage: test
-  script:
-    - echo "Testing testing "
-
-deploy_preview:
-  stage: deploy
+    - pnpm build
   except:
     - main
-  script:
-    - npm install -g pnpm
-    - pnpm install
-    - npm install --global vercel
-    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - vercel build --token=$VERCEL_TOKEN
-    - DEPLOY_URL = $(vercel deploy --prebuilt --token=$VERCEL_TOKEN)
-    - echo "Preview URL $DEPLOY_URL"
+  interruptible: true
 
-deploy_production:
+deploy:
   stage: deploy
   only:
     - main
@@ -49,6 +34,7 @@ deploy_production:
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - vercel build --prod --token=$VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+    - pnpm db:push
   environment: production
 
 include:
