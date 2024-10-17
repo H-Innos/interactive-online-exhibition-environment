@@ -71,8 +71,7 @@ function UploaderPlugin(editor: any) {
 // exhibition editor component
 const ExhibitionEditorPage = () => {
   const router = useRouter();
-  const params = useParams(); 
-  const { id } = params;
+  const { id = "" } = useParams() as { id: string };
 
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
 
@@ -81,7 +80,6 @@ const ExhibitionEditorPage = () => {
   const [coverImage, setCoverImage] = useState<string | null>(null);
 
   const [editorContent, setEditorContent] = useState<string>("");
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -95,10 +93,10 @@ const ExhibitionEditorPage = () => {
   useEffect(() => {
     if (data) {
       setExhibition(data);
-      setName(data.name);
-      setDescription(data.description);
-      setCoverImage(data.coverImageUrl);
-      setEditorContent(data.content);
+      setName(data.name ?? "");
+      setDescription(data.description ?? "");
+      setCoverImage(data.coverImageUrl ?? "");
+      setEditorContent(data.content ?? "");
     }
   }, [data]);
 
@@ -322,7 +320,7 @@ const ExhibitionEditorPage = () => {
       <button
         type="submit"
         className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
-        disabled={updateExhibition.isPending || (exhibition && exhibition.name === name && exhibition.description === description && exhibition.coverImageUrl === coverImage && exhibition.content === editorContent)}
+        disabled={updateExhibition.isPending}
       >
         {updateExhibition.isPending ? "Saving..." : "Save Changes"}
       </button>

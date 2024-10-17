@@ -37,7 +37,7 @@ export const postRouter = createTRPCRouter({
         name: input.name,
         description: input.description,
         coverImageUrl: input.coverImageUrl,
-        content: input.content || "" 
+        content: input.content ?? "" 
       }).where(sql`id = ${input.id}`); // TODO validate, unsafe
       // }).where((posts, { eq }) => eq(posts.id, input.id)); // !???!
     }),
@@ -51,7 +51,7 @@ export const postRouter = createTRPCRouter({
   }),
 
   getOne: publicProcedure
-    .input(z.object({ id: z.string() })) 
+    .input(z.object({ id: z.string().transform(x => Number(x)) })) 
     .query(async ({ ctx, input }) => {
       const post = await ctx.db.query.posts.findFirst({
         where: (posts, { eq }) => eq(posts.id, input.id), 
