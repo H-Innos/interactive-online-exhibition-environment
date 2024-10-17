@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { posts } from "~/server/db/schema";
 
@@ -21,16 +22,26 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-  // update: publicProcedure
-  // .input(
-  //   z.object({
-  //     name: z.string().min(1),
-  //     description: z.string().optional(),
-  //     coverImageUrl: z.string().optional(),
-  //   })
-  // TODO id of post we are updating
-  // )
-  //  ctx.db.modify?
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1),
+        description: z.string().optional(),
+        coverImageUrl: z.string().optional(),
+        content: z.string().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.update(posts).set({
+        name: input.name,
+        description: input.description,
+        coverImageUrl: input.coverImageUrl,
+        content: input.content || "" 
+      }).where(sql`id = ${input.id}`); // TODO validate, unsafe
+      // }).where((posts, { eq }) => eq(posts.id, input.id)); // !???!
+    }),
+   
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allPosts = await ctx.db.query.posts.findMany({

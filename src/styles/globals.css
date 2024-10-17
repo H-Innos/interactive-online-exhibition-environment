@@ -4,7 +4,8 @@
 
 .ck-editor__editable {
     min-height: 300px; 
-  }
+    max-height: 60vh;
+}
   
 @layer components {
 ::file-selector-button, ::-webkit-file-upload-button  {

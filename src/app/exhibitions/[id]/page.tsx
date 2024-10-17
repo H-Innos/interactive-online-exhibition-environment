@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState, useRef } from 'react';
 import { api } from "~/trpc/react";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
@@ -70,6 +70,7 @@ function UploaderPlugin(editor: any) {
 
 // exhibition editor component
 const ExhibitionEditorPage = () => {
+  const router = useRouter();
   const params = useParams(); 
   const { id } = params;
 
@@ -84,6 +85,10 @@ const ExhibitionEditorPage = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const utils = api.useUtils();
+
+  const descriptionMaxLength = 130;
+  const fileMaxSize = 5 * 1024 * 1024; // 5MB
 
   const { data, error, isLoading } = api.post.getOne.useQuery({ id: id });
 
@@ -93,13 +98,27 @@ const ExhibitionEditorPage = () => {
       setName(data.name);
       setDescription(data.description);
       setCoverImage(data.coverImageUrl);
+      setEditorContent(data.content);
     }
   }, [data]);
+
+  const updateExhibition = api.post.update.useMutation({
+    onSuccess: async () => {
+      await utils.post.invalidate();
+      setSuccessMessage("Exhibition updated successfully!");
+      setErrorMessage("");
+      setTimeout(() => {
+        setSuccessMessage("");
+        router.push(`/exhibitions`);
+      }, 3000);
+    }
+  });
+
 
   const handleEditorChange = (event: any, editor: any) => {
     const data = editor.getData();
     setEditorContent(data); 
-    console.log("Editor content:", data);
+    // console.log("Editor content:", data);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -139,31 +158,30 @@ const ExhibitionEditorPage = () => {
       }
     }
 
-    let updatedExhibition = {
+    updateExhibition.mutate({
+      id: id,
       name: name,
       description: description,
-      coverImageUrl: coverImageUrl,
-      // content: editorContent ?
-    };
-
-    if (updatedExhibition != exhibition) { // TODO check only first 3 fields?
-      // modify entry... give id for post
-      // make API request
-    }
-
-  }
+      coverImageUrl: coverImageUrl || exhibition?.coverImageUrl,
+      content: editorContent
+    });
+};
   
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
+      if (file.size > fileMaxSize) {
+        setErrorMessage("The file size exceeds the maximum allowed size of 5MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          // TODO use Cloudinary new POST upload endpoint 
           setCoverImage(reader.result as string); 
           setSuccessMessage("New cover image uploaded successfully!");
+          setErrorMessage(""); 
           setTimeout(() => setSuccessMessage(""), 3000);
         }
       };
@@ -185,6 +203,13 @@ const ExhibitionEditorPage = () => {
       {successMessage && (
         <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
           {successMessage}
+        </div>
+      )}
+
+
+      {errorMessage && (
+        <div className="bg-red-200 text-red-800 px-4 py-2 rounded-md mb-4">
+          {errorMessage}
         </div>
       )}
 
@@ -213,14 +238,14 @@ const ExhibitionEditorPage = () => {
               <textarea
                 value={description ?? ""}
                 onChange={(e) => {
-                  if (e.target.value.length <= 500) {
+                  if (e.target.value.length <= descriptionMaxLength) {
                     setDescription(e.target.value);
                   }
                 }}
                 placeholder="Enter exhibition description"
                 className="w-full rounded-md border border-gray-300 focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
               />
-              {/* <p className="text-xs text-gray-500 mt-1">{exhibition.description.length ?? 0}/{descriptionMaxLength} characters</p> */}
+              <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
             </div>
 
             <div>
@@ -232,6 +257,7 @@ const ExhibitionEditorPage = () => {
                   accept="image/*"
                   className="block w-full rounded-md shadow-sm bg-white font-medium text-sm border-gray-500 focus:ring-blue-600 focus:border-blue-600 mb-6"
                 />
+                {/*errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>*/}
               </div>
 
           </div>
@@ -288,15 +314,17 @@ const ExhibitionEditorPage = () => {
       <button
         type="button"
         className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
+        onClick={() => router.push(`/exhibitions`)}
       >
         Cancel
       </button>
+      
       <button
         type="submit"
-        className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
-        disabled={isLoading}
+        className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
+        disabled={updateExhibition.isPending || (exhibition && exhibition.name === name && exhibition.description === description && exhibition.coverImageUrl === coverImage && exhibition.content === editorContent)}
       >
-        Save Changes
+        {updateExhibition.isPending ? "Saving..." : "Save Changes"}
       </button>
 
       </form>

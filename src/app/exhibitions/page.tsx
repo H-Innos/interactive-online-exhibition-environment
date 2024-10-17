@@ -11,6 +11,7 @@ export interface Exhibition {
   name: string | null;
   description: string | null;
   coverImageUrl: string | null;
+  content: string | null;
   createdAt: Date | string;
   updatedAt: Date | null;
 }
@@ -29,6 +30,8 @@ const ExhibitionsPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const descriptionMaxLength = 130;
+  const defaultCoverImageUrl = "/logos/museum.jpg";
+  const fileMaxSize = 5 * 1024 * 1024; // 5MB
 
   // Pagination config
   const exhibitionsPerPage = 24;
@@ -68,7 +71,6 @@ const ExhibitionsPage = () => {
       return;
     }
 
-    const defaultCoverImageUrl = "/logos/museum.jpg";
     let coverImageUrl = null;
     let coverImageFile = null;
 
@@ -113,6 +115,10 @@ const ExhibitionsPage = () => {
     const file = e.target.files?.[0];
 
     if (file) {
+      if (file.size > fileMaxSize) {
+        setErrorMessage("The file size exceeds the maximum allowed size of 5MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
@@ -176,8 +182,6 @@ const ExhibitionsPage = () => {
                   placeholder="Enter exhibition title"
                   className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
                 />
-                {/* Error message if name is not filled in */}
-                {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Description</label>
@@ -228,6 +232,7 @@ const ExhibitionsPage = () => {
                   <option value="template3">Template 3</option>
                 </select>
               </div>
+              {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
