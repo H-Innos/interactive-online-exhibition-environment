@@ -89,7 +89,7 @@ const ExhibitionEditorPage = () => {
   const descriptionMaxLength = 130;
   const fileMaxSize = 5 * 1024 * 1024; // 5MB
 
-  const { data, error, isLoading } = api.post.getOne.useQuery({ id: id });
+  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
 
   useEffect(() => {
     if (data) {
@@ -101,9 +101,9 @@ const ExhibitionEditorPage = () => {
     }
   }, [data]);
 
-  const updateExhibition = api.post.update.useMutation({
+  const updateExhibition = api.exhibition.update.useMutation({
     onSuccess: async () => {
-      await utils.post.invalidate();
+      await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition updated successfully!");
       setErrorMessage("");
       setTimeout(() => {
