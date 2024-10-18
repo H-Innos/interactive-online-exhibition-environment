@@ -61,6 +61,10 @@ const ExhibitionsPage = () => {
       setSuccessMessage("Exhibition deleted successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     },
+    onError: (error) => {
+      setErrorMessage(`Failed to delete exhibition: ${error.message}`);
+      setTimeout(() => setErrorMessage(""), 3000);
+    },
   });
 
   const handleDeleteExhibition = (id: number) => {
