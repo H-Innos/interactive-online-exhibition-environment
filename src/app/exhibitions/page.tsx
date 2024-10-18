@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import ExhibitionCard from "~/app/_components/exhibition"; 
+import ExhibitionCard from "~/app/_components/exhibition";
 
-interface Exhibition {
+
+export interface Exhibition {
   id: number;
   name: string | null;
   description: string | null;
   coverImageUrl: string | null;
+  content: string | null;
   createdAt: Date | string;
   updatedAt: Date | null;
 }
@@ -21,6 +23,8 @@ const ExhibitionsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [template, setTemplate] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,6 +33,8 @@ const ExhibitionsPage = () => {
 
 
   const descriptionMaxLength = 130;
+  const defaultCoverImageUrl = "/logos/museum.jpg";
+  const fileMaxSize = 5 * 1024 * 1024; // 5MB
 
   const exhibitionsPerPage = 24;
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
@@ -51,6 +57,7 @@ const ExhibitionsPage = () => {
       setName("");
       setDescription("");
       setTemplate("");
+      setCoverImage("");
       setIsModalOpen(false);
       setSuccessMessage("Exhibition created successfully!");
       setErrorMessage("");
@@ -92,7 +99,7 @@ const handleEditExhibition = () => {
   }
 };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!name.trim()) {
@@ -100,13 +107,73 @@ const handleEditExhibition = () => {
       return;
     }
 
-    const defaultCoverImageUrl = "/logos/museum.jpg";
+    let coverImageUrl = null;
+    let coverImageFile = null;
+
+    if (coverImage) {
+      const coverImageToBlobResponse = await fetch(coverImage);
+      coverImageFile = await coverImageToBlobResponse.blob();
+    }
+
+    if (coverImageFile) {
+      const formData = new FormData();
+      formData.append('file', coverImageFile);
+
+      try {
+        // Making a request
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        // Cloudinary response
+        const result = await uploadResponse.json();
+        if (result.url) {
+          console.log("File uploaded successfully:", result.url);
+          coverImageUrl = result.url;
+        } else {
+          console.error("No URL in the response.");
+        }
+        
+      } catch (e) {
+        console.error("Error during file upload:", e);
+      }
+    }
+
     createExhibition.mutate({
       name,
       description,
-      coverImageUrl: defaultCoverImageUrl,
+      coverImageUrl: coverImageUrl || defaultCoverImageUrl,
     });
   };
+
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      if (file.size > fileMaxSize) {
+        setErrorMessage("The file size exceeds the maximum allowed size of 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          // NB!    data:image/*;base64,
+          setCoverImage(reader.result as string); 
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+  };
+
+  const handleRemoveImage = () => {
+    setCoverImage(""); 
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
+  };
+
+
 
   // Navigate to exhibition editor page when an exhibition is clicked
   const handleExhibitionClick = (id: number) => {
@@ -169,6 +236,28 @@ const handleEditExhibition = () => {
                 <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
               </div>
               <div>
+              <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleCoverImageChange}
+                  accept="image/*"
+                  className="block w-full rounded-md shadow-sm bg-white font-medium text-sm border-gray-500 focus:ring-blue-600 focus:border-blue-600 mb-6"
+                />
+              </div>
+              {coverImage && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-500">Image Preview:</p>
+                    <img src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
+                    <span
+                        onClick={handleRemoveImage} // Reset the coverImage state
+                        className="text-black text-xs cursor-pointer hover:underline"
+                      >
+                      Discard
+                    </span>
+                  </div>
+                )}
+              <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Template</label>
                 <select
                   value={template}
@@ -181,10 +270,11 @@ const handleEditExhibition = () => {
                   <option value="template3">Template 3</option>
                 </select>
               </div>
+              {/* {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>} */}
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {setIsModalOpen(false); handleRemoveImage();}}
                   className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
                 >
                   Cancel

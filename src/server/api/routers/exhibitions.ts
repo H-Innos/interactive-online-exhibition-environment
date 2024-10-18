@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { exhibitions } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
@@ -22,12 +23,42 @@ export const exhibitionRouter = createTRPCRouter({
       });
     }),
 
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1),
+        description: z.string().optional(),
+        coverImageUrl: z.string().optional(),
+        content: z.string().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.update(exhibitions).set({
+        name: input.name,
+        description: input.description,
+        coverImageUrl: input.coverImageUrl,
+        content: input.content ?? "" 
+      }).where(sql`id = ${input.id}`); // TODO validate, unsafe
+      // }).where((exhibitions, { eq }) => eq(exhibitions.id, input.id)); // !???!
+    }),
+   
+
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
     });
     return allExhibitions ?? []; 
   }),
+
+  getOne: publicProcedure
+    .input(z.object({ id: z.string().transform(x => Number(x)) })) 
+    .query(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id), 
+      });
+      return exhibition ?? null; 
+    }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
     const exhibition = await ctx.db.query.exhibitions.findFirst({

@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ck-editor__editable {
+    min-height: 300px; 
+    max-height: 60vh;
+}
+  
+@layer components {
+::file-selector-button, ::-webkit-file-upload-button  {
+    @apply text-text-light bg-primary-dark hover:bg-gray-600
+      font-medium text-sm cursor-pointer
+      border-0 border-r border-solid border-gray-500
+      py-2.5 pl-8 pr-4;
+    margin-inline-start: -1rem;
+    margin-inline-end: 1rem;
+  }
+
+  ::-webkit-file-upload-button, input[type=file]::-webkit-file-upload-button {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      padding-left: 1rem;
+      margin-left: 0rem;
+  }
+}

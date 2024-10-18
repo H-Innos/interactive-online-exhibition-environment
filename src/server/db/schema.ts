@@ -18,7 +18,8 @@ export const exhibitions = createTable(
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }),
     description: text("description").default(""),
-    coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""), 
+    coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
+    content: text("content").default(""),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
