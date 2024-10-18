@@ -3,7 +3,7 @@ import { HydrateClient } from "~/trpc/server";
 
 export const dynamic = "force-dynamic"; 
 
-interface Post {
+interface Exhibition {
   id: number; 
   name: string | null; 
   description: string | null; 
@@ -13,7 +13,7 @@ interface Post {
 }
 
 export default async function Home() {
-  const posts: Post[] = await db.query.posts.findMany();
+  const exhibitions: Exhibition[] = await db.query.exhibitions.findMany();
 
   return (
     <HydrateClient>
