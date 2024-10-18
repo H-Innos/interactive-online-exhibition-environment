@@ -7,14 +7,18 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// handles POST request for uploading a file
 export async function POST(request: Request) {
+  const headers = new Headers();
+  headers.append('Access-Control-Allow-Origin', '*');
+  headers.append('Access-Control-Allow-Methods', 'POST');
+  headers.append('Access-Control-Allow-Headers', 'Content-Type');
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as Blob;
 
     if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400, headers });
     }
 
     const result: any = await new Promise(async (resolve, reject) => {
@@ -27,10 +31,9 @@ export async function POST(request: Request) {
       stream.end(buffer);
     });
 
-    return NextResponse.json({ url: result.secure_url }, { status: 200 });
+    return NextResponse.json({ url: result.secure_url }, { status: 200, headers });
   } catch (error) {
     console.error('File upload error:', error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500, headers });
   }
 }
-
