@@ -166,24 +166,25 @@ const ExhibitionsPage = () => {
         </div>
       )}
 
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>Error loading exhibitions.</div>
-      ) : currentExhibitions && currentExhibitions.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {currentExhibitions.map((exhibition) => (
-            <ExhibitionCard
-              key={exhibition.id}
-              exhibition={exhibition}
-              descriptionMaxLength={descriptionMaxLength}
-              onClick={handleExhibitionClick}
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
-      )}
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div>Error loading exhibitions.</div>
+        ) : currentExhibitions && currentExhibitions.length > 0 ? (
+          <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+            {currentExhibitions.map((exhibition) => (
+              <ExhibitionCard
+                key={exhibition.id}
+                exhibition={exhibition}
+                descriptionMaxLength={descriptionMaxLength}
+                onClick={handleExhibitionClick}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
+        )}
+
 
       {/* Pagination controls */}
       {totalPages > 1 && (
