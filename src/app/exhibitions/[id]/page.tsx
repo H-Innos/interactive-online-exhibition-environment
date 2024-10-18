@@ -5,22 +5,23 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from "~/trpc/react";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { CldImage } from 'next-cloudinary';
+import { Editor } from '@ckeditor/ckeditor5-core';
+//import { EventInfo } from '@ckeditor/ckeditor5-utils/src/eventinfo';
+import { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
 import { Exhibition } from '~/app/exhibitions/page';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
-// TODO separate place for this
 class Uploader {
-  loader: any;
-  constructor(loader: any) {
+  loader: FileLoader;
+  constructor(loader: FileLoader) {
     this.loader = loader; // assigns the loader
   }
 
   upload() {
     console.log("Attempting to upload the file...");
     return this.loader.file
-      .then((file: File) => {
+      .then((file: File | null) => {
         if (!file) {
           console.error("No file found.");
           throw new Error('File is not available.');
@@ -28,9 +29,9 @@ class Uploader {
 
         console.log("File found:", file);
 
-        return new Promise((resolve, reject) => {
+        return new Promise<UploadResponse>((resolve, reject) => {
           const formData = new FormData();
-          formData.append('file', file);
+          formData.append('file', file as File);
 
           fetch('/api/upload', {
             method: 'POST',
@@ -45,16 +46,16 @@ class Uploader {
                 });
               } else {
                 console.error("No URL in the response.");
-                reject('No URL in the response');
+                reject(new Error('No URL in the response'));
               }
             })
-            .catch(error => {
+            .catch((error: Error) => {
               console.error("Error during file upload:", error);
               reject(error);
             });
         });
       })
-      .catch((error: any) => {
+      .catch((error: Error) => {
         console.error('Upload failed:', error);
         return Promise.reject(error);
       });
@@ -62,8 +63,8 @@ class Uploader {
 }
 
 // plugin for CKEditor to use uploader for Cloudinary uploads
-function UploaderPlugin(editor: any) {
-  editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
+function UploaderPlugin(editor: Editor) {
+  editor.plugins.get('FileRepository').createUploadAdapter = (loader: FileLoader) => {
     return new Uploader(loader);
   };
 }
@@ -71,7 +72,7 @@ function UploaderPlugin(editor: any) {
 // exhibition editor component
 const ExhibitionEditorPage = () => {
   const router = useRouter();
-  const { id = "" } = useParams() as { id: string };
+  const { id } = useParams() as { id: string };
 
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
 
@@ -113,7 +114,7 @@ const ExhibitionEditorPage = () => {
   });
 
 
-  const handleEditorChange = (event: any, editor: any) => {
+  const handleEditorChange = (event: any, editor: Editor) => {
     const data = editor.getData();
     setEditorContent(data); 
     // console.log("Editor content:", data);
@@ -188,7 +189,7 @@ const ExhibitionEditorPage = () => {
   };
 
   const handleRemoveImage = () => {
-    setCoverImage(exhibition?.coverImageUrl || ""); 
+    setCoverImage(exhibition?.coverImageUrl ?? ""); 
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; 
     }
@@ -255,21 +256,13 @@ const ExhibitionEditorPage = () => {
                   accept="image/*"
                   className="block w-full rounded-md shadow-sm bg-white font-medium text-sm border-gray-500 focus:ring-blue-600 focus:border-blue-600 mb-6"
                 />
-                {/*errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>*/}
               </div>
 
           </div>
 
           <div className="mt-8">
             <h2 className="block text-l font-bold text-text-dark mb-1">Uploaded Cover Image:</h2>
-            {/* <CldImage
-              src={exhibition.coverImageUrl}
-              width="500"
-              height="500"
-              crop="fill"
-              alt="Uploaded Image"
-            /> */}
-            <img src={coverImage || ""} width="300px" />
+            <img src={coverImage ?? ""} alt="Cover image for exhibition entry." width="300px" />
 
             {(coverImage != exhibition.coverImageUrl) &&(
                 <span
