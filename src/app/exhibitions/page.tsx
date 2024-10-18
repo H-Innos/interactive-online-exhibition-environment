@@ -115,8 +115,8 @@ const handleEditExhibition = () => {
 
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
-      <h1 className="text-3xl font-bold mb-2 text-accent">All Exhibitions</h1>
-      <p className="text-lg mb-6 text-light-gray">Manage</p>
+      <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
+      <p className="text-lg mb-6 text-light-gray">Manage exhibitions</p>
 
       {successMessage && (
         <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
