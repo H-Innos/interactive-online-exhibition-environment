@@ -30,7 +30,6 @@ const ExhibitionsPage = () => {
 
   const descriptionMaxLength = 130;
 
-  // Pagination config
   const exhibitionsPerPage = 24;
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
   const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
@@ -119,7 +118,6 @@ const handleEditExhibition = () => {
       <h1 className="text-3xl font-bold mb-2 text-accent">All Exhibitions</h1>
       <p className="text-lg mb-6 text-light-gray">Manage</p>
 
-      {/* Display message if exhibition was successfully created */}
       {successMessage && (
         <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
           {successMessage}
@@ -209,7 +207,7 @@ const handleEditExhibition = () => {
       ) : error ? (
         <div>Error loading exhibitions.</div>
       ) : currentExhibitions && currentExhibitions.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
           {currentExhibitions.map((exhibition) => (
             <ExhibitionCard
               key={exhibition.id}
@@ -258,7 +256,6 @@ const handleEditExhibition = () => {
       {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
-          {/* Previous text, styled as lighter gray when disabled */}
           <span
             onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
             className={`px-4 py-2 cursor-pointer text-xl ${
