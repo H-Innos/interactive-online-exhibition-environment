@@ -148,7 +148,7 @@ const ExhibitionEditorPage = () => {
   const handlePublish = async (e: React.MouseEvent<HTMLButtonElement>) => {
     await handleSaveChanges(e, false);
 
-    publishExhibition.mutate({ id: id });
+    publishExhibition.mutate({ id: Number(id) });
     redirectToExhibitions();
   };
 
