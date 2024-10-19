@@ -103,7 +103,7 @@ export const exhibitionRouter = createTRPCRouter({
     }),
 
   publish: publicProcedure
-    .input(z.object({ id: z.number() }))
+  .input(z.object({ id: z.string().transform((x) => Number(x)) }))
     .mutation(async ({ ctx, input }) => {
       const publishedExhibition = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
