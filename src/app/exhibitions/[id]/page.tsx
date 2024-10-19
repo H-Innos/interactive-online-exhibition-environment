@@ -110,7 +110,18 @@ const ExhibitionEditorPage = () => {
         setSuccessMessage("");
         router.push(`/exhibitions`);
       }, 3000);
-    }
+    },
+    onError: (error) => {
+      if (error.message === "An exhibition with this name already exists.") {
+        setErrorMessage("An exhibition with this name already exists. Please choose a different name.");
+      } 
+      else if (error.message.includes("String must contain at least 1 character(s)")) {
+        setErrorMessage("Exhibition name must contain at least 1 character(s).");
+      } 
+      else {
+        setErrorMessage(`Failed to create exhibition: ${error.message}`);
+      }
+    },
   });
 
 
@@ -262,8 +273,12 @@ const ExhibitionEditorPage = () => {
 
           <div className="mt-8">
             <h2 className="block text-l font-bold text-text-dark mb-1">Uploaded Cover Image:</h2>
-            <img src={coverImage ?? ""} alt="Cover image for exhibition entry." width="300px" />
-
+            <img 
+              src={coverImage ?? ""} 
+              alt="Cover image for exhibition entry." 
+              width="300px" 
+              style={{ maxHeight: "300px", objectFit: "contain" }}
+            />
             {(coverImage != exhibition.coverImageUrl) &&(
                 <span
                   onClick={handleRemoveImage}
@@ -304,7 +319,7 @@ const ExhibitionEditorPage = () => {
 
       <button
         type="button"
-        className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
+        className="bg-gray-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-gray-600"
         onClick={() => router.push(`/exhibitions`)}
       >
         Cancel
@@ -312,7 +327,7 @@ const ExhibitionEditorPage = () => {
       
       <button
         type="submit"
-        className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
+        className="bg-accent text-text-light mt-4 ml-4 px-3 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
         disabled={updateExhibition.isPending}
       >
         {updateExhibition.isPending ? "Saving..." : "Save Changes"}

@@ -6,6 +6,7 @@ import {
   timestamp,
   varchar,
   text,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -16,7 +17,7 @@ export const exhibitions = createTable(
   "post",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    name: varchar("name", { length: 256 }).notNull(),
     description: text("description").default(""),
     coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
     content: text("content").default(""),
@@ -28,6 +29,6 @@ export const exhibitions = createTable(
     ),
   },
   (example) => ({
-    nameIndex: index("name_idx").on(example.name),
+    nameIndex: uniqueIndex("name_unique_idx").on(example.name),
   })
 );
