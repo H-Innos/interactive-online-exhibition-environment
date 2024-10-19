@@ -10,6 +10,7 @@ import { Editor } from '@ckeditor/ckeditor5-core';
 import { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
 import { Exhibition } from '~/app/exhibitions/page';
+import ConfirmationModal from '~/app/_components/confirmation-modal';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
@@ -80,6 +81,9 @@ const ExhibitionEditorPage = () => {
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<string | null>(null);
 
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
   const [editorContent, setEditorContent] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -100,6 +104,19 @@ const ExhibitionEditorPage = () => {
       setEditorContent(data.content ?? "");
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!unsavedChanges) return;
+    
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+      return (event.returnValue = '');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload, {capture: true});
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload, {capture: true});
+    }
+  }, [unsavedChanges]);
 
   const updateExhibition = api.exhibition.update.useMutation({
     onSuccess: async () => {
@@ -128,6 +145,7 @@ const ExhibitionEditorPage = () => {
   const handleEditorChange = (event: any, editor: Editor) => {
     const data = editor.getData();
     setEditorContent(data); 
+    setUnsavedChanges(true);
     // console.log("Editor content:", data);
   };
 
@@ -206,6 +224,22 @@ const ExhibitionEditorPage = () => {
     }
   };
 
+  const handleFormChanged = () => {
+    setUnsavedChanges(true);
+  };
+
+  const handleSaveAndExit = () => {
+    return;
+  };
+
+  const handleDontSaveAndExit = () => {
+    return
+  };
+
+  const handleCancel = () => {
+    return;
+  };
+
   return (
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
@@ -223,7 +257,7 @@ const ExhibitionEditorPage = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form onChange={handleFormChanged} onSubmit={handleSubmit}>
 
       {isLoading ? (
         <div>Loading...</div>
@@ -334,6 +368,13 @@ const ExhibitionEditorPage = () => {
       </button>
 
       </form>
+
+      <ConfirmationModal
+        isOpen={showConfirmationModal}
+        onSaveAndExit={handleSaveAndExit}
+        onDontSaveAndExit={handleDontSaveAndExit}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };
