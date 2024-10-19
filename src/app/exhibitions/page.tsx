@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import ExhibitionCard from "~/app/_components/exhibition";
+import {ExhibitionCardConstants, ExhibitionList } from "~/app/_components/exhibition";
 import type { Exhibition } from "../_types/exhibition";
 import DashboardActionsModal from "../_components/dashboard-actions-modal";
 
@@ -24,7 +24,6 @@ const ExhibitionsPage = () => {
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
   const TIMEOUT_DURATION = 3000;
-  const descriptionMaxLength = 130;
   const defaultCoverImageUrl = "/logos/museum.jpg";
   const fileMaxSize = 5 * 1024 * 1024; // 5MB
 
@@ -232,14 +231,14 @@ const ExhibitionsPage = () => {
                 <textarea
                   value={description ?? ""}
                   onChange={(e) => {
-                    if (e.target.value.length <= descriptionMaxLength) {
+                    if (e.target.value.length <= ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH) {
                       setDescription(e.target.value);
                     }
                   }}
                   placeholder="Enter exhibition description"
                   className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
                 />
-                <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
+                <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH} characters</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
@@ -304,35 +303,19 @@ const ExhibitionsPage = () => {
       ) : currentExhibitions && currentExhibitions.length > 0 ? (
         <div>
           <h1 className="text-2xl font-bold mb-2 text-accent">Drafts</h1>
-          <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
-            {currentExhibitions
-            .filter((exhibition) => !exhibition.isPublished)
-            .map((exhibition) => (
-              <ExhibitionCard
-                key={exhibition.id}
-                exhibition={exhibition}
-                descriptionMaxLength={descriptionMaxLength}
-                onClick={handleExhibitionClick}
-                onDelete={() => handleOpenOptions(exhibition.id)}
-                onOpenOptions={() => handleOpenOptions(exhibition.id)}
-              />
-            ))}
-          </div>
+          <ExhibitionList
+            exhibitions={currentExhibitions.filter((exhibition) => !exhibition.isPublished)}
+            onExhibitionClick={handleExhibitionClick}
+            onOpenOptions={handleOpenOptions}
+            onDelete={handleDeleteExhibition}
+          />
           <h1 className="text-2xl font-bold mb-2 text-accent">Published Exhibitions</h1>
-          <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
-            {currentExhibitions
-            .filter((exhibition) => exhibition.isPublished)
-            .map((exhibition) => (
-              <ExhibitionCard
-                key={exhibition.id}
-                exhibition={exhibition}
-                descriptionMaxLength={descriptionMaxLength}
-                onClick={handleExhibitionClick}
-                onDelete={() => handleOpenOptions(exhibition.id)}
-                onOpenOptions={() => handleOpenOptions(exhibition.id)}
-              />
-            ))}
-          </div>
+          <ExhibitionList
+            exhibitions={currentExhibitions.filter((exhibition) => exhibition.isPublished)}
+            onExhibitionClick={handleExhibitionClick}
+            onOpenOptions={handleOpenOptions}
+            onDelete={handleDeleteExhibition}
+          />
         </div>
       ) : (
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
