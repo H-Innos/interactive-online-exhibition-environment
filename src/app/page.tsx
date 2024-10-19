@@ -1,4 +1,3 @@
-import { db } from "~/server/db"; 
 import { HydrateClient } from "~/trpc/server";
 
 export const dynamic = "force-dynamic"; 
