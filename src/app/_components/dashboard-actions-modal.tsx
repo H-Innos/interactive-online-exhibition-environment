@@ -1,19 +1,26 @@
 import React from "react";
 
 interface DashboardActionsModalProps {
-  handleEditExhibition: () => void;
-  handleDeleteExhibition: () => void;
-  handleCloseOptions: () => void;
+    handlePublishExhibition: () => void;
+    handleEditExhibition: () => void;
+    handleDeleteExhibition: () => void;
+    handleCloseOptions: () => void;
 }
 
 export default function DashboardActionsModal(
-    { handleEditExhibition, handleDeleteExhibition, handleCloseOptions }
+    { handlePublishExhibition, handleEditExhibition, handleDeleteExhibition, handleCloseOptions }
     : DashboardActionsModalProps) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-sm">
             <h2 className="text-2xl font-semibold mb-4">Exhibition Options</h2>
             <div className="space-y-4">
+            <button
+                onClick={handlePublishExhibition}
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Publish Exhibition
+              </button>
               <button
                 onClick={handleEditExhibition}
                 className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"

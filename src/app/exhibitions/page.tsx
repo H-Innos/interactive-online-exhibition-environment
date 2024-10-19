@@ -23,6 +23,7 @@ const ExhibitionsPage = () => {
   const [selectedExhibitionId, setSelectedExhibitionId] = useState<number | null>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
+  const TIMEOUT_DURATION = 3000;
   const descriptionMaxLength = 130;
   const defaultCoverImageUrl = "/logos/museum.jpg";
   const fileMaxSize = 5 * 1024 * 1024; // 5MB
@@ -52,7 +53,7 @@ const ExhibitionsPage = () => {
       setIsModalOpen(false);
       setSuccessMessage("Exhibition created successfully!");
       setErrorMessage("");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
     },
     onError: (error) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -67,11 +68,23 @@ const ExhibitionsPage = () => {
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
       setSuccessMessage("Exhibition deleted successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
     },
     onError: (error) => {
       setErrorMessage(`Failed to delete exhibition: ${error.message}`);
-      setTimeout(() => setErrorMessage(""), 3000);
+      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
+    },
+  });
+
+  const publishExhibition = api.exhibition.publish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition published successfully!");
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to publish exhibition: ${error.message}`);
+      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
     },
   });
 
@@ -95,6 +108,13 @@ const ExhibitionsPage = () => {
   const handleEditExhibition = () => {
     if (selectedExhibitionId) {
       router.push(`/exhibitions/${selectedExhibitionId}`);
+    }
+  };
+
+  const handlePublishExhibition = () => {
+    if (selectedExhibitionId && window.confirm("Are you sure you want to publish this exhibition?")) {
+      publishExhibition.mutate({ id: selectedExhibitionId });
+      handleCloseOptions();
     }
   };
 
@@ -320,6 +340,7 @@ const ExhibitionsPage = () => {
 
       {isOptionsModalOpen && (
         <DashboardActionsModal 
+          handlePublishExhibition={handlePublishExhibition}
           handleEditExhibition={handleEditExhibition} 
           handleDeleteExhibition={handleDeleteExhibition} 
           handleCloseOptions={handleCloseOptions} 
