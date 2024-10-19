@@ -2,7 +2,7 @@ import { z } from "zod";
 import { sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { exhibitions } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
@@ -14,8 +14,6 @@ export const exhibitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("Received values in create mutation:", input);
-
       const existingExhibition = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq }) => eq(exhibitions.name, input.name),
       });
@@ -36,7 +34,7 @@ export const exhibitionRouter = createTRPCRouter({
   update: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.string().transform((x) => Number(x)),  // Transform the id to a number
         name: z.string().min(1),
         description: z.string().optional(),
         coverImageUrl: z.string().optional(),
@@ -44,6 +42,17 @@ export const exhibitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Check if another exhibition with the same name exists (excluding the current one)
+      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq, and }) =>
+          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
+      });
+
+      if (existingExhibition) {
+        throw new Error("An exhibition with this name already exists.");
+      }
+
+      // Proceed with the update if no duplicate name is found
       await ctx.db
         .update(exhibitions)
         .set({
@@ -52,7 +61,7 @@ export const exhibitionRouter = createTRPCRouter({
           coverImageUrl: input.coverImageUrl,
           content: input.content ?? "",
         })
-        .where(sql`id = ${input.id}`);
+        .where(eq(exhibitions.id, input.id));  // input.id is now a number
     }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
