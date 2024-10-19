@@ -11,6 +11,7 @@ export interface Exhibition {
   description: string | null;
   coverImageUrl: string | null;
   content: string | null;
+  isPublished: boolean;
   createdAt: Date | string;
   updatedAt: Date | null;
 }
@@ -283,23 +284,43 @@ const ExhibitionsPage = () => {
           </div>
         </div>
       )}
-
+      
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
         <div>Error loading exhibitions.</div>
       ) : currentExhibitions && currentExhibitions.length > 0 ? (
-        <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
-          {currentExhibitions.map((exhibition) => (
-            <ExhibitionCard
-              key={exhibition.id}
-              exhibition={exhibition}
-              descriptionMaxLength={descriptionMaxLength}
-              onClick={handleExhibitionClick}
-              onDelete={() => handleOpenOptions(exhibition.id)}
-              onOpenOptions={() => handleOpenOptions(exhibition.id)}
-            />
-          ))}
+        <div>
+          <h1 className="text-2xl font-bold mb-2 text-accent">Drafts</h1>
+          <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+            {currentExhibitions
+            .filter((exhibition) => !exhibition.isPublished)
+            .map((exhibition) => (
+              <ExhibitionCard
+                key={exhibition.id}
+                exhibition={exhibition}
+                descriptionMaxLength={descriptionMaxLength}
+                onClick={handleExhibitionClick}
+                onDelete={() => handleOpenOptions(exhibition.id)}
+                onOpenOptions={() => handleOpenOptions(exhibition.id)}
+              />
+            ))}
+          </div>
+          <h1 className="text-2xl font-bold mb-2 text-accent">Published Exhibitions</h1>
+          <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+            {currentExhibitions
+            .filter((exhibition) => exhibition.isPublished)
+            .map((exhibition) => (
+              <ExhibitionCard
+                key={exhibition.id}
+                exhibition={exhibition}
+                descriptionMaxLength={descriptionMaxLength}
+                onClick={handleExhibitionClick}
+                onDelete={() => handleOpenOptions(exhibition.id)}
+                onOpenOptions={() => handleOpenOptions(exhibition.id)}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
