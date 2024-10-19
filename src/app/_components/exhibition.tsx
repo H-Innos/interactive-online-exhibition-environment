@@ -1,15 +1,8 @@
 "use client";
 import React from "react";
 import { FaCog } from "react-icons/fa"; 
+import type { Exhibition } from "../_types/exhibition";
 
-interface Exhibition {
-  id: number;
-  name: string | null;
-  description: string | null;
-  coverImageUrl: string | null;
-  createdAt: Date | string;
-  updatedAt: Date | null;
-}
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   descriptionMaxLength: number;

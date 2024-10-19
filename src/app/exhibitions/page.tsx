@@ -4,17 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import ExhibitionCard from "~/app/_components/exhibition";
+import type { Exhibition } from "../_types/exhibition";
 
-export interface Exhibition {
-  id: number;
-  name: string | null;
-  description: string | null;
-  coverImageUrl: string | null;
-  content: string | null;
-  isPublished: boolean;
-  createdAt: Date | string;
-  updatedAt: Date | null;
-}
 
 const ExhibitionsPage = () => {
   const router = useRouter();
