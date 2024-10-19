@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import ExhibitionCard from "~/app/_components/exhibition";
 
-
 export interface Exhibition {
   id: number;
   name: string | null;
@@ -30,7 +29,6 @@ const ExhibitionsPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedExhibitionId, setSelectedExhibitionId] = useState<number | null>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-
 
   const descriptionMaxLength = 130;
   const defaultCoverImageUrl = "/logos/museum.jpg";
@@ -63,7 +61,15 @@ const ExhibitionsPage = () => {
       setErrorMessage("");
       setTimeout(() => setSuccessMessage(""), 3000);
     },
+    onError: (error) => {
+      if (error.message === "An exhibition with this name already exists.") {
+        setErrorMessage("An exhibition with this name already exists. Please choose a different name.");
+      } else {
+        setErrorMessage(`Failed to create exhibition: ${error.message}`);
+      }
+    },
   });
+
   const deleteExhibition = api.exhibition.delete.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
@@ -76,28 +82,28 @@ const ExhibitionsPage = () => {
     },
   });
 
-const handleOpenOptions = (id: number) => {
-  setSelectedExhibitionId(id);
-  setIsOptionsModalOpen(true);
-};
+  const handleOpenOptions = (id: number) => {
+    setSelectedExhibitionId(id);
+    setIsOptionsModalOpen(true);
+  };
 
-const handleCloseOptions = () => {
-  setSelectedExhibitionId(null);
-  setIsOptionsModalOpen(false);
-};
+  const handleCloseOptions = () => {
+    setSelectedExhibitionId(null);
+    setIsOptionsModalOpen(false);
+  };
 
-const handleDeleteExhibition = () => {
-  if (selectedExhibitionId && window.confirm("Are you sure you want to delete this exhibition?")) {
-    deleteExhibition.mutate({ id: selectedExhibitionId });
-    handleCloseOptions();
-  }
-};
+  const handleDeleteExhibition = () => {
+    if (selectedExhibitionId && window.confirm("Are you sure you want to delete this exhibition?")) {
+      deleteExhibition.mutate({ id: selectedExhibitionId });
+      handleCloseOptions();
+    }
+  };
 
-const handleEditExhibition = () => {
-  if (selectedExhibitionId) {
-    router.push(`/exhibitions/${selectedExhibitionId}`);
-  }
-};
+  const handleEditExhibition = () => {
+    if (selectedExhibitionId) {
+      router.push(`/exhibitions/${selectedExhibitionId}`);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -120,19 +126,14 @@ const handleEditExhibition = () => {
       formData.append('file', coverImageFile);
 
       try {
-        // Making a request
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
           body: formData,
         });
 
-        // Cloudinary response
         const result = await uploadResponse.json();
         if (result.url) {
-          console.log("File uploaded successfully:", result.url);
           coverImageUrl = result.url;
-        } else {
-          console.error("No URL in the response.");
         }
         
       } catch (e) {
@@ -158,8 +159,7 @@ const handleEditExhibition = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (reader.result) {
-          // NB!    data:image/*;base64,
-          setCoverImage(reader.result as string); 
+          setCoverImage(reader.result as string);
         }
       };
       reader.readAsDataURL(file);
@@ -173,9 +173,6 @@ const handleEditExhibition = () => {
     }
   };
 
-
-
-  // Navigate to exhibition editor page when an exhibition is clicked
   const handleExhibitionClick = (id: number) => {
     router.push(`/exhibitions/${id}`);
   };
@@ -191,7 +188,6 @@ const handleEditExhibition = () => {
         </div>
       )}
 
-      {/* Open the creator for creating a new exhibition */}
       <button
         onClick={() => {
           setIsModalOpen(true);
@@ -202,7 +198,6 @@ const handleEditExhibition = () => {
         New Exhibition
       </button>
 
-      {/* Creating a new exhibition */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
@@ -217,8 +212,6 @@ const handleEditExhibition = () => {
                   placeholder="Enter exhibition title"
                   className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
                 />
-                
-                {/* Error message if name is not filled in */}
                 {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
               </div>
               <div>
@@ -236,7 +229,7 @@ const handleEditExhibition = () => {
                 <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
               </div>
               <div>
-              <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
+                <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -246,17 +239,17 @@ const handleEditExhibition = () => {
                 />
               </div>
               {coverImage && (
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-500">Image Preview:</p>
-                    <img src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
-                    <span
-                        onClick={handleRemoveImage} // Reset the coverImage state
-                        className="text-black text-xs cursor-pointer hover:underline"
-                      >
-                      Discard
-                    </span>
-                  </div>
-                )}
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500">Image Preview:</p>
+                  <img src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
+                  <span
+                    onClick={handleRemoveImage}
+                    className="text-black text-xs cursor-pointer hover:underline"
+                  >
+                    Discard
+                  </span>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Template</label>
                 <select
@@ -270,7 +263,6 @@ const handleEditExhibition = () => {
                   <option value="template3">Template 3</option>
                 </select>
               </div>
-              {/* {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>} */}
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
@@ -313,37 +305,34 @@ const handleEditExhibition = () => {
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
-{/* Options Modal */}
       {isOptionsModalOpen && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 w-full max-w-sm">
-                  <h2 className="text-2xl font-semibold mb-4">Exhibition Options</h2>
-                  <div className="space-y-4">
-                    <button
-                      onClick={handleEditExhibition}
-                      className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-                    >
-                      Edit Exhibition
-                    </button>
-                    <button
-                      onClick={handleDeleteExhibition}
-                      className="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
-                    >
-                      Delete Exhibition
-                    </button>
-                    <button
-                      onClick={handleCloseOptions}
-                      className="w-full bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+            <h2 className="text-2xl font-semibold mb-4">Exhibition Options</h2>
+            <div className="space-y-4">
+              <button
+                onClick={handleEditExhibition}
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Edit Exhibition
+              </button>
+              <button
+                onClick={handleDeleteExhibition}
+                className="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+              >
+                Delete Exhibition
+              </button>
+              <button
+                onClick={handleCloseOptions}
+                className="w-full bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-
-      {/* Pagination controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">
           <span
@@ -355,7 +344,6 @@ const handleEditExhibition = () => {
             ← Previous
           </span>
 
-          {/* Page indicator boxes */}
           <div className="flex space-x-2">
             {Array.from({ length: totalPages }, (_, index) => (
               <span
@@ -380,7 +368,6 @@ const handleEditExhibition = () => {
           </span>
         </div>
       )}
-
     </div>
   );
 };

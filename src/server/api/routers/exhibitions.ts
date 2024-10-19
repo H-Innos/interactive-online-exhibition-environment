@@ -8,7 +8,7 @@ export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
     .input(
       z.object({
-        name: z.string().min(1),
+        name: z.string().min(1, "Exhibition name is required."),
         description: z.string().optional(),
         coverImageUrl: z.string().optional(),
       })
@@ -16,11 +16,21 @@ export const exhibitionRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       console.log("Received values in create mutation:", input);
 
-      await ctx.db.insert(exhibitions).values({
+      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.name, input.name),
+      });
+
+      if (existingExhibition) {
+        throw new Error("An exhibition with this name already exists.");
+      }
+
+      const newExhibition = await ctx.db.insert(exhibitions).values({
         name: input.name,
         description: input.description ?? "",
         coverImageUrl: input.coverImageUrl ?? "",
       });
+
+      return newExhibition;
     }),
 
   update: publicProcedure
@@ -30,34 +40,35 @@ export const exhibitionRouter = createTRPCRouter({
         name: z.string().min(1),
         description: z.string().optional(),
         coverImageUrl: z.string().optional(),
-        content: z.string().optional()
+        content: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.update(exhibitions).set({
-        name: input.name,
-        description: input.description,
-        coverImageUrl: input.coverImageUrl,
-        content: input.content ?? "" 
-      }).where(sql`id = ${input.id}`); // TODO validate, unsafe
-      // }).where((exhibitions, { eq }) => eq(exhibitions.id, input.id)); // !???!
+      await ctx.db
+        .update(exhibitions)
+        .set({
+          name: input.name,
+          description: input.description,
+          coverImageUrl: input.coverImageUrl,
+          content: input.content ?? "",
+        })
+        .where(sql`id = ${input.id}`);
     }),
-   
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
     });
-    return allExhibitions ?? []; 
+    return allExhibitions ?? [];
   }),
 
   getOne: publicProcedure
-    .input(z.object({ id: z.string().transform(x => Number(x)) })) 
+    .input(z.object({ id: z.string().transform((x) => Number(x)) }))
     .query(async ({ ctx, input }) => {
       const exhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id), 
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
       });
-      return exhibition ?? null; 
+      return exhibition ?? null;
     }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
@@ -70,7 +81,8 @@ export const exhibitionRouter = createTRPCRouter({
   delete: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const deletedExhibition = await ctx.db.delete(exhibitions)
+      const deletedExhibition = await ctx.db
+        .delete(exhibitions)
         .where(eq(exhibitions.id, input.id))
         .returning();
 
