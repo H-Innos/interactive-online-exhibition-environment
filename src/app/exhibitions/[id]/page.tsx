@@ -5,11 +5,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from "~/trpc/react";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Editor } from '@ckeditor/ckeditor5-core';
+import type { Editor } from '@ckeditor/ckeditor5-core';
 //import { EventInfo } from '@ckeditor/ckeditor5-utils/src/eventinfo';
-import { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
+import type { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
-import { Exhibition } from '~/app/exhibitions/page';
+import type { Exhibition } from '~/app/_types/exhibition';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
