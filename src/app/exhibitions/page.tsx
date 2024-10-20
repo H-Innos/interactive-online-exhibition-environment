@@ -10,9 +10,10 @@ import { configurations } from "~/constants/config";
 import PaginationControls from "../components/pagination-controls";
 
 
-const ExhibitionsPage = () => {
-
-
+const ExhibitionsPage = ({
+  searchParams }: {
+    searchParams: Record<string, string | string[] | undefined>;
+  }) => {
   const router = useRouter();
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,8 +26,8 @@ const ExhibitionsPage = () => {
   const [selectedExhibitionId, setSelectedExhibitionId] = useState<number | null>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
-  const searchParams = useSearchParams();
-  let currentPage = Number(searchParams.get("page"));
+  // const searchParams = useSearchParams();
+  let currentPage = Number(searchParams.page);
   const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
 
   if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
