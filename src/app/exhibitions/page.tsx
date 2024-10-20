@@ -6,6 +6,8 @@ import { api } from "~/trpc/react";
 import {ExhibitionCardConstants, ExhibitionList } from "~/app/_components/exhibition";
 import type { Exhibition } from "../_types/exhibition";
 import DashboardActionsModal from "../_components/dashboard-actions-modal";
+import { configurations } from "~/constants/config";
+import PaginationControls from "../components/pagination-controls";
 
 
 const ExhibitionsPage = () => {
@@ -17,21 +19,15 @@ const ExhibitionsPage = () => {
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [template, setTemplate] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [selectedExhibitionId, setSelectedExhibitionId] = useState<number | null>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
-  const TIMEOUT_DURATION = 3000;
-  const defaultCoverImageUrl = "/logos/museum.jpg";
-  const fileMaxSize = 5 * 1024 * 1024; // 5MB
-
-  const exhibitionsPerPage = 24;
-  const indexOfLastExhibition = currentPage * exhibitionsPerPage;
-  const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
+  const indexOfLastExhibition = currentPage * configurations.EXHIBITIONS_PER_PAGE;
+  const indexOfFirstExhibition = indexOfLastExhibition - configurations.EXHIBITIONS_PER_PAGE;
   const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
-  const totalPages = Math.ceil(exhibitions.length / exhibitionsPerPage);
+  const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
 
   const { data, error, isLoading } = api.exhibition.getAll.useQuery(undefined);
   const utils = api.useUtils();
@@ -47,12 +43,11 @@ const ExhibitionsPage = () => {
       await utils.exhibition.invalidate();
       setName("");
       setDescription("");
-      setTemplate("");
       setCoverImage("");
       setIsModalOpen(false);
       setSuccessMessage("Exhibition created successfully!");
       setErrorMessage("");
-      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setSuccessMessage(""), configurations.TIMEOUT_DURATION);
     },
     onError: (error) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -67,11 +62,11 @@ const ExhibitionsPage = () => {
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
       setSuccessMessage("Exhibition deleted successfully!");
-      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setSuccessMessage(""), configurations.TIMEOUT_DURATION);
     },
     onError: (error) => {
       setErrorMessage(`Failed to delete exhibition: ${error.message}`);
-      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setErrorMessage(""), configurations.TIMEOUT_DURATION);
     },
   });
 
@@ -79,11 +74,11 @@ const ExhibitionsPage = () => {
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
       setSuccessMessage("Exhibition published successfully!");
-      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setSuccessMessage(""), configurations.TIMEOUT_DURATION);
     },
     onError: (error) => {
       setErrorMessage(`Failed to publish exhibition: ${error.message}`);
-      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setErrorMessage(""), configurations.TIMEOUT_DURATION);
     },
   });
 
@@ -91,11 +86,11 @@ const ExhibitionsPage = () => {
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
       setSuccessMessage("Exhibition moved back to drafts!");
-      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setSuccessMessage(""), configurations.TIMEOUT_DURATION);
     },
     onError: (error) => {
       setErrorMessage(`Failed to unpublish exhibition: ${error.message}`);
-      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
+      setTimeout(() => setErrorMessage(""), configurations.TIMEOUT_DURATION);
     },
   });
   
@@ -181,7 +176,7 @@ const ExhibitionsPage = () => {
     createExhibition.mutate({
       name,
       description,
-      coverImageUrl: coverImageUrl || defaultCoverImageUrl,
+      coverImageUrl: coverImageUrl || configurations.DEFAULT_COVER_IMAGE_URL,
     });
   };
 
@@ -189,7 +184,7 @@ const ExhibitionsPage = () => {
     const file = e.target.files?.[0];
 
     if (file) {
-      if (file.size > fileMaxSize) {
+      if (file.size > configurations.FILE_MAX_SIZE) {
         setErrorMessage("The file size exceeds the maximum allowed size of 5MB.");
         return;
       }
@@ -343,42 +338,11 @@ const ExhibitionsPage = () => {
         />
       )}
 
-
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-8 space-x-4">
-          <span
-            onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-            className={`px-4 py-2 cursor-pointer text-xl ${
-              currentPage === 1 ? 'text-gray-400 cursor-default' : 'text-gray-700 hover:text-black'
-            }`}
-          >
-            ← Previous
-          </span>
-
-          <div className="flex space-x-2">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <span
-                key={index + 1}
-                onClick={() => setCurrentPage(index + 1)}
-                className={`px-3 py-1 cursor-pointer ${
-                  index + 1 === currentPage ? 'bg-black text-white rounded-md' : 'text-gray-700 hover:bg-gray-200 rounded-md'
-                }`}
-              >
-                {index + 1}
-              </span>
-            ))}
-          </div>
-
-          <span
-            onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
-            className={`px-4 py-2 cursor-pointer text-xl ${
-              currentPage === totalPages ? 'text-gray-400 cursor-default' : 'text-gray-700 hover:text-black'
-            }`}
-          >
-            Next →
-          </span>
-        </div>
-      )}
+      <PaginationControls 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
