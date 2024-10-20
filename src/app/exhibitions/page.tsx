@@ -87,6 +87,19 @@ const ExhibitionsPage = () => {
     },
   });
 
+  const unpublishExhibition = api.exhibition.unpublish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition moved back to drafts!");
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to unpublish exhibition: ${error.message}`);
+      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
+    },
+  });
+  
+
   const handleOpenOptions = (id: number) => {
     setSelectedExhibitionId(id);
     setIsOptionsModalOpen(true);
@@ -111,11 +124,23 @@ const ExhibitionsPage = () => {
   };
 
   const handlePublishExhibition = () => {
-    if (selectedExhibitionId && window.confirm("Are you sure you want to publish this exhibition?")) {
-      publishExhibition.mutate({ id: selectedExhibitionId });
+    if (selectedExhibitionId) {
+      const exhibition = exhibitions.find(exh => exh.id === selectedExhibitionId);
+  
+      if (exhibition?.isPublished) {
+        if (window.confirm("Are you sure you want to move this exhibition back to drafts?")) {
+          unpublishExhibition.mutate({ id: selectedExhibitionId });
+        }
+      } else {
+        if (window.confirm("Are you sure you want to publish this exhibition?")) {
+          publishExhibition.mutate({ id: selectedExhibitionId });
+        }
+      }
+  
       handleCloseOptions();
     }
   };
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -296,7 +321,7 @@ const ExhibitionsPage = () => {
             onOpenOptions={handleOpenOptions}
             onDelete={handleDeleteExhibition}
           />
-          <h1 className="text-2xl font-bold mb-2 text-accent">Published Exhibitions</h1>
+          <h1 className="text-2xl font-bold mb-2 mt-10 text-accent">Published Exhibitions</h1>
           <ExhibitionList
             exhibitions={currentExhibitions.filter((exhibition) => exhibition.isPublished)}
             onExhibitionClick={handleExhibitionClick}
@@ -308,14 +333,16 @@ const ExhibitionsPage = () => {
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
-      {isOptionsModalOpen && (
-        <DashboardActionsModal 
+      {isOptionsModalOpen && selectedExhibitionId !== null && (
+        <DashboardActionsModal
           handlePublishExhibition={handlePublishExhibition}
-          handleEditExhibition={handleEditExhibition} 
-          handleDeleteExhibition={handleDeleteExhibition} 
-          handleCloseOptions={handleCloseOptions} 
+          handleEditExhibition={handleEditExhibition}
+          handleDeleteExhibition={handleDeleteExhibition}
+          handleCloseOptions={handleCloseOptions}
+          isPublished={exhibitions.find(exhibition => exhibition.id === selectedExhibitionId)?.isPublished ?? false}
         />
       )}
+
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center mt-8 space-x-4">

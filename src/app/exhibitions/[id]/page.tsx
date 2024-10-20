@@ -162,12 +162,16 @@ const ExhibitionEditorPage = () => {
   };
 
   const handlePublish = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    await handleSaveChanges(e, false);
-
-    publishExhibition.mutate({ id: Number(id) });
+    e.preventDefault(); 
+      const confirmed = window.confirm("Are you sure you want to publish this exhibition?");
+    
+    if (confirmed) {
+      await handleSaveChanges(e, false);
+      publishExhibition.mutate({ id: Number(id) });
+    }
   };
-
-  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = true) => {
+  
+  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = false) => {
     e.preventDefault();
 
     let coverImageUrl = null;
@@ -376,7 +380,7 @@ const ExhibitionEditorPage = () => {
 
       <button
         type="submit"
-        className="bg-accent text-text-light mt-4 ml-4 px-3 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
+        className="bg-lime-600 text-text-light mt-4 ml-4 px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none"
         disabled={publishExhibition.isPending}
         onClick={handlePublish}
       >
