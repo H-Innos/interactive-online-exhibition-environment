@@ -171,7 +171,7 @@ const ExhibitionEditorPage = () => {
     }
   };
   
-  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = true) => {
+  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = false) => {
     e.preventDefault();
 
     let coverImageUrl = null;
