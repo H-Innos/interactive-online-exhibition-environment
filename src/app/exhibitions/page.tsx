@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import {ExhibitionCardConstants, ExhibitionList } from "~/app/_components/exhibition";
 import type { Exhibition } from "../_types/exhibition";
@@ -11,9 +11,10 @@ import PaginationControls from "../components/pagination-controls";
 
 
 const ExhibitionsPage = () => {
+
+
   const router = useRouter();
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -24,10 +25,17 @@ const ExhibitionsPage = () => {
   const [selectedExhibitionId, setSelectedExhibitionId] = useState<number | null>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
+  const searchParams = useSearchParams();
+  let currentPage = Number(searchParams.get("page"));
+  const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
+
+  if (isNaN(currentPage) || currentPage < 1 || currentPage > totalPages) {
+    currentPage = 1;
+  }
   const indexOfLastExhibition = currentPage * configurations.EXHIBITIONS_PER_PAGE;
   const indexOfFirstExhibition = indexOfLastExhibition - configurations.EXHIBITIONS_PER_PAGE;
   const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
-  const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
+
 
   const { data, error, isLoading } = api.exhibition.getAll.useQuery(undefined);
   const utils = api.useUtils();
@@ -338,10 +346,9 @@ const ExhibitionsPage = () => {
         />
       )}
 
-      <PaginationControls 
+      <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
       />
     </div>
   );
