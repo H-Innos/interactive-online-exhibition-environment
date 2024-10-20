@@ -86,7 +86,7 @@ const ExhibitionsPage = () => {
       setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
     },
   });
-  
+
   const unpublishExhibition = api.exhibition.unpublish.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
@@ -321,7 +321,7 @@ const ExhibitionsPage = () => {
             onOpenOptions={handleOpenOptions}
             onDelete={handleDeleteExhibition}
           />
-          <h1 className="text-2xl font-bold mb-2 text-accent">Published Exhibitions</h1>
+          <h1 className="text-2xl font-bold mb-2 mt-10 text-accent">Published Exhibitions</h1>
           <ExhibitionList
             exhibitions={currentExhibitions.filter((exhibition) => exhibition.isPublished)}
             onExhibitionClick={handleExhibitionClick}

@@ -78,7 +78,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, on
         <div className="flex flex-col justify-between pl-4 flex-grow overflow-hidden">
           <div>
             <h2 className="text-2xl font-semibold text-dark truncate">{exhibition.name}</h2>
-            <p className="text-lg text-text-dark mt-2 line-clamp-3">
+            <p className="text-lg text-text-dark mt-2">
               {truncateDescription(exhibition.description ?? "", ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH)}
             </p>
           </div>

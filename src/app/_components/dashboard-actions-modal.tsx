@@ -18,7 +18,7 @@ export default function DashboardActionsModal(
           <div className="space-y-4">
             <button
               onClick={handlePublishExhibition} 
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+              className="w-full bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition duration-300"
             >
               {isPublished ? "Unpublish Exhibition" : "Publish Exhibition"}
             </button>
