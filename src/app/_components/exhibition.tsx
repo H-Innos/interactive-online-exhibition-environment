@@ -67,12 +67,12 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, on
         className="flex w-full"
         onClick={() => onClick(exhibition.id)}
       >
-        <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden">
+        <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden relative">
           <Image
             src={exhibition.coverImageUrl ?? ExhibitionCardConstants.DEFAULT_COVER_IMAGE_URL}
             alt={exhibition.name ?? ExhibitionCardConstants.DEFAULT_IMAGE_ALT_TEXT}
-            width={500}
-            height={500}
+            layout="fill"  
+            objectFit="cover" 
           />
         </div>
         <div className="flex flex-col justify-between pl-4 flex-grow overflow-hidden">
