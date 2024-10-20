@@ -3,12 +3,7 @@ import React from "react";
 import { FaCog } from "react-icons/fa"; 
 import type { Exhibition } from "../_types/exhibition";
 import Image from "next/image";
-
-const ExhibitionCardConstants = {
-  MAX_DESCRIPTION_LENGTH: 130,
-  DEFAULT_COVER_IMAGE_URL: "/logos/museum.jpg",
-  DEFAULT_IMAGE_ALT_TEXT: "Exhibition",
-};
+import { configurations } from "~/constants/config";
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
@@ -69,8 +64,8 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, on
       >
         <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden relative">
           <Image
-            src={exhibition.coverImageUrl ?? ExhibitionCardConstants.DEFAULT_COVER_IMAGE_URL}
-            alt={exhibition.name ?? ExhibitionCardConstants.DEFAULT_IMAGE_ALT_TEXT}
+            src={exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
+            alt={exhibition.name ?? "Exhibition"}
             layout="fill"  
             objectFit="cover" 
           />
@@ -79,7 +74,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, on
           <div>
             <h2 className="text-2xl font-semibold text-dark truncate">{exhibition.name}</h2>
             <p className="text-lg text-text-dark mt-2">
-              {truncateDescription(exhibition.description ?? "", ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH)}
+              {truncateDescription(exhibition.description ?? "", configurations.MAX_DESCRIPTION_LENGTH)}
             </p>
           </div>
         </div>
@@ -98,4 +93,4 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, on
   );
 };
 
-export { ExhibitionCardConstants, ExhibitionList, ExhibitionCard };
+export { ExhibitionList, ExhibitionCard };
