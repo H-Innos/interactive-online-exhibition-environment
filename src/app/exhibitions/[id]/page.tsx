@@ -80,6 +80,8 @@ const ExhibitionEditorPage = () => {
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<string | null>(null);
 
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
   const [editorContent, setEditorContent] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -101,19 +103,27 @@ const ExhibitionEditorPage = () => {
     }
   }, [data]);
 
-  function redirectToExhibitions() {
-    setTimeout(() => {
-      setSuccessMessage("");
-      setErrorMessage("");
-      router.push(`/exhibitions`);
-    }, 3000);
-  };
+  useEffect(() => {
+    if (!unsavedChanges) return;
+    
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+      return (event.returnValue = '');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload, {capture: true});
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload, {capture: true});
+    }
+  }, [unsavedChanges]);
 
   const updateExhibition = api.exhibition.update.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition updated successfully!");
       setErrorMessage("");
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
     },
     onError: (error) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -133,6 +143,11 @@ const ExhibitionEditorPage = () => {
       await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition published successfully!");
       setErrorMessage("");
+      setTimeout(() => {
+        setSuccessMessage("");
+        setErrorMessage("");
+        router.push(`/exhibitions`);
+      }, 3000);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -142,6 +157,7 @@ const ExhibitionEditorPage = () => {
   const handleEditorChange = (event: any, editor: Editor) => {
     const data = editor.getData();
     setEditorContent(data); 
+    setUnsavedChanges(true);
     // console.log("Editor content:", data);
   };
 
@@ -149,7 +165,6 @@ const ExhibitionEditorPage = () => {
     await handleSaveChanges(e, false);
 
     publishExhibition.mutate({ id: Number(id) });
-    redirectToExhibitions();
   };
 
   const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = true) => {
@@ -196,10 +211,6 @@ const ExhibitionEditorPage = () => {
       coverImageUrl: coverImageUrl || exhibition?.coverImageUrl,
       content: editorContent
     });
-
-    if (redirect) {
-      redirectToExhibitions();
-    };
 };
   
 
@@ -231,6 +242,10 @@ const ExhibitionEditorPage = () => {
     }
   };
 
+  const handleFormChanged = () => {
+    setUnsavedChanges(true);
+  };
+
   return (
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
@@ -248,7 +263,7 @@ const ExhibitionEditorPage = () => {
         </div>
       )}
 
-      <form>
+      <form onChange={handleFormChanged}>
 
       {isLoading ? (
         <div>Loading...</div>
@@ -347,7 +362,7 @@ const ExhibitionEditorPage = () => {
         className="bg-gray-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-gray-600"
         onClick={() => router.push(`/exhibitions`)}
       >
-        Cancel
+        Exit
       </button>
       
       <button
@@ -356,7 +371,7 @@ const ExhibitionEditorPage = () => {
         disabled={updateExhibition.isPending}
         onClick={handleSaveChanges}
       >
-        {updateExhibition.isPending ? "Saving..." : "Save Changes as Draft"}
+        {updateExhibition.isPending ? "Saving..." : "Save Changes"}
       </button>
 
       <button
@@ -365,7 +380,7 @@ const ExhibitionEditorPage = () => {
         disabled={publishExhibition.isPending}
         onClick={handlePublish}
       >
-        {publishExhibition.isPending ? "Saving..." : "Publish"}
+        {publishExhibition.isPending ? "Publishing..." : "Publish"}
       </button>
 
       </form>

@@ -262,19 +262,6 @@ const ExhibitionsPage = () => {
                   </span>
                 </div>
               )}
-              <div>
-                <label className="block text-sm font-medium text-text-dark mb-1">Template</label>
-                <select
-                  value={template}
-                  onChange={(e) => setTemplate(e.target.value)}
-                  className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
-                >
-                  <option value="">Select a template</option>
-                  <option value="template1">Template 1</option>
-                  <option value="template2">Template 2</option>
-                  <option value="template3">Template 3</option>
-                </select>
-              </div>
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
