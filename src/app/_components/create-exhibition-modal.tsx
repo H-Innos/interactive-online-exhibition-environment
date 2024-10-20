@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState } from "react";
 import { configurations } from "~/constants/config";
 import { api } from "~/trpc/react";
