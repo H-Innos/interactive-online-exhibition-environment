@@ -34,7 +34,7 @@ export const exhibitionRouter = createTRPCRouter({
   update: publicProcedure
     .input(
       z.object({
-        id: z.string().transform((x) => Number(x)),  // Transform the id to a number
+        id: z.string().transform((x) => Number(x)),
         name: z.string().min(1),
         description: z.string().optional(),
         coverImageUrl: z.string().optional(),
@@ -42,7 +42,6 @@ export const exhibitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if another exhibition with the same name exists (excluding the current one)
       const existingExhibition = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq, and }) =>
           and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
@@ -52,7 +51,6 @@ export const exhibitionRouter = createTRPCRouter({
         throw new Error("An exhibition with this name already exists.");
       }
 
-      // Proceed with the update if no duplicate name is found
       await ctx.db
         .update(exhibitions)
         .set({
@@ -120,5 +118,23 @@ export const exhibitionRouter = createTRPCRouter({
       }).where(eq(exhibitions.id, input.id));
 
       return publishedExhibition;
+    }),
+
+    unpublish: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const unpublishedExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!unpublishedExhibition) {
+        throw new Error("Exhibition not found");
+      }
+
+      await ctx.db.update(exhibitions).set({
+        isPublished: false,
+      }).where(eq(exhibitions.id, input.id));
+
+      return { ...unpublishedExhibition, isPublished: false };
     }),
 });
