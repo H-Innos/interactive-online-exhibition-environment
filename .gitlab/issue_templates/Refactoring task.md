@@ -11,7 +11,7 @@ Provide a brief overview of what needs to be refactored, explaining why the refa
 
  - `src/path/to/file`
  - `src/path/to/other/file`
- - ``
+ - ` `
 
 ---
 
