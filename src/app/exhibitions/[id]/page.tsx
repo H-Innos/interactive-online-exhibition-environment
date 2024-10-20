@@ -10,7 +10,6 @@ import { Editor } from '@ckeditor/ckeditor5-core';
 import { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
 import { Exhibition } from '~/app/exhibitions/page';
-import ConfirmationModal from '~/app/_components/confirmation-modal';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
@@ -82,7 +81,6 @@ const ExhibitionEditorPage = () => {
   const [coverImage, setCoverImage] = useState<string | null>(null);
 
   const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const [editorContent, setEditorContent] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -125,7 +123,6 @@ const ExhibitionEditorPage = () => {
       setErrorMessage("");
       setTimeout(() => {
         setSuccessMessage("");
-        router.push(`/exhibitions`);
       }, 3000);
     },
     onError: (error) => {
@@ -226,18 +223,6 @@ const ExhibitionEditorPage = () => {
 
   const handleFormChanged = () => {
     setUnsavedChanges(true);
-  };
-
-  const handleSaveAndExit = () => {
-    return;
-  };
-
-  const handleDontSaveAndExit = () => {
-    return
-  };
-
-  const handleCancel = () => {
-    return;
   };
 
   return (
@@ -368,13 +353,6 @@ const ExhibitionEditorPage = () => {
       </button>
 
       </form>
-
-      <ConfirmationModal
-        isOpen={showConfirmationModal}
-        onSaveAndExit={handleSaveAndExit}
-        onDontSaveAndExit={handleDontSaveAndExit}
-        onCancel={handleCancel}
-      />
     </div>
   );
 };
