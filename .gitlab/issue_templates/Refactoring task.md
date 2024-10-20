@@ -1,7 +1,7 @@
 ### Refactoring Task
 ---
 
-#### Task objective
+#### Problem description
 
 Provide a brief overview of what needs to be refactored, explaining why the refactor is necessary (e.g., to improve code readability, performance, maintainability, etc.).
 
