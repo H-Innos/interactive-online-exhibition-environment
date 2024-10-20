@@ -3,17 +3,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import ExhibitionCard from "~/app/_components/exhibition";
+import {ExhibitionCardConstants, ExhibitionList } from "~/app/_components/exhibition";
+import type { Exhibition } from "../_types/exhibition";
+import DashboardActionsModal from "../_components/dashboard-actions-modal";
 
-export interface Exhibition {
-  id: number;
-  name: string | null;
-  description: string | null;
-  coverImageUrl: string | null;
-  content: string | null;
-  createdAt: Date | string;
-  updatedAt: Date | null;
-}
 
 const ExhibitionsPage = () => {
   const router = useRouter();
@@ -30,7 +23,7 @@ const ExhibitionsPage = () => {
   const [selectedExhibitionId, setSelectedExhibitionId] = useState<number | null>(null);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
-  const descriptionMaxLength = 130;
+  const TIMEOUT_DURATION = 3000;
   const defaultCoverImageUrl = "/logos/museum.jpg";
   const fileMaxSize = 5 * 1024 * 1024; // 5MB
 
@@ -59,7 +52,7 @@ const ExhibitionsPage = () => {
       setIsModalOpen(false);
       setSuccessMessage("Exhibition created successfully!");
       setErrorMessage("");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
     },
     onError: (error) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -74,11 +67,23 @@ const ExhibitionsPage = () => {
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
       setSuccessMessage("Exhibition deleted successfully!");
-      setTimeout(() => setSuccessMessage(""), 3000);
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
     },
     onError: (error) => {
       setErrorMessage(`Failed to delete exhibition: ${error.message}`);
-      setTimeout(() => setErrorMessage(""), 3000);
+      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
+    },
+  });
+
+  const publishExhibition = api.exhibition.publish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition published successfully!");
+      setTimeout(() => setSuccessMessage(""), TIMEOUT_DURATION);
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to publish exhibition: ${error.message}`);
+      setTimeout(() => setErrorMessage(""), TIMEOUT_DURATION);
     },
   });
 
@@ -102,6 +107,13 @@ const ExhibitionsPage = () => {
   const handleEditExhibition = () => {
     if (selectedExhibitionId) {
       router.push(`/exhibitions/${selectedExhibitionId}`);
+    }
+  };
+
+  const handlePublishExhibition = () => {
+    if (selectedExhibitionId && window.confirm("Are you sure you want to publish this exhibition?")) {
+      publishExhibition.mutate({ id: selectedExhibitionId });
+      handleCloseOptions();
     }
   };
 
@@ -219,14 +231,14 @@ const ExhibitionsPage = () => {
                 <textarea
                   value={description ?? ""}
                   onChange={(e) => {
-                    if (e.target.value.length <= descriptionMaxLength) {
+                    if (e.target.value.length <= ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH) {
                       setDescription(e.target.value);
                     }
                   }}
                   placeholder="Enter exhibition description"
                   className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
                 />
-                <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
+                <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH} characters</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
@@ -283,54 +295,39 @@ const ExhibitionsPage = () => {
           </div>
         </div>
       )}
-
+      
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
         <div>Error loading exhibitions.</div>
       ) : currentExhibitions && currentExhibitions.length > 0 ? (
-        <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
-          {currentExhibitions.map((exhibition) => (
-            <ExhibitionCard
-              key={exhibition.id}
-              exhibition={exhibition}
-              descriptionMaxLength={descriptionMaxLength}
-              onClick={handleExhibitionClick}
-              onDelete={() => handleOpenOptions(exhibition.id)}
-              onOpenOptions={() => handleOpenOptions(exhibition.id)}
-            />
-          ))}
+        <div>
+          <h1 className="text-2xl font-bold mb-2 text-accent">Drafts</h1>
+          <ExhibitionList
+            exhibitions={currentExhibitions.filter((exhibition) => !exhibition.isPublished)}
+            onExhibitionClick={handleExhibitionClick}
+            onOpenOptions={handleOpenOptions}
+            onDelete={handleDeleteExhibition}
+          />
+          <h1 className="text-2xl font-bold mb-2 text-accent">Published Exhibitions</h1>
+          <ExhibitionList
+            exhibitions={currentExhibitions.filter((exhibition) => exhibition.isPublished)}
+            onExhibitionClick={handleExhibitionClick}
+            onOpenOptions={handleOpenOptions}
+            onDelete={handleDeleteExhibition}
+          />
         </div>
       ) : (
         <p className="text-gray-500">No exhibitions available. Please add a new exhibition.</p>
       )}
 
       {isOptionsModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
-            <h2 className="text-2xl font-semibold mb-4">Exhibition Options</h2>
-            <div className="space-y-4">
-              <button
-                onClick={handleEditExhibition}
-                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Edit Exhibition
-              </button>
-              <button
-                onClick={handleDeleteExhibition}
-                className="w-full bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
-              >
-                Delete Exhibition
-              </button>
-              <button
-                onClick={handleCloseOptions}
-                className="w-full bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <DashboardActionsModal 
+          handlePublishExhibition={handlePublishExhibition}
+          handleEditExhibition={handleEditExhibition} 
+          handleDeleteExhibition={handleDeleteExhibition} 
+          handleCloseOptions={handleCloseOptions} 
+        />
       )}
 
       {totalPages > 1 && (

@@ -101,4 +101,24 @@ export const exhibitionRouter = createTRPCRouter({
 
       return deletedExhibition[0];
     }),
+
+  publish: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const publishedExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!publishedExhibition) {
+        throw new Error("Exhibition not found");
+      }
+
+      publishedExhibition.isPublished = true;
+
+      await ctx.db.update(exhibitions).set({
+        isPublished: true,
+      }).where(eq(exhibitions.id, input.id));
+
+      return publishedExhibition;
+    }),
 });

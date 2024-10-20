@@ -5,11 +5,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { api } from "~/trpc/react";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Editor } from '@ckeditor/ckeditor5-core';
+import type { Editor } from '@ckeditor/ckeditor5-core';
 //import { EventInfo } from '@ckeditor/ckeditor5-utils/src/eventinfo';
-import { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
+import type { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
-import { Exhibition } from '~/app/exhibitions/page';
+import type { Exhibition } from '~/app/_types/exhibition';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
@@ -101,15 +101,19 @@ const ExhibitionEditorPage = () => {
     }
   }, [data]);
 
+  function redirectToExhibitions() {
+    setTimeout(() => {
+      setSuccessMessage("");
+      setErrorMessage("");
+      router.push(`/exhibitions`);
+    }, 3000);
+  };
+
   const updateExhibition = api.exhibition.update.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition updated successfully!");
       setErrorMessage("");
-      setTimeout(() => {
-        setSuccessMessage("");
-        router.push(`/exhibitions`);
-      }, 3000);
     },
     onError: (error) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -124,6 +128,16 @@ const ExhibitionEditorPage = () => {
     },
   });
 
+  const publishExhibition = api.exhibition.publish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.invalidate();
+      setSuccessMessage("Exhibition published successfully!");
+      setErrorMessage("");
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    }
+  });
 
   const handleEditorChange = (event: any, editor: Editor) => {
     const data = editor.getData();
@@ -131,7 +145,14 @@ const ExhibitionEditorPage = () => {
     // console.log("Editor content:", data);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePublish = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    await handleSaveChanges(e, false);
+
+    publishExhibition.mutate({ id: Number(id) });
+    redirectToExhibitions();
+  };
+
+  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = true) => {
     e.preventDefault();
 
     let coverImageUrl = null;
@@ -175,6 +196,10 @@ const ExhibitionEditorPage = () => {
       coverImageUrl: coverImageUrl || exhibition?.coverImageUrl,
       content: editorContent
     });
+
+    if (redirect) {
+      redirectToExhibitions();
+    };
 };
   
 
@@ -223,7 +248,7 @@ const ExhibitionEditorPage = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
+      <form>
 
       {isLoading ? (
         <div>Loading...</div>
@@ -329,8 +354,18 @@ const ExhibitionEditorPage = () => {
         type="submit"
         className="bg-accent text-text-light mt-4 ml-4 px-3 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
         disabled={updateExhibition.isPending}
+        onClick={handleSaveChanges}
       >
-        {updateExhibition.isPending ? "Saving..." : "Save Changes"}
+        {updateExhibition.isPending ? "Saving..." : "Save Changes as Draft"}
+      </button>
+
+      <button
+        type="submit"
+        className="bg-accent text-text-light mt-4 ml-4 px-3 py-2 rounded-md hover:bg-primary-dark_hover disabled:pointer-events-none"
+        disabled={publishExhibition.isPending}
+        onClick={handlePublish}
+      >
+        {publishExhibition.isPending ? "Saving..." : "Publish"}
       </button>
 
       </form>
