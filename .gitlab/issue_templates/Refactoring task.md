@@ -9,9 +9,9 @@ Provide a brief overview of what needs to be refactored, explaining why the refa
 
 #### Affected Components/Files:
 
-    - `src/path/to/file`
-    - `src/path/to/other/file`
-    - ``
+ - `src/path/to/file`
+ - `src/path/to/other/file`
+ - ``
 
 ---
 
@@ -27,4 +27,3 @@ Provide a brief overview of what needs to be refactored, explaining why the refa
 
  - [ ] The (component(s)/functions(s)) are moved to a separate file 
  - [ ] File is under ... lines
- - [ ] 
