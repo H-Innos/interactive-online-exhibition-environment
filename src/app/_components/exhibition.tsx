@@ -1,24 +1,45 @@
 "use client";
 import React from "react";
 import { FaCog } from "react-icons/fa"; 
+import type { Exhibition } from "../_types/exhibition";
+import Image from "next/image";
 
-interface Exhibition {
-  id: number;
-  name: string | null;
-  description: string | null;
-  coverImageUrl: string | null;
-  createdAt: Date | string;
-  updatedAt: Date | null;
-}
+const ExhibitionCardConstants = {
+  MAX_DESCRIPTION_LENGTH: 130,
+  DEFAULT_COVER_IMAGE_URL: "/logos/museum.jpg",
+  DEFAULT_IMAGE_ALT_TEXT: "Exhibition",
+};
+
 interface ExhibitionCardProps {
   exhibition: Exhibition;
-  descriptionMaxLength: number;
   onClick: (id: number) => void;
   onOpenOptions: (id: number) => void;
-  onDelete: (id: number) => void; 
 }
 
-const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, descriptionMaxLength, onClick, onOpenOptions ,onDelete }) => {
+interface ExhibitionListProps {
+  exhibitions: Exhibition[];
+  onExhibitionClick: (id: number) => void;
+  onOpenOptions: (id: number) => void;
+  onDelete: (id: number) => void;
+}
+
+
+const ExhibitionList: React.FC<ExhibitionListProps> = ({exhibitions, onExhibitionClick, onOpenOptions}: ExhibitionListProps) => {
+  return (
+    <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+      {exhibitions.map((exhibition) => (
+        <ExhibitionCard
+          key={exhibition.id}
+          exhibition={exhibition}
+          onClick={onExhibitionClick}
+          onOpenOptions={() => onOpenOptions(exhibition.id)}
+        />
+      ))}
+    </div>
+  );
+}
+
+const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, onOpenOptions }) => {
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
@@ -47,17 +68,18 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, description
         onClick={() => onClick(exhibition.id)}
       >
         <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden">
-          <img
-            src={exhibition.coverImageUrl ?? "/logos/museum.jpg"}
-            alt={exhibition.name ?? "Exhibition"}
-            className="w-full h-full object-cover"
+          <Image
+            src={exhibition.coverImageUrl ?? ExhibitionCardConstants.DEFAULT_COVER_IMAGE_URL}
+            alt={exhibition.name ?? ExhibitionCardConstants.DEFAULT_IMAGE_ALT_TEXT}
+            width={500}
+            height={500}
           />
         </div>
         <div className="flex flex-col justify-between pl-4 flex-grow overflow-hidden">
           <div>
             <h2 className="text-2xl font-semibold text-dark truncate">{exhibition.name}</h2>
             <p className="text-lg text-text-dark mt-2 line-clamp-3">
-              {truncateDescription(exhibition.description ?? "", descriptionMaxLength)}
+              {truncateDescription(exhibition.description ?? "", ExhibitionCardConstants.MAX_DESCRIPTION_LENGTH)}
             </p>
           </div>
         </div>
@@ -76,4 +98,4 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, description
   );
 };
 
-export default ExhibitionCard;
+export { ExhibitionCardConstants, ExhibitionList, ExhibitionCard };

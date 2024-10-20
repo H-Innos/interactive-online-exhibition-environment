@@ -1,12 +1,12 @@
 import { sql } from "drizzle-orm";
 import {
-  index,
   pgTableCreator,
   serial,
   timestamp,
   varchar,
   text,
   uniqueIndex,
+  boolean,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -21,6 +21,7 @@ export const exhibitions = createTable(
     description: text("description").default(""),
     coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
     content: text("content").default(""),
+    isPublished: boolean("is_published").default(false).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
