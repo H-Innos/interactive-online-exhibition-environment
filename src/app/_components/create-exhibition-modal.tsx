@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { configurations } from "~/constants/config";
 import { api } from "~/trpc/react";
@@ -142,7 +143,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
           {coverImage && (
             <div className="mt-4">
               <p className="text-sm text-gray-500">Image Preview:</p>
-              <img src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
+              <Image src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
               <span onClick={handleRemoveImage}
                 className="text-black text-xs cursor-pointer hover:underline"
               >
