@@ -16,7 +16,6 @@ interface ExhibitionListProps {
   onExhibitionClick: (id: number) => void;
 }
 
-
 const ExhibitionList: React.FC<ExhibitionListProps> = ({ exhibitions, onExhibitionClick }: ExhibitionListProps) => {
   return (
     <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">

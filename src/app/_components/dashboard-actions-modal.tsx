@@ -1,7 +1,8 @@
 import React from "react";
 import type { Exhibition } from "../_types/exhibition";
 import { useRouter } from "next/navigation";
-import { useExhibitionActions } from "~/hooks/exhibition-actions";
+import { api } from "~/trpc/react";
+import { useMessage } from "~/context/message";
 
 
 interface DashboardActionsModalProps {
@@ -12,7 +13,38 @@ interface DashboardActionsModalProps {
 const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
   { exhibition, onClose }) => {
   const router = useRouter();
-  const { deleteExhibition, publishExhibition, unpublishExhibition } = useExhibitionActions();
+  const utils = api.useUtils();
+  const { setSuccessMessage, setErrorMessage } = useMessage();
+
+  const deleteExhibition = api.exhibition.delete.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition deleted successfully!");
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to delete exhibition: ${error.message}`);
+    },
+  });
+
+  const publishExhibition = api.exhibition.publish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition published successfully!");
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to publish exhibition: ${error.message}`);
+    },
+  });
+
+  const unpublishExhibition = api.exhibition.unpublish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition moved back to drafts!");
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to unpublish exhibition: ${error.message}`);
+    },
+  });
 
   const handleDeleteExhibition = () => {
     if (exhibition.id && window.confirm("Are you sure you want to delete this exhibition?")) {
