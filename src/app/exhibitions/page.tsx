@@ -7,7 +7,7 @@ import {ExhibitionList } from "~/app/_components/exhibition";
 import { configurations } from "~/constants/config";
 import PaginationControls from "../../components/pagination-controls";
 import CreateExhibitionModal from "../_components/create-exhibition-modal";
-import SuccessMessage from "../_components/success-message";
+import MessageBanner from "../_components/message-banner";
 import type { Exhibition } from "../_types/exhibition";
 
 
@@ -47,7 +47,7 @@ const ExhibitionsPage = ({
         <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
         <p className="text-lg mb-6 text-light-gray">Manage exhibitions</p>
 
-        <SuccessMessage />
+        <MessageBanner />
 
         <button
           onClick={() => {

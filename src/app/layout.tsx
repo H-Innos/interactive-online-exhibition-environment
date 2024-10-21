@@ -5,7 +5,7 @@ import Footer from "~/app/_components/footer";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
-import { SuccessMessageProvider } from "~/context/SuccessMessageContext";
+import { MessageProvider } from "~/context/message";
 
 export const metadata: Metadata = {
   title: "UTLib näitused",
@@ -21,9 +21,9 @@ export default function RootLayout({
         <Header />
 
         <TRPCReactProvider>
-          <SuccessMessageProvider>
+          <MessageProvider>
             <main>{children}</main>
-          </SuccessMessageProvider>
+          </MessageProvider>
         </TRPCReactProvider>
 
         <Footer />

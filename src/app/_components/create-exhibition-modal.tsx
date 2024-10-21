@@ -8,9 +8,7 @@ interface CreateExhibitionModalProps {
   onClose: () => void;
 }
 
-const CreateExhibitionModal = (
-  { onClose }
-  : CreateExhibitionModalProps) => {
+const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -22,10 +20,7 @@ const CreateExhibitionModal = (
   const createExhibition = api.exhibition.create.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
-      setName("");
-      setDescription("");
-      setCoverImage("");
-      setErrorMessage("");
+      onClose();
     },
     onError: (error: { message?: string }) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -77,7 +72,6 @@ const CreateExhibitionModal = (
       description,
       coverImageUrl: coverImageUrl || configurations.DEFAULT_COVER_IMAGE_URL,
     });
-    onClose();
   };
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

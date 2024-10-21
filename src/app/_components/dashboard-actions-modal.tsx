@@ -1,8 +1,7 @@
 import React from "react";
 import type { Exhibition } from "../_types/exhibition";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
-import { useSuccessMessage } from "~/context/SuccessMessageContext";
+import { useExhibitionActions } from "~/hooks/exhibition-actions";
 
 
 interface DashboardActionsModalProps {
@@ -12,40 +11,8 @@ interface DashboardActionsModalProps {
 
 const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
   { exhibition, onClose }) => {
-  
-  const { setSuccessMessage } = useSuccessMessage();
   const router = useRouter();
-  const utils = api.useUtils();
-
-  const deleteExhibition = api.exhibition.delete.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.getAll.invalidate();
-      setSuccessMessage("Exhibition deleted successfully!");
-    },
-    onError: (error) => {
-      // setErrorMessage(`Failed to delete exhibition: ${error.message}`);
-    },
-  });
-
-  const publishExhibition = api.exhibition.publish.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.getAll.invalidate();
-      setSuccessMessage("Exhibition published successfully!");
-    },
-    onError: (error) => {
-      // setErrorMessage(`Failed to publish exhibition: ${error.message}`);
-    },
-  });
-
-  const unpublishExhibition = api.exhibition.unpublish.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.getAll.invalidate();
-      setSuccessMessage("Exhibition moved back to drafts!");
-    },
-    onError: (error) => {
-      // setErrorMessage(`Failed to unpublish exhibition: ${error.message}`);
-    },
-  });
+  const { deleteExhibition, publishExhibition, unpublishExhibition } = useExhibitionActions();
 
   const handleDeleteExhibition = () => {
     if (exhibition.id && window.confirm("Are you sure you want to delete this exhibition?")) {
@@ -54,13 +21,13 @@ const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
     }
   };
 
-  const handleEditExhibition = () => {
+  const handleOpenEditor = () => {
     if (exhibition.id) {
       router.push(`/exhibitions/${exhibition.id}`);
     }
   };
 
-  const handlePublishExhibition = () => {
+  const handleChangePublishedState = () => {
     if (exhibition.id) { 
       if (exhibition?.isPublished) {
         if (window.confirm("Are you sure you want to move this exhibition back to drafts?")) {
@@ -81,13 +48,13 @@ const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
           <h2 className="text-2xl font-semibold mb-4">Exhibition Options</h2>
           <div className="space-y-4">
             <button
-              onClick={handlePublishExhibition} 
+              onClick={handleChangePublishedState} 
               className="w-full bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 transition duration-300"
             >
-              {(exhibition?.isPublished ?? false) ? "Unpublish Exhibition" : "Publish Exhibition"}
+              {exhibition.isPublished ? "Unpublish Exhibition" : "Publish Exhibition"}
             </button>
             <button
-              onClick={handleEditExhibition}
+              onClick={handleOpenEditor}
               className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
             >
               Edit Exhibition
