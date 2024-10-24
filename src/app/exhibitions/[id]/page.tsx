@@ -89,7 +89,7 @@ const ExhibitionEditorPage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const utils = api.useUtils();
 
-  const { successMessage, errorMessage, setSuccessMessage, setErrorMessage } = useMessage(); 
+  const { setSuccessMessage, setErrorMessage } = useMessage(); 
   const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
 
   useEffect(() => {
@@ -221,8 +221,6 @@ const ExhibitionEditorPage = () => {
         if (reader.result) {
           setCoverImage(reader.result as string); 
           setSuccessMessage("New cover image uploaded successfully!");
-          setErrorMessage(""); 
-          setTimeout(() => setSuccessMessage(""), 3000);
         }
       };
       reader.readAsDataURL(file);
