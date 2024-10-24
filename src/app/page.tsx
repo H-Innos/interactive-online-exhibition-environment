@@ -25,7 +25,6 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
   
   useEffect(() => {
     if (data) {
-      // Filter only published exhibitions
       const publishedExhibitions = data.filter((exhibition: Exhibition) => exhibition.isPublished);
       setExhibitions(publishedExhibitions);
     }
