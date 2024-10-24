@@ -25,14 +25,13 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
   
   useEffect(() => {
     if (data) {
-      // Filter only published exhibitions
       const publishedExhibitions = data.filter((exhibition: Exhibition) => exhibition.isPublished);
       setExhibitions(publishedExhibitions);
     }
   }, [data]);
   
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/${id}`);
+    router.push(`/exhibitions/view/${id}`);
   };
   
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;

@@ -1,0 +1,43 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
+import React, { useEffect, useState } from "react";
+import { Exhibition } from "~/app/_types/exhibition";
+
+const ExhibitionViewPage: React.FC = () => {
+  const router = useRouter();
+  const { id } = useParams() as { id: string };
+  const [exhibition, setExhibition] = useState<Exhibition | null>(null);
+
+  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id });
+
+  useEffect(() => {
+    if (data) {
+      setExhibition(data);
+    }
+  }, [data]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error || !exhibition) {
+    return <div>Error loading exhibition.</div>;
+  }
+
+  return (
+    <div className="text-text-dark min-h-screen p-8">
+      <h1 className="text-4xl font-bold mb-4 text-center">{exhibition.name}</h1>
+      <img
+        src={exhibition.coverImageUrl ?? undefined}
+        alt={exhibition.name ?? undefined}
+        className="mb-4"
+      />
+      <p className="text-lg mb-4">{exhibition.description}</p>
+      <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} />
+    </div>
+  );
+};
+
+export default ExhibitionViewPage;
