@@ -11,6 +11,8 @@ import type { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/
 
 import type { Exhibition } from '~/app/_types/exhibition';
 import MessageBanner from '~/app/_components/message-banner';
+import { useMessage } from '~/context/message';
+import { configurations } from '~/constants/config';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
@@ -84,14 +86,10 @@ const ExhibitionEditorPage = () => {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const [editorContent, setEditorContent] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const utils = api.useUtils();
 
-  const descriptionMaxLength = 130;
-  const fileMaxSize = 5 * 1024 * 1024; // 5MB
-
+  const { successMessage, errorMessage, setSuccessMessage, setErrorMessage } = useMessage(); 
   const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
 
   useEffect(() => {
@@ -121,10 +119,6 @@ const ExhibitionEditorPage = () => {
     onSuccess: async () => {
       await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition updated successfully!");
-      setErrorMessage("");
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
     },
     onError: (error) => {
       if (error.message === "An exhibition with this name already exists.") {
@@ -143,12 +137,7 @@ const ExhibitionEditorPage = () => {
     onSuccess: async () => {
       await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition published successfully!");
-      setErrorMessage("");
-      setTimeout(() => {
-        setSuccessMessage("");
-        setErrorMessage("");
-        router.push(`/exhibitions`);
-      }, 3000);
+      router.push(`/exhibitions`);
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -167,12 +156,12 @@ const ExhibitionEditorPage = () => {
       const confirmed = window.confirm("Are you sure you want to publish this exhibition?");
     
     if (confirmed) {
-      await handleSaveChanges(e, false);
+      await handleSaveChanges(e);
       publishExhibition.mutate({ id: Number(id) });
     }
   };
   
-  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>, redirect = false) => {
+  const handleSaveChanges = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     let coverImageUrl = null;
@@ -223,7 +212,7 @@ const ExhibitionEditorPage = () => {
     const file = e.target.files?.[0];
 
     if (file) {
-      if (file.size > fileMaxSize) {
+      if (file.size > configurations.FILE_MAX_SIZE) {
         setErrorMessage("The file size exceeds the maximum allowed size of 5MB.");
         return;
       }
@@ -282,14 +271,14 @@ const ExhibitionEditorPage = () => {
               <textarea
                 value={description ?? ""}
                 onChange={(e) => {
-                  if (e.target.value.length <= descriptionMaxLength) {
+                  if (e.target.value.length <= configurations.MAX_DESCRIPTION_LENGTH) {
                     setDescription(e.target.value);
                   }
                 }}
                 placeholder="Enter exhibition description"
                 className="w-full rounded-md border border-gray-300 focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
               />
-              <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{descriptionMaxLength} characters</p>
+              <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} characters</p>
             </div>
 
             <div>
