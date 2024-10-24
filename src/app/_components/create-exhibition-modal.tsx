@@ -142,14 +142,23 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
           </div>
           {coverImage && (
             <div className="mt-4">
-              <p className="text-sm text-gray-500">Image Preview:</p>
-              <Image src={coverImage} alt="Cover preview" className="w-32 h-32 object-cover mt-2" />
-              <span onClick={handleRemoveImage}
-                className="text-black text-xs cursor-pointer hover:underline"
-              >
-                Discard
-              </span>
+            <p className="text-sm w-full text-gray-500">Image Preview:</p>
+            <div className="relative w-32 h-32">
+              <Image
+                src={coverImage} 
+                alt="Cover preview" 
+                layout="fill"
+                objectFit="cover" 
+                className="rounded-md"
+              />
             </div>
+            <span
+              onClick={handleRemoveImage}
+              className="text-black text-xs cursor-pointer hover:underline"
+            >
+              Discard
+            </span>
+          </div>
           )}
           <div className="flex justify-end space-x-4">
             <button
