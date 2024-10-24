@@ -10,6 +10,7 @@ import type { Editor } from '@ckeditor/ckeditor5-core';
 import type { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
 import type { Exhibition } from '~/app/_types/exhibition';
+import MessageBanner from '~/app/_components/message-banner';
 
 // custom upload adapter for CKEditor to handle Cloudinary uploads
 class Uploader {
@@ -254,18 +255,7 @@ const ExhibitionEditorPage = () => {
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
 
-      {successMessage && (
-        <div className="bg-green-200 text-green-800 px-4 py-2 rounded-md mb-4">
-          {successMessage}
-        </div>
-      )}
-
-
-      {errorMessage && (
-        <div className="bg-red-200 text-red-800 px-4 py-2 rounded-md mb-4">
-          {errorMessage}
-        </div>
-      )}
+      <MessageBanner />
 
       <form onChange={handleFormChanged}>
 
