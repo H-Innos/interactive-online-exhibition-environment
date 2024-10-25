@@ -91,7 +91,7 @@ const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
     return (
       <div
       ref={modalRef}
-      className="absolute bg-white rounded-lg p-6 w-48 shadow-lg z-50 border border-gray-100"
+      className="absolute bg-white rounded-lg p-6 w-56 shadow-lg z-50 border border-gray-100"
       style={{ top: position.top, left: position.left }}
       >
       <button

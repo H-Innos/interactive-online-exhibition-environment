@@ -50,9 +50,11 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
       </div>
       <div className="flex flex-col mt-2 p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-medium text-dark">{exhibition.name}</h2>
+          <h2 className="text-2xl font-medium text-dark overflow-hidden line-clamp-2">
+            {exhibition.name}
+          </h2>
           <button
-            className="bg-black text-white text-sm w-20 h-8 flex items-center justify-center rounded-full mb-3 hover:bg-gray-600"
+            className="bg-black text-white text-sm w-20 h-8 flex items-center justify-center rounded-full mb-3 ml-5 hover:bg-gray-600"
             onClick={(e) => {
               e.stopPropagation();
               onClick(exhibition.id);
@@ -68,5 +70,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
     </div>
   );
 };
+
+
 
 export { ExhibitionList, ExhibitionCard };
