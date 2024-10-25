@@ -29,20 +29,20 @@ const ExhibitionEditorPage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { setSuccessMessage, setErrorMessage } = useMessage(); 
-  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: Number(id) });
+  const { data: exhibitionData, error, isLoading } = api.exhibition.getOne.useQuery({ id: Number(id) });
 
   const updateExhibition = useUpdateExhibition();
   const publishExhibition = usePublishExhibition();
 
   useEffect(() => {
-    if (data) {
-      setExhibition(data);
-      setName(data.name ?? "");
-      setDescription(data.description ?? "");
-      setCoverImage(data.coverImageUrl ?? "");
-      setEditorContent(data.content ?? "");
+    if (exhibitionData) {
+      setExhibition(exhibitionData);
+      setName(exhibitionData.name ?? "");
+      setDescription(exhibitionData.description ?? "");
+      setCoverImage(exhibitionData.coverImageUrl ?? "");
+      setEditorContent(exhibitionData.content ?? "");
     }
-  }, [data]);
+  }, [exhibitionData]);
 
   useEffect(() => {
     if (!unsavedChanges) return;
