@@ -20,6 +20,7 @@
     "@ckeditor/ckeditor5-core": "^43.2.0",
     "@ckeditor/ckeditor5-react": "^9.3.0",
     "@ckeditor/ckeditor5-upload": "^43.2.0",
+    "@ckeditor/ckeditor5-utils": "^43.2.0",
     "@cloudinary/react": "^1.13.0",
     "@cloudinary/url-gen": "^1.21.0",
     "@t3-oss/env-nextjs": "^0.10.1",

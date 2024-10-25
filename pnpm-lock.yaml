@@ -20,6 +20,9 @@ importers:
       '@ckeditor/ckeditor5-upload':
         specifier: ^43.2.0
         version: 43.2.0
+      '@ckeditor/ckeditor5-utils':
+        specifier: ^43.2.0
+        version: 43.2.0
       '@cloudinary/react':
         specifier: ^1.13.0
         version: 1.13.0(react@18.3.1)

@@ -3,76 +3,16 @@
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState, useRef } from 'react';
 import { api } from "~/trpc/react";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import type { Editor } from '@ckeditor/ckeditor5-core';
-//import { EventInfo } from '@ckeditor/ckeditor5-utils/src/eventinfo';
-import type { FileLoader, UploadResponse } from '@ckeditor/ckeditor5-upload/src/filerepository';
 
 import type { Exhibition } from '~/app/_types/exhibition';
 import MessageBanner from '~/app/_components/message-banner';
 import { useMessage } from '~/context/message';
 import { configurations } from '~/constants/config';
+import EditorPreview from '~/components/editor-preview';
+import ExhibitionEditor from '~/components/editor';
+import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
 
-// custom upload adapter for CKEditor to handle Cloudinary uploads
-class Uploader {
-  loader: FileLoader;
-  constructor(loader: FileLoader) {
-    this.loader = loader; // assigns the loader
-  }
-
-  upload() {
-    console.log("Attempting to upload the file...");
-    return this.loader.file
-      .then((file: File | null) => {
-        if (!file) {
-          console.error("No file found.");
-          throw new Error('File is not available.');
-        }
-
-        console.log("File found:", file);
-
-        return new Promise<UploadResponse>((resolve, reject) => {
-          const formData = new FormData();
-          formData.append('file', file as File);
-
-          fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-          })
-            .then(response => response.json())
-            .then(result => {
-              if (result.url) {
-                console.log("File uploaded successfully:", result.url);
-                resolve({
-                  default: result.url, // Cloudinary URL for the image
-                });
-              } else {
-                console.error("No URL in the response.");
-                reject(new Error('No URL in the response'));
-              }
-            })
-            .catch((error: Error) => {
-              console.error("Error during file upload:", error);
-              reject(error);
-            });
-        });
-      })
-      .catch((error: Error) => {
-        console.error('Upload failed:', error);
-        return Promise.reject(error);
-      });
-  }
-}
-
-// plugin for CKEditor to use uploader for Cloudinary uploads
-function UploaderPlugin(editor: Editor) {
-  editor.plugins.get('FileRepository').createUploadAdapter = (loader: FileLoader) => {
-    return new Uploader(loader);
-  };
-}
-
-// exhibition editor component
 const ExhibitionEditorPage = () => {
   const router = useRouter();
   const { id } = useParams() as { id: string };
@@ -87,10 +27,12 @@ const ExhibitionEditorPage = () => {
 
   const [editorContent, setEditorContent] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const utils = api.useUtils();
 
   const { setSuccessMessage, setErrorMessage } = useMessage(); 
-  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
+  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: Number(id) });
+
+  const updateExhibition = useUpdateExhibition();
+  const publishExhibition = usePublishExhibition();
 
   useEffect(() => {
     if (data) {
@@ -115,45 +57,15 @@ const ExhibitionEditorPage = () => {
     }
   }, [unsavedChanges]);
 
-  const updateExhibition = api.exhibition.update.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.invalidate();
-      setSuccessMessage("Exhibition updated successfully!");
-    },
-    onError: (error) => {
-      if (error.message === "An exhibition with this name already exists.") {
-        setErrorMessage("An exhibition with this name already exists. Please choose a different name.");
-      } 
-      else if (error.message.includes("String must contain at least 1 character(s)")) {
-        setErrorMessage("Exhibition name must contain at least 1 character(s).");
-      } 
-      else {
-        setErrorMessage(`Failed to create exhibition: ${error.message}`);
-      }
-    },
-  });
-
-  const publishExhibition = api.exhibition.publish.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.invalidate();
-      setSuccessMessage("Exhibition published successfully!");
-      router.push(`/exhibitions`);
-    },
-    onError: (error) => {
-      setErrorMessage(error.message);
-    }
-  });
-
   const handleEditorChange = (event: any, editor: Editor) => {
     const data = editor.getData();
     setEditorContent(data); 
     setUnsavedChanges(true);
-    // console.log("Editor content:", data);
   };
 
   const handlePublish = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); 
-      const confirmed = window.confirm("Are you sure you want to publish this exhibition?");
+    const confirmed = window.confirm("Are you sure you want to publish this exhibition?");
     
     if (confirmed) {
       await handleSaveChanges(e);
@@ -249,7 +161,7 @@ const ExhibitionEditorPage = () => {
       {isLoading ? (
         <div>Loading...</div>
       ) : error ? (
-        <div>Error loading exhibitions.</div>
+        <div>Error loading exhibition.</div>
       ) : exhibition ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
@@ -319,24 +231,14 @@ const ExhibitionEditorPage = () => {
         
       <br/>
 
-      {/* CKEditor with adapter for Cloudinary */}
-
       <p className="text-xl font-semibold">Content editor</p>
 
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorContent}
-        onChange={handleEditorChange}
-        config={{
-          extraPlugins: [UploaderPlugin],
-        }}
+      <ExhibitionEditor 
+        initialContent={editorContent} 
+        onChange={handleEditorChange} 
       />
 
-      {/* editor preview */}
-      <div className="mt-4">
-        <h2 className="text-xl font-semibold">Editor Preview:</h2>
-        <div dangerouslySetInnerHTML={{ __html: editorContent }} />
-      </div>
+      <EditorPreview content={editorContent} />
 
       <button
         type="button"
