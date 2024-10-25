@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { exhibitions } from "~/server/db/schema";
 import { eq, and } from "drizzle-orm";
+import { configurations } from "~/constants/config";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
@@ -34,9 +35,9 @@ export const exhibitionRouter = createTRPCRouter({
   update: publicProcedure
     .input(
       z.object({
-        id: z.string().transform((x) => Number(x)),
+        id: z.number(),
         name: z.string().min(1),
-        description: z.string().optional(),
+        description: z.string().max(configurations.MAX_DESCRIPTION_LENGTH).optional(),
         coverImageUrl: z.string().optional(),
         content: z.string().optional(),
       })
@@ -57,9 +58,9 @@ export const exhibitionRouter = createTRPCRouter({
           name: input.name,
           description: input.description,
           coverImageUrl: input.coverImageUrl,
-          content: input.content ?? "",
+          content: input.content,
         })
-        .where(eq(exhibitions.id, input.id));  // input.id is now a number
+        .where(eq(exhibitions.id, input.id)); 
     }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
@@ -136,5 +137,20 @@ export const exhibitionRouter = createTRPCRouter({
       }).where(eq(exhibitions.id, input.id));
 
       return { ...unpublishedExhibition, isPublished: false };
+    }),
+
+    checkTitleUnique: publicProcedure
+    .input(z
+      .object(
+        { id: z.number(),
+          name: z.string(),
+        }))
+    .query(async ({ ctx, input }) => {
+      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq, and }) =>
+          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
+      });
+
+      return existingExhibition !== null;
     }),
 });
