@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import type { Exhibition } from "../_types/exhibition";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
-import { useMessage } from "~/context/message";
+import { useDeleteExhibition, usePublishExhibition, useUnpublishExhibition } from "~/hooks/exhibition-actions";
 
 interface DashboardActionsModalProps {
   exhibition: Exhibition;
@@ -13,8 +12,6 @@ interface DashboardActionsModalProps {
 const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
   { exhibition, onClose, position }) => {
     const router = useRouter();
-    const utils = api.useUtils();
-    const { setSuccessMessage, setErrorMessage } = useMessage();
     const modalRef = useRef<HTMLDivElement>(null);
     
     useEffect(() => {
@@ -30,35 +27,9 @@ const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
       };
     }, [onClose]);
     
-    const deleteExhibition = api.exhibition.delete.useMutation({
-      onSuccess: async () => {
-        await utils.exhibition.getAll.invalidate();
-        setSuccessMessage("Exhibition deleted successfully!");
-      },
-      onError: (error) => {
-        setErrorMessage(`Failed to delete exhibition: ${error.message}`);
-      },
-    });
-    
-    const publishExhibition = api.exhibition.publish.useMutation({
-      onSuccess: async () => {
-        await utils.exhibition.getAll.invalidate();
-        setSuccessMessage("Exhibition published successfully!");
-      },
-      onError: (error) => {
-        setErrorMessage(`Failed to publish exhibition: ${error.message}`);
-      },
-    });
-    
-    const unpublishExhibition = api.exhibition.unpublish.useMutation({
-      onSuccess: async () => {
-        await utils.exhibition.getAll.invalidate();
-        setSuccessMessage("Exhibition moved back to drafts!");
-      },
-      onError: (error) => {
-        setErrorMessage(`Failed to unpublish exhibition: ${error.message}`);
-      },
-    });
+    const deleteExhibition = useDeleteExhibition();
+    const publishExhibition = usePublishExhibition();
+    const unpublishExhibition = useUnpublishExhibition();
     
     const handleDeleteExhibition = () => {
       if (exhibition.id && window.confirm("Are you sure you want to delete this exhibition?")) {

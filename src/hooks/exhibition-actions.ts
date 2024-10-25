@@ -5,6 +5,7 @@ import { api } from "~/trpc/react";
 export const useUpdateExhibition = () => {
   const utils = api.useUtils();
   const { setSuccessMessage, setErrorMessage } = useMessage();
+
   return api.exhibition.update.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
@@ -29,6 +30,7 @@ export const usePublishExhibition = () => {
   const utils = api.useUtils();
   const { setSuccessMessage, setErrorMessage } = useMessage();
   const router = useRouter();
+
   return api.exhibition.publish.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
@@ -36,7 +38,37 @@ export const usePublishExhibition = () => {
       router.push(`/exhibitions`);
     },
     onError: (error) => {
-      setErrorMessage(error.message);
+      setErrorMessage(`Failed to publish exhibition: ${error.message}`);
     }
+  });
+}
+
+export const useUnpublishExhibition = () => {
+  const utils = api.useUtils();
+  const { setSuccessMessage, setErrorMessage } = useMessage();
+
+  return api.exhibition.unpublish.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition moved back to drafts!");
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to unpublish exhibition: ${error.message}`);
+    },
+  });
+}
+
+export const useDeleteExhibition = () => {
+  const utils = api.useUtils();
+  const { setSuccessMessage, setErrorMessage } = useMessage();
+  
+  return api.exhibition.delete.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.getAll.invalidate();
+      setSuccessMessage("Exhibition deleted successfully!");
+    },
+    onError: (error) => {
+      setErrorMessage(`Failed to delete exhibition: ${error.message}`);
+    },
   });
 }

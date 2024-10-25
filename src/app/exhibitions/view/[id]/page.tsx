@@ -1,16 +1,15 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import React, { useEffect, useState } from "react";
-import { Exhibition } from "~/app/_types/exhibition";
+import type { Exhibition } from "~/app/_types/exhibition";
 
 const ExhibitionViewPage: React.FC = () => {
-  const router = useRouter();
   const { id } = useParams() as { id: string };
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
 
-  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id });
+  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: Number(id) });
 
   useEffect(() => {
     if (data) {
