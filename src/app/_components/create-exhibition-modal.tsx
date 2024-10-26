@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { configurations } from "~/constants/config";
 import { api } from "~/trpc/react";
+import { uploadImage } from '~/utils/image-uploader';
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
@@ -40,38 +41,16 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
       return;
     }
 
-    let coverImageUrl = null;
-    let coverImageFile = null;
+    let coverImageUrl = configurations.DEFAULT_COVER_IMAGE_URL;
 
     if (coverImage) {
-      const coverImageToBlobResponse = await fetch(coverImage);
-      coverImageFile = await coverImageToBlobResponse.blob();
-    }
-
-    if (coverImageFile) {
-      const formData = new FormData();
-      formData.append('file', coverImageFile);
-
-      try {
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await uploadResponse.json();
-        if (result.url) {
-          coverImageUrl = result.url;
-        }
-        
-      } catch (e) {
-        console.error("Error during file upload:", e);
-      }
+      coverImageUrl = (await uploadImage(coverImage)) ?? configurations.DEFAULT_COVER_IMAGE_URL;
     }
 
     createExhibition.mutate({
       name,
       description,
-      coverImageUrl: coverImageUrl || configurations.DEFAULT_COVER_IMAGE_URL,
+      coverImageUrl,
     });
   };
 
@@ -90,88 +69,88 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
         }
       };
       reader.readAsDataURL(file);
-    };
+    }
   };
 
   const handleRemoveImage = () => {
-    setCoverImage(""); 
+    setCoverImage("");
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; 
+      fileInputRef.current.value = "";
     }
   };
-  
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
         <h2 className="text-2xl font-semibold mb-4 text-primary-dark">Create a New Exhibition</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-              <label className="block text-sm font-medium text-text-dark mb-1">Title</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter exhibition title"
-                className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
-              />
-              {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
+            <label className="block text-sm font-medium text-text-dark mb-1">Title</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter exhibition title"
+              className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
+            />
+            {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
           </div>
           <div>
-              <label className="block text-sm font-medium text-text-dark mb-1">Description</label>
-              <textarea
+            <label className="block text-sm font-medium text-text-dark mb-1">Description</label>
+            <textarea
               value={description ?? ""}
               onChange={(e) => {
-                  if (e.target.value.length <= configurations.MAX_DESCRIPTION_LENGTH) {
+                if (e.target.value.length <= configurations.MAX_DESCRIPTION_LENGTH) {
                   setDescription(e.target.value);
-                  }
+                }
               }}
               placeholder="Enter exhibition description"
               className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
-              />
-              <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} characters</p>
+            />
+            <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} characters</p>
           </div>
           <div>
-              <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
-              <input
+            <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
+            <input
               type="file"
               ref={fileInputRef}
               onChange={handleCoverImageChange}
               accept="image/*"
               className="block w-full rounded-md shadow-sm bg-white font-medium text-sm border-gray-500 focus:ring-blue-600 focus:border-blue-600 mb-6"
-              />
+            />
           </div>
           {coverImage && (
             <div className="mt-4">
-            <p className="text-sm w-full text-gray-500">Image Preview:</p>
-            <div className="relative w-32 h-32">
-              <Image
-                src={coverImage} 
-                alt="Cover preview" 
-                layout="fill"
-                objectFit="cover" 
-                className="rounded-md"
-              />
+              <p className="text-sm w-full text-gray-500">Image Preview:</p>
+              <div className="relative w-32 h-32">
+                <Image
+                  src={coverImage}
+                  alt="Cover preview"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-md"
+                />
+              </div>
+              <span
+                onClick={handleRemoveImage}
+                className="text-black text-xs cursor-pointer hover:underline"
+              >
+                Discard
+              </span>
             </div>
-            <span
-              onClick={handleRemoveImage}
-              className="text-black text-xs cursor-pointer hover:underline"
-            >
-              Discard
-            </span>
-          </div>
           )}
           <div className="flex justify-end space-x-4">
             <button
-            type="button"
-            onClick={() => {onClose(); handleRemoveImage();}}
-            className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
+              type="button"
+              onClick={() => { onClose(); handleRemoveImage(); }}
+              className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
             >
               Cancel
             </button>
             <button
-            type="submit"
-            className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
-            disabled={createExhibition.isPending}
+              type="submit"
+              className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
+              disabled={createExhibition.isPending}
             >
               {createExhibition.isPending ? "Saving..." : "Create"}
             </button>

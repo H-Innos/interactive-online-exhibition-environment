@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ExhibitionContentEditor from './exhibition-content-editor';
+import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
 import { configurations } from '~/constants/config';
-import EditorPreview from './editor-preview';
+import EditorPreview from '~/app/_components/editor-preview';
 import { usePublishExhibition } from '~/hooks/exhibition-actions';
 import type { Exhibition } from '~/app/_types/exhibition';
 import type { Editor } from '@ckeditor/ckeditor5-core';
@@ -10,6 +10,7 @@ import type { EventInfo } from '@ckeditor/ckeditor5-utils';
 import { api } from '~/trpc/react';
 import { useMessage } from '~/context/message';
 import Image from 'next/image';
+import { uploadImage } from '~/utils/image-uploader';
 
 interface ExhibitionEditorProps {
     exhibition: Exhibition
@@ -104,41 +105,15 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
   const handleCoverImageSave = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
-    let coverImageUrl = null;
-    let coverImageFile = null;
-
-    if (coverImage && coverImage != exhibition.coverImageUrl) {
-      const coverImageToBlobResponse = await fetch(coverImage);
-      coverImageFile = await coverImageToBlobResponse.blob();
-    }
-
-    if (!coverImageFile) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', coverImageFile);
-
-    try {
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await uploadResponse.json();
-      if (result.url) {
-        console.log("File uploaded successfully:", result.url);
-        coverImageUrl = result.url;
-      } else {
-        console.error("No URL in the response.");
+    if (coverImage && coverImage !== exhibition.coverImageUrl) {
+      const coverImageUrl = await uploadImage(coverImage);
+      if (coverImageUrl) {
+        updateExhibition.mutate({
+          id: exhibition.id,
+          name: exhibition.name,
+          coverImageUrl: coverImageUrl,
+        });
       }
-      updateExhibition.mutate({
-        id: exhibition.id,
-        name: exhibition.name,
-        coverImageUrl: coverImageUrl,
-      });      
-    } catch (e) {
-      console.error("Error during file upload:", e);
     }
   };
 
