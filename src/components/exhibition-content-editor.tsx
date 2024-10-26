@@ -7,18 +7,15 @@ import type { EventInfo } from '@ckeditor/ckeditor5-utils';
 
 interface ExhibitionContentEditorProps {
     initialContent: string,
-    onChange: (event: EventInfo, editor: Editor) => void,
     onBlur: (event: EventInfo, editor: Editor) => void
 }
 
-const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({ initialContent, onChange, onBlur }) => {
-
-    
+const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
+    initialContent, onBlur }) => { 
     return (
         <CKEditor
         editor={ClassicEditor}
         data={initialContent}
-        onChange={onChange}
         onBlur={onBlur}
         config={{
             extraPlugins: [UploaderPlugin]

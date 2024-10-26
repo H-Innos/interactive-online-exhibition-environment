@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import type { EventInfo } from '@ckeditor/ckeditor5-utils';
 import { api } from '~/trpc/react';
 import { useMessage } from '~/context/message';
+import Image from 'next/image';
 
 interface ExhibitionEditorProps {
     exhibition: Exhibition
@@ -18,7 +19,6 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
   const [ title, setTitle ] = useState(exhibition?.name ?? "");
   const [ description, setDescription ] = useState(exhibition?.description ?? "");
   const [ coverImage, setCoverImage ] = useState(exhibition?.coverImageUrl ?? "");
-  const [ exhibitionContent, setExhibitionContent ] = useState(exhibition?.content ?? "");
   const [ unsavedChanges, setUnsavedChanges] = useState(false);
   
   const [ titleError, setTitleError] = useState("");
@@ -61,7 +61,6 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
       window.removeEventListener('beforeunload', handleBeforeUnload, {capture: true});
     }
   }, [unsavedChanges]);
-
 
   const handleFormChanged = () =>  {
     setUnsavedChanges(true);
@@ -143,11 +142,6 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
     }
   };
 
-  const handleEditorChange = (event: EventInfo, editor: Editor) => {
-    const data = editor.getData();
-    setExhibitionContent(data);
-  };
-
   const handleEditorBlur = (event: EventInfo, editor: Editor) => {
     updateExhibition.mutate({
       id: exhibition.id,
@@ -222,11 +216,11 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
             
             <div>
               <h2 className="block text-l font-bold text-text-dark mb-1">Uploaded Cover Image:</h2>
-              <img 
+              <Image
                   src={coverImage ?? ""} 
                   alt="Cover image for exhibition entry." 
-                  width="300px" 
-                  style={{ maxHeight: "300px", objectFit: "contain" }}
+                  width="300" 
+                  height="300"
               />
               <span
                 onClick={handleRemoveImage}
@@ -244,7 +238,6 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
 
         <ExhibitionContentEditor 
           initialContent={exhibition.content ?? ""} 
-          onChange={handleEditorChange} 
           onBlur={handleEditorBlur}
         />
 

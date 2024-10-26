@@ -1,6 +1,5 @@
 import type { FileLoader, UploadResponse } from "@ckeditor/ckeditor5-upload";
 
-
 export default class FileUploader {
     loader: FileLoader;
     constructor(loader: FileLoader) {
@@ -20,7 +19,7 @@ export default class FileUploader {
   
           return new Promise<UploadResponse>((resolve, reject) => {
             const formData = new FormData();
-            formData.append('file', file as File);
+            formData.append('file', file);
   
             fetch('/api/upload', {
               method: 'POST',

@@ -9,7 +9,7 @@ import MessageBanner from '~/app/_components/message-banner';
 import ExhibitionEditor from '~/components/exhibition-editor';
 
 const ExhibitionEditorPage = () => {
-  const { id } = useParams() as { id: string };
+  const { id } = useParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const { data: exhibitionData} = api.exhibition.getOne.useQuery({ id: Number(id) });
 

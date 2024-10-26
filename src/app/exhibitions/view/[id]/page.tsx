@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import type { Exhibition } from "~/app/_types/exhibition";
 
 const ExhibitionViewPage: React.FC = () => {
-  const { id } = useParams() as { id: string };
+  const { id } = useParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
 
   const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: Number(id) });
