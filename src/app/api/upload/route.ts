@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import type { UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 import { NextResponse } from 'next/server';
 
 cloudinary.config({
@@ -21,19 +22,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400, headers });
     }
 
-    const result: any = await new Promise(async (resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream((error: Error, result) => {
-        if (result) resolve(result);
-        else reject(error);
-      });
+    const buffer = Buffer.from(await file.arrayBuffer());
 
-      const buffer = Buffer.from(await file.arrayBuffer());
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
+          if (result) resolve(result);
+          else reject(new Error('Upload failed'));
+        }
+      );
+
       stream.end(buffer);
     });
 
     return NextResponse.json({ url: result.secure_url }, { status: 200, headers });
-  } catch (error) {
-    console.error('File upload error:', error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('File upload error:', error.message);
+    } else {
+      console.error('Unknown file upload error');
+    }
     return NextResponse.json({ error: 'Upload failed' }, { status: 500, headers });
   }
 }

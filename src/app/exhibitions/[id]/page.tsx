@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 
 import type { Exhibition } from '~/app/_types/exhibition';
 import MessageBanner from '~/app/_components/message-banner';
-import ExhibitionEditor from '~/components/exhibition-editor';
+import ExhibitionEditor from '~/app/_components/exhibition-editor';
 
 const ExhibitionEditorPage = () => {
   const { id } = useParams();

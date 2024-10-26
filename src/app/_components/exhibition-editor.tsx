@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ExhibitionContentEditor from './exhibition-content-editor';
+import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
 import { configurations } from '~/constants/config';
-import EditorPreview from './editor-preview';
+import EditorPreview from '~/app/_components/editor-preview';
 import { usePublishExhibition } from '~/hooks/exhibition-actions';
 import type { Exhibition } from '~/app/_types/exhibition';
 import type { Editor } from '@ckeditor/ckeditor5-core';
