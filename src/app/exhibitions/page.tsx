@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import {ExhibitionList } from "~/app/_components/exhibition";
+import {ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
 import { configurations } from "~/constants/config";
 import PaginationControls from "../../components/pagination-controls";
 import CreateExhibitionModal from "../_components/create-exhibition-modal";

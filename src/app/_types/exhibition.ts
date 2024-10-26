@@ -1,6 +1,6 @@
 export interface Exhibition {
     id: number;
-    name: string | null;
+    name: string;
     description: string | null;
     coverImageUrl: string | null;
     content: string | null;
