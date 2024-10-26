@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import React from "react";
 
 const Header = () => {
   return (
@@ -22,11 +24,12 @@ const Header = () => {
             "
           ></div>
 
-          <a href="/" className="relative z-10 flex items-center pl-8">
-            <img
+          <a href="/" className="relative z-10 flex items-center pl-8 ml-28">
+            <Image
               src="/logos/UT_website_logo_white_est.svg"
-              alt="UT Website Logo"
-              className="h-[48px] w-auto"
+              alt="Logo"
+              width={248}
+              height={48}
             />
           </a>
 
