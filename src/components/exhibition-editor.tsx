@@ -10,7 +10,7 @@ import type { EventInfo } from '@ckeditor/ckeditor5-utils';
 import { api } from '~/trpc/react';
 import { useMessage } from '~/context/message';
 import Image from 'next/image';
-import { uploadImage } from '~/components/image-uploader';
+import { uploadImage } from '~/utils/image-uploader';
 
 interface ExhibitionEditorProps {
     exhibition: Exhibition
