@@ -37,9 +37,20 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
   const handleCogClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
-    setModalPosition({ top: rect.bottom, left: rect.left });
+    const modalWidth = 300;
+    const viewportWidth = window.innerWidth;
+
+    let leftPosition = rect.left + window.scrollX;
+    if (leftPosition + modalWidth > viewportWidth) {
+      leftPosition = viewportWidth - modalWidth;
+    }
+    setModalPosition({ 
+      top: rect.bottom + window.scrollY, 
+      left: leftPosition
+    });
     setIsOptionsModalOpen(true);
   };
+
   
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
