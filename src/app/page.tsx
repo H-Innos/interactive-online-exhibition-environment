@@ -53,7 +53,11 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
     ) : (
       <p className="text-gray-500">No exhibitions available.</p>
     )}
-        </div>
+    <PaginationControls
+    currentPage={currentPage}
+    totalPages={totalPages}
+    />
+    </div>
   );
 };
 
