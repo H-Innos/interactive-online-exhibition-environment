@@ -35,7 +35,7 @@ export const usePublishExhibition = () => {
     onSuccess: async () => {
       await utils.exhibition.invalidate();
       setSuccessMessage("Exhibition published successfully!");
-      router.push(`/exhibitions`);
+      router.push(`/dashboard`);
     },
     onError: (error) => {
       setErrorMessage(`Failed to publish exhibition: ${error.message}`);

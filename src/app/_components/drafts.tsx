@@ -27,7 +27,7 @@ const DraftsPage = () => {
   }, [data]);
 
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/${id}`);
+    router.push(`/dashboard/${id}`);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -35,7 +35,7 @@ const DraftsPage = () => {
   };
 
   const handleBackToDashboard = () => {
-    router.push("/exhibitions");
+    router.push("/dashboard");
   };
 
   return (

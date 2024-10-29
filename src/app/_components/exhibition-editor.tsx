@@ -221,7 +221,7 @@ const ExhibitionEditor: React.FC<ExhibitionEditorProps> = ({ exhibition }) => {
         <button
           type="button"
           className="bg-gray-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-gray-600"
-          onClick={() => router.push(`/exhibitions`)}
+          onClick={() => router.push(`/dashboard`)}
         >
           Exit
         </button>

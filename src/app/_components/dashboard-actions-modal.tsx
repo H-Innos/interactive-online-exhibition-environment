@@ -40,7 +40,7 @@ const DashboardActionsModal: React.FC<DashboardActionsModalProps> = (
     
     const handleOpenEditor = () => {
       if (exhibition.id) {
-        router.push(`/exhibitions/${exhibition.id}`);
+        router.push(`/dashboard/${exhibition.id}`);
       }
     };
     
