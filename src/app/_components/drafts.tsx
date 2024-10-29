@@ -34,8 +34,19 @@ const DraftsPage = () => {
     setCurrentPage(newPage);
   };
 
+  const handleBackToDashboard = () => {
+    router.push("/exhibitions");
+  };
+
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
+      <button
+        onClick={handleBackToDashboard}
+        className="mb-4 text-5xl px-4 py-2 text-black rounded-md hover:text-gray-500 transition duration-300"
+      >
+        ❬
+      </button>
+
       <h1 className="text-3xl font-bold mb-2 text-accent">Drafts</h1>
       <p className="text-lg mb-6 text-light-gray">Manage all drafts</p>
 
@@ -46,9 +57,11 @@ const DraftsPage = () => {
       ) : currentDrafts && currentDrafts.length > 0 ? (
         <div>
           <ExhibitionList
-                exhibitions={currentDrafts}
-                onExhibitionClick={handleExhibitionClick} section={"Published"}          />
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+            exhibitions={currentDrafts}
+            onExhibitionClick={handleExhibitionClick}
+            section="Drafts"
+          />
+          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
       ) : (
         <p className="text-gray-500">No draft exhibitions available.</p>
