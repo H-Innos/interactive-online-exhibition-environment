@@ -19,6 +19,7 @@ const ExhibitionsPage = ({
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
   const [isCreateExhibitionModalOpen, setIsCreateExhibitionModalOpen] = useState(false);
+  const [sliceCount, setSliceCount] = useState(4);
 
   let currentPage = Number(searchParams.page);
   const totalPages = Math.ceil(publishedExhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
@@ -35,10 +36,30 @@ const ExhibitionsPage = ({
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished).slice(0, 4));
+      setDrafts(data.filter((exhibition) => !exhibition.isPublished).slice(0, sliceCount));
       setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished));
     }
-  }, [data]);
+  }, [data, sliceCount]);
+
+  useEffect(() => {
+    const updateSliceCount = () => {
+      const screenWidth = window.innerWidth;
+      if (screenWidth >= 1536) {
+        setSliceCount(4); 
+      } else if (screenWidth >= 1280) {
+        setSliceCount(3); 
+      } else if (screenWidth >= 1000) {
+        setSliceCount(2); 
+      } else {
+        setSliceCount(1); 
+      }
+    };
+
+    updateSliceCount(); 
+    window.addEventListener("resize", updateSliceCount);
+
+    return () => window.removeEventListener("resize", updateSliceCount);
+  }, []);
 
   const handleExhibitionClick = (id: number) => {
     router.push(`/exhibitions/${id}`);
