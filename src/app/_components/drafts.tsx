@@ -61,7 +61,10 @@ const DraftsPage = () => {
             onExhibitionClick={handleExhibitionClick}
             section="Drafts"
           />
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+           <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
         </div>
       ) : (
         <p className="text-gray-500">No draft exhibitions available.</p>

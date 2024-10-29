@@ -108,9 +108,7 @@ const ExhibitionsPage = ({
                   onExhibitionClick={handleExhibitionClick}
                   section="Drafts"
                 />
-
                 <div className="absolute top-0 right-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
-
                 <div className="absolute top-1/2 right-8 transform -translate-y-1/2">
                   <button
                     onClick={handleViewAllDrafts}
@@ -122,17 +120,16 @@ const ExhibitionsPage = ({
               </div>
             </>
           )}
-
           <h1 className="text-2xl font-bold mb-2 mt-10 text-accent">Published Exhibitions</h1>
           <ExhibitionList
             exhibitions={currentPublishedExhibitions}
             onExhibitionClick={handleExhibitionClick}
             section="Published"
           />
-
-          {totalPages > 1 && (
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-          )}
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
         </>
       )}
     </div>
