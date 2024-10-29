@@ -46,9 +46,8 @@ const DraftsPage = () => {
       ) : currentDrafts && currentDrafts.length > 0 ? (
         <div>
           <ExhibitionList
-            exhibitions={currentDrafts}
-            onExhibitionClick={handleExhibitionClick}
-          />
+                exhibitions={currentDrafts}
+                onExhibitionClick={handleExhibitionClick} section={"Published"}          />
           <PaginationControls currentPage={currentPage} totalPages={totalPages} />
         </div>
       ) : (
