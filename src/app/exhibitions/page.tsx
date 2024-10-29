@@ -48,6 +48,10 @@ const ExhibitionsPage = ({
     router.push(`/exhibitions/drafts`);
   };
 
+  const handlePageChange = (page: number) => {
+    router.push(`/exhibitions?page=${page}`);
+  };
+
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
       <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
@@ -106,7 +110,7 @@ const ExhibitionsPage = ({
           />
 
           {totalPages > 1 && (
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+            <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           )}
         </>
       )}

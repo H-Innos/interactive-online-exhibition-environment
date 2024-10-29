@@ -3,7 +3,6 @@
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import type { Exhibition } from "~/app/_types/exhibition";
 
 import 'ckeditor5/ckeditor5.css';
@@ -31,14 +30,6 @@ const ExhibitionViewPage: React.FC = () => {
   return (
     <div className="text-text-dark min-h-screen p-8">
       <h1 className="text-4xl font-bold mb-4 text-center">{exhibition.name}</h1>
-      <Image
-        src={exhibition.coverImageUrl ?? ""}
-        alt={exhibition.name ?? ""}
-        width={800}
-        height={600} 
-        className="mb-4"
-      />
-      <p className="text-lg mb-4">{exhibition.description}</p>
       <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="ck-content" />
     </div>
   );
