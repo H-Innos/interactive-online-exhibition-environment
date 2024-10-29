@@ -6,7 +6,32 @@
     min-height: 300px; 
     max-height: 60vh;
 }
-  
+
+.editor-container__editor h1, .ck-content h1 {
+  font-size: 2.2rem;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+} 
+
+.editor-container__editor h2, .ck-content h2 {
+  font-size: 1.8rem;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+} 
+
+.editor-container__editor h3, .ck-content h3 {
+  font-size: 1.5rem;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+} 
+
+.editor-container__editor h4, .ck-content h4 {
+  font-size: 1.2rem;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+} 
+
+
 @layer components {
 ::file-selector-button, ::-webkit-file-upload-button  {
     @apply text-text-light bg-primary-dark hover:bg-gray-600

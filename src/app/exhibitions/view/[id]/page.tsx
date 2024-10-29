@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import type { Exhibition } from "~/app/_types/exhibition";
 
+import 'ckeditor5/ckeditor5.css';
+
 const ExhibitionViewPage: React.FC = () => {
   const { id } = useParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
@@ -37,7 +39,7 @@ const ExhibitionViewPage: React.FC = () => {
         className="mb-4"
       />
       <p className="text-lg mb-4">{exhibition.description}</p>
-      <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} />
+      <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="ck-content" />
     </div>
   );
 };
