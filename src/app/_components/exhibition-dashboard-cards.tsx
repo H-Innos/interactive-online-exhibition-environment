@@ -9,14 +9,16 @@ import DashboardActionsModal from "./dashboard-actions-modal";
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
+  section: "Drafts" | "Published";
 }
 
 interface ExhibitionListProps {
   exhibitions: Exhibition[];
   onExhibitionClick: (id: number) => void;
+  section: "Drafts" | "Published";
 }
 
-const ExhibitionList: React.FC<ExhibitionListProps> = ({ exhibitions, onExhibitionClick }: ExhibitionListProps) => {
+const ExhibitionList: React.FC<ExhibitionListProps> = ({ exhibitions, onExhibitionClick, section }) => {
   return (
     <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
       {exhibitions.map((exhibition) => (
@@ -24,13 +26,14 @@ const ExhibitionList: React.FC<ExhibitionListProps> = ({ exhibitions, onExhibiti
           key={exhibition.id}
           exhibition={exhibition}
           onClick={onExhibitionClick}
+          section={section} 
         />
       ))}
     </div>
   );
-}
+};
 
-const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) => {
+const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick, section }) => {
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   
@@ -41,16 +44,24 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
     const viewportWidth = window.innerWidth;
 
     let leftPosition = rect.left + window.scrollX;
-    if (leftPosition + modalWidth > viewportWidth) {
-      leftPosition = viewportWidth - modalWidth;
+    let topPosition = rect.bottom + window.scrollY;
+  
+    if (section === "Drafts") {
+      leftPosition = rect.left + window.scrollX - 130;
+      topPosition = rect.top + window.scrollY - 380;
+      if (leftPosition + modalWidth > viewportWidth) {
+        leftPosition = viewportWidth - modalWidth - 130;
+      }
+    } else {
+      if (leftPosition + modalWidth > viewportWidth) {
+        leftPosition = viewportWidth - modalWidth;
+      }
     }
-    setModalPosition({ 
-      top: rect.bottom + window.scrollY, 
-      left: leftPosition
-    });
+  
+    setModalPosition({ top: topPosition, left: leftPosition });
     setIsOptionsModalOpen(true);
   };
-
+  
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
@@ -60,18 +71,15 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
     <div>
       <div
         key={exhibition.id}
-        className="flex bg-background_dark rounded-lg overflow-hidden p-4 h-48 w-full md:w-[350px] cursor-pointer relative"
+        className="flex bg-background_dark rounded-lg overflow-hidden p-4 h-48 w-full md:w-[320px] cursor-pointer relative mt-8"
       >
-        <div 
-          className="flex w-full"
-          onClick={() => onClick(exhibition.id)}
-        >
+        <div className="flex w-full" onClick={() => onClick(exhibition.id)}>
           <div className="w-32 h-32 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden relative">
             <Image
               src={exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
               alt={exhibition.name ?? "Exhibition"}
-              layout="fill"  
-              objectFit="cover" 
+              layout="fill"
+              objectFit="cover"
             />
           </div>
           <div className="flex flex-col justify-between pl-3 flex-grow overflow-hidden">
@@ -88,7 +96,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
           onClick={handleCogClick}
           className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 z-10"
         >
-          <FaCog size={18} />
+          <FaCog size={20} />
         </button>
       </div>
       
