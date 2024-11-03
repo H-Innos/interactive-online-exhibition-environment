@@ -6,28 +6,28 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Cog } from "lucide-react";
 import { configurations } from "~/constants/config";
-import type { Exhibition } from "../_types/exhibition";
 import {
   useDeleteExhibition,
   usePublishExhibition,
   useUnpublishExhibition,
 } from "~/hooks/exhibition-actions";
+import { type Exhibition } from "~/app/_types/exhibition";
 
 const DropdownMenu = dynamic(() =>
-  import("~/components/dropdown-menu").then((mod) => mod.DropdownMenu),
+  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
 );
 const DropdownMenuTrigger = dynamic(() =>
-  import("~/components/dropdown-menu").then(
+  import("~/components/ui/dropdown-menu").then(
     (mod) => mod.DropdownMenuTrigger,
   ),
 );
 const DropdownMenuContent = dynamic(() =>
-  import("~/components/dropdown-menu").then(
+  import("~/components/ui/dropdown-menu").then(
     (mod) => mod.DropdownMenuContent,
   ),
 );
 const DropdownMenuItem = dynamic(() =>
-  import("~/components/dropdown-menu").then((mod) => mod.DropdownMenuItem),
+  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem),
 );
 
 interface ExhibitionCardProps {

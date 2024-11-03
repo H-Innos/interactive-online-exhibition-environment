@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { UploaderPlugin } from '~/utils/plugins';
+import { UploaderPlugin } from '~/lib/utils/plugins';
 
 import {
 	ClassicEditor,

@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { configurations } from "~/constants/config";
 import { api } from "~/trpc/react";
-import { uploadImage } from '~/utils/image-uploader';
+import { uploadImage } from '~/lib/utils/image-uploader';
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
