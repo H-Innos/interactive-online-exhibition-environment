@@ -15,7 +15,7 @@ interface ExhibitionSectionProps {
   viewAllPath?: string;
   maxVisibleItems?: number;
   showFadeEffect?: boolean;
-  onCreateExhibition?: () => void; 
+  onCreateExhibition?: () => void;
 }
 
 const ExhibitionSection = ({
@@ -26,27 +26,21 @@ const ExhibitionSection = ({
   viewAllPath,
   maxVisibleItems,
   showFadeEffect = false,
-  onCreateExhibition, 
+  onCreateExhibition,
 }: ExhibitionSectionProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const page = parseInt(searchParams.get("page") ?? "1", 10);
+    const page = parseInt(searchParams?.get("page") ?? "1", 10);
     setCurrentPage(page);
   }, [searchParams]);
 
-  const drafts = exhibitions.filter((exhibition) => !exhibition.isPublished);
-  const publishedExhibitions = exhibitions.filter((exhibition) => exhibition.isPublished);
-
-  const totalPages = Math.ceil(publishedExhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
+  const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
   const indexOfLastExhibition = currentPage * configurations.EXHIBITIONS_PER_PAGE;
   const indexOfFirstExhibition = indexOfLastExhibition - configurations.EXHIBITIONS_PER_PAGE;
-
-  const currentExhibitions = currentPage === 1
-    ? drafts.concat(publishedExhibitions.slice(0, configurations.EXHIBITIONS_PER_PAGE - drafts.length))
-    : publishedExhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
+  const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
 
   const handlePageChange = (newPage: number) => {
     router.push(`?page=${newPage}`);
@@ -60,7 +54,7 @@ const ExhibitionSection = ({
 
   return (
     <div className="mb-10">
-    {onCreateExhibition && (
+      {onCreateExhibition && (
         <button
           onClick={onCreateExhibition}
           className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"

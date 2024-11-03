@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import type { Exhibition } from "../_types/exhibition";
@@ -10,7 +10,6 @@ import MessageBanner from "../_components/message-banner";
 
 const ExhibitionsPage = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
   const [isCreateExhibitionModalOpen, setIsCreateExhibitionModalOpen] = useState(false);
@@ -28,7 +27,40 @@ const ExhibitionsPage = () => {
     router.push(`/dashboard/${id}`);
   };
 
-  const currentPage = parseInt(searchParams.get("page") ?? "1", 10);
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchParamsWrapper
+        drafts={drafts}
+        publishedExhibitions={publishedExhibitions}
+        isCreateExhibitionModalOpen={isCreateExhibitionModalOpen}
+        setIsCreateExhibitionModalOpen={setIsCreateExhibitionModalOpen}
+        handleExhibitionClick={handleExhibitionClick}
+        isLoading={isLoading}
+        error={error}
+      />
+    </Suspense>
+  );
+};
+
+const SearchParamsWrapper = ({
+  drafts,
+  publishedExhibitions,
+  isCreateExhibitionModalOpen,
+  setIsCreateExhibitionModalOpen,
+  handleExhibitionClick,
+  isLoading,
+  error,
+}: {
+  drafts: Exhibition[];
+  publishedExhibitions: Exhibition[];
+  isCreateExhibitionModalOpen: boolean;
+  setIsCreateExhibitionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleExhibitionClick: (id: number) => void;
+  isLoading: boolean;
+  error: unknown;
+}) => {
+  const searchParams = useSearchParams();
+  const currentPage = searchParams ? parseInt(searchParams.get("page") ?? "1", 10) : 1;
 
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
@@ -37,7 +69,9 @@ const ExhibitionsPage = () => {
 
       <MessageBanner />
 
-      {isCreateExhibitionModalOpen && <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />}
+      {isCreateExhibitionModalOpen && (
+        <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
+      )}
 
       {isLoading ? (
         <div>Loading...</div>
@@ -67,5 +101,6 @@ const ExhibitionsPage = () => {
     </div>
   );
 };
+
 
 export default ExhibitionsPage;
