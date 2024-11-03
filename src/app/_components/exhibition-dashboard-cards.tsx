@@ -14,32 +14,30 @@ import {
 } from "~/hooks/exhibition-actions";
 
 const DropdownMenu = dynamic(() =>
-  import("~/app/_components/dropdown-menu").then((mod) => mod.DropdownMenu),
+  import("~/components/dropdown-menu").then((mod) => mod.DropdownMenu),
 );
 const DropdownMenuTrigger = dynamic(() =>
-  import("~/app/_components/dropdown-menu").then(
+  import("~/components/dropdown-menu").then(
     (mod) => mod.DropdownMenuTrigger,
   ),
 );
 const DropdownMenuContent = dynamic(() =>
-  import("~/app/_components/dropdown-menu").then(
+  import("~/components/dropdown-menu").then(
     (mod) => mod.DropdownMenuContent,
   ),
 );
 const DropdownMenuItem = dynamic(() =>
-  import("~/app/_components/dropdown-menu").then((mod) => mod.DropdownMenuItem),
+  import("~/components/dropdown-menu").then((mod) => mod.DropdownMenuItem),
 );
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
-  section: "Drafts" | "Published";
 }
 
 export default function ExhibitionCard({
   exhibition,
   onClick,
-  section,
 }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
@@ -166,11 +164,9 @@ export default function ExhibitionCard({
 export function ExhibitionList({
   exhibitions,
   onExhibitionClick,
-  section,
 }: {
   exhibitions: Exhibition[];
   onExhibitionClick: (id: number) => void;
-  section: "Drafts" | "Published";
 }) {
   return (
     <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
@@ -179,7 +175,6 @@ export function ExhibitionList({
           key={exhibition.id}
           exhibition={exhibition}
           onClick={onExhibitionClick}
-          section={section}
         />
       ))}
     </div>
