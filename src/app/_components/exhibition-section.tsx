@@ -33,7 +33,7 @@ const ExhibitionSection = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const page = parseInt(searchParams.get("page") || "1", 10);
+    const page = parseInt(searchParams.get("page") ?? "1", 10);
     setCurrentPage(page);
   }, [searchParams]);
 
@@ -84,7 +84,7 @@ const ExhibitionSection = ({
         )}
       </div>
       {showPagination && (
-        <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        <PaginationControls currentPage={currentPage} totalPages={totalPages} />
       )}
     </div>
   );

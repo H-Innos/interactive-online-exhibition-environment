@@ -28,7 +28,7 @@ const ExhibitionsPage = () => {
     router.push(`/dashboard/${id}`);
   };
 
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const currentPage = parseInt(searchParams.get("page") ?? "1", 10);
 
   return (
     <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
