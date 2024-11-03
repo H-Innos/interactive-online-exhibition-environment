@@ -21,7 +21,7 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
   const exhibitionsPerPage = configurations.EXHIBITIONS_PER_PAGE;
   const totalPages = Math.ceil(exhibitions.length / exhibitionsPerPage);
   
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery(undefined);
+  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
   
   useEffect(() => {
     if (data) {
@@ -53,8 +53,10 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
     ) : (
       <p className="text-gray-500">No exhibitions available.</p>
     )}
-    
-    <PaginationControls currentPage={currentPage} totalPages={totalPages} />
+    <PaginationControls
+    currentPage={currentPage}
+    totalPages={totalPages}
+    />
     </div>
   );
 };

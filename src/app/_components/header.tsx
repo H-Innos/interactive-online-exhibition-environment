@@ -49,7 +49,7 @@ const Header = () => {
             All exhibitions
           </span>
         </Link>
-        <Link href="/exhibitions">
+        <Link href="/dashboard">
           <span className="hover:text-primary-dark cursor-pointer text-text-dark text-lg hover:border-b-2 hover:border-[#2C5696]">
             Dashboard
           </span>

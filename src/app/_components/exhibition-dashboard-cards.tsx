@@ -1,108 +1,182 @@
 "use client";
+
 import React, { useState } from "react";
-import { FaCog } from "react-icons/fa"; 
-import type { Exhibition } from "../_types/exhibition";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { Cog } from "lucide-react";
 import { configurations } from "~/constants/config";
-import DashboardActionsModal from "./dashboard-actions-modal";
+import type { Exhibition } from "../_types/exhibition";
+import {
+  useDeleteExhibition,
+  usePublishExhibition,
+  useUnpublishExhibition,
+} from "~/hooks/exhibition-actions";
+
+const DropdownMenu = dynamic(() =>
+  import("~/components/dropdown-menu").then((mod) => mod.DropdownMenu),
+);
+const DropdownMenuTrigger = dynamic(() =>
+  import("~/components/dropdown-menu").then(
+    (mod) => mod.DropdownMenuTrigger,
+  ),
+);
+const DropdownMenuContent = dynamic(() =>
+  import("~/components/dropdown-menu").then(
+    (mod) => mod.DropdownMenuContent,
+  ),
+);
+const DropdownMenuItem = dynamic(() =>
+  import("~/components/dropdown-menu").then((mod) => mod.DropdownMenuItem),
+);
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
 }
 
-interface ExhibitionListProps {
-  exhibitions: Exhibition[];
-  onExhibitionClick: (id: number) => void;
-}
+export default function ExhibitionCard({
+  exhibition,
+  onClick,
+}: ExhibitionCardProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
 
-const ExhibitionList: React.FC<ExhibitionListProps> = ({ exhibitions, onExhibitionClick }: ExhibitionListProps) => {
-  return (
-    <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
-    {exhibitions.map((exhibition) => (
-      <ExhibitionCard
-      key={exhibition.id}
-      exhibition={exhibition}
-      onClick={onExhibitionClick}
-      />
-    ))}
-    </div>
-  );
-}
+  const deleteExhibition = useDeleteExhibition();
+  const publishExhibition = usePublishExhibition();
+  const unpublishExhibition = useUnpublishExhibition();
 
-const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) => {
-  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
-  
-  const handleCogClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const modalWidth = 300;
-    const viewportWidth = window.innerWidth;
-
-    let leftPosition = rect.left + window.scrollX;
-    if (leftPosition + modalWidth > viewportWidth) {
-      leftPosition = viewportWidth - modalWidth;
+    if (exhibition.id) {
+      router.push(`/dashboard/${exhibition.id}`);
+      setIsMenuOpen(false);
     }
-    setModalPosition({ 
-      top: rect.bottom + window.scrollY, 
-      left: leftPosition
-    });
-    setIsOptionsModalOpen(true);
   };
 
-  
+  const handleChangePublishedState = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (exhibition.id) {
+      if (exhibition.isPublished) {
+        if (
+          window.confirm(
+            "Are you sure you want to move this exhibition back to drafts?",
+          )
+        ) {
+          unpublishExhibition.mutate({ id: exhibition.id });
+        }
+      } else {
+        if (
+          window.confirm("Are you sure you want to publish this exhibition?")
+        ) {
+          publishExhibition.mutate({ id: exhibition.id });
+        }
+      }
+      setIsMenuOpen(false);
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (
+      exhibition.id &&
+      window.confirm("Are you sure you want to delete this exhibition?")
+    ) {
+      deleteExhibition.mutate({ id: exhibition.id });
+      setIsMenuOpen(false);
+    }
+  };
+
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength) + "...";
   };
-  
+
   return (
-    <div>
-    <div
-    key={exhibition.id}
-    className="flex bg-background_dark rounded-lg overflow-hidden p-6 h-64 w-full md:w-[450px] cursor-pointer relative"
-    >
-    <div 
-    className="flex w-full"
-    onClick={() => onClick(exhibition.id)}
-    >
-    <div className="w-44 h-44 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden relative">
-    <Image
-    src={exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
-    alt={exhibition.name ?? "Exhibition"}
-    layout="fill"  
-    objectFit="cover" 
-    />
-    </div>
-    <div className="flex flex-col justify-between pl-4 flex-grow overflow-hidden">
-    <div>
-    <h2 className="text-2xl font-semibold text-dark truncate">{exhibition.name}</h2>
-    <p className="text-lg text-text-dark mt-2">
-    {truncateDescription(exhibition.description ?? "", configurations.MAX_DESCRIPTION_LENGTH)}
-    </p>
-    </div>
-    </div>
-    </div>
-    
-    <button
-    onClick={handleCogClick}
-    className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 z-10"
-    >
-    <FaCog size={20} />
-    </button>
-    </div>
-    
-    {isOptionsModalOpen && (
-      <DashboardActionsModal
-      exhibition={exhibition}
-      onClose={() => setIsOptionsModalOpen(false)}
-      position={modalPosition}
-      />
-    )}
+    <div className="mt-8">
+      <div
+        className="relative flex h-48 w-full cursor-pointer overflow-hidden rounded-lg bg-background_dark p-4 md:w-[320px]"
+        onClick={() => onClick(exhibition.id)}
+      >
+        <div className="flex w-full">
+          <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">
+            <Image
+              src={
+                exhibition.coverImageUrl ??
+                configurations.DEFAULT_COVER_IMAGE_URL
+              }
+              alt={exhibition.name ?? "Exhibition"}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="mt-2 flex flex-grow flex-col justify-between overflow-hidden pl-3">
+            <div>
+              <h2 className="text-dark truncate text-xl font-semibold">
+                {exhibition.name}
+              </h2>
+              <p className="mt-1 text-sm text-text-dark">
+                {truncateDescription(
+                  exhibition.description ?? "",
+                  configurations.MAX_DESCRIPTION_LENGTH,
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="absolute right-1 top-1 p-2 text-gray-600 hover:text-gray-800"
+              aria-label="Card options"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Cog className="h-5 w-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-36 bg-white">
+            <DropdownMenuItem
+              onClick={handleEdit}
+              className="hover:font-semibold"
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleChangePublishedState}
+              className="hover:font-semibold"
+            >
+              {exhibition.isPublished ? "Unpublish" : "Publish"}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDelete}
+              className="text-red-600 hover:font-semibold hover:text-red-600"
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
-};
+}
 
-export { ExhibitionList, ExhibitionCard };
-
+export function ExhibitionList({
+  exhibitions,
+  onExhibitionClick,
+}: {
+  exhibitions: Exhibition[];
+  onExhibitionClick: (id: number) => void;
+}) {
+  return (
+    <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
+      {exhibitions.map((exhibition) => (
+        <ExhibitionCard
+          key={exhibition.id}
+          exhibition={exhibition}
+          onClick={onExhibitionClick}
+        />
+      ))}
+    </div>
+  );
+}
