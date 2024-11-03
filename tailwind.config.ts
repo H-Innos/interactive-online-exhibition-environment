@@ -2,59 +2,30 @@ import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
-    darkMode: ["class"],
-    content: ["./src/**/*.tsx"],
+  content: ["./src/**/*.tsx"],
   theme: {
-  	extend: {
-  		fontFamily: {
-  			sans: ['Rubik', ...fontFamily.sans]
-  		},
-  		colors: {
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				light: '#f8f4f4',
-  				dark: '#2C5696',
-  				dark_hover: '#5e8bdb',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			background_dark: '#f8f4f4',
-  			background: 'hsl(var(--background))',
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			text: {
-  				dark: '#17181a',
-  				light: '#FFFFFF'
-  			},
-  			'light-gray': '#5c5f66',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  	
-  		},
-  	
-  	}
+    extend: {
+      fontFamily: {
+        sans: ['Rubik', ...fontFamily.sans],
+      },
+      colors: {
+        primary: {
+          DEFAULT: "#fcfcfc", // Base primary color
+          light: "#f8f4f4", // Lighter shade of primary
+          dark: "#2C5696", // Darker shade of primary
+          dark_hover: "#5e8bdb", // Darker shade of primary hover (light blue)
+        },
+        background_dark: "#f8f4f4", // Background color
+        background: "#FFFFFF", // Background color
+        accent: "#2e353b", // Accent color
+        text: {
+          dark: "#17181a", // Default dark text
+          light: "#FFFFFF", // Light text
+        },
+        "light-gray": "#5c5f66", // Medium gray color
+      },
+    },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [],
 } satisfies Config;
+

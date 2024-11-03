@@ -44,7 +44,7 @@ const Header = () => {
       </header>
 
       <nav className="w-full bg-background text-text-dark overflow-hidden h-16 flex justify-center items-center space-x-32">
-        <Link href="/exhibitions">
+        <Link href="/">
           <span className="hover:text-primary-dark cursor-pointer text-text-dark text-lg hover:border-b-2 hover:border-[#2C5696]">
             All exhibitions
           </span>
