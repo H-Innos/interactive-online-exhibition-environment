@@ -8,7 +8,7 @@ import ExhibitionSection from "../_components/exhibition-section";
 import CreateExhibitionModal from "../_components/create-exhibition-modal";
 import MessageBanner from "../_components/message-banner";
 
-const ExhibitionsPage = () => {
+const ExhibitionPageContent = () => {
   const router = useRouter();
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
@@ -61,47 +61,53 @@ const ExhibitionsPage = () => {
   const currentPage = searchParams ? parseInt(searchParams.get("page") ?? "1", 10) : 1;
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
-        <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
-        <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
+    <>
+      <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
+      <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
 
-        <MessageBanner />
+      <MessageBanner />
 
-        {isCreateExhibitionModalOpen && (
-          <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
-        )}
+      {isCreateExhibitionModalOpen && (
+        <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
+      )}
 
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div>Error loading exhibitions.</div>
-        ) : (
-          <>
-            {currentPage === 1 && drafts.length > 0 && (
-              <ExhibitionSection
-                title="Drafts"
-                exhibitions={drafts.slice(0, visibleDrafts)}
-                onExhibitionClick={handleExhibitionClick}
-                viewAllPath="/dashboard/drafts"
-                maxVisibleItems={visibleDrafts}
-                showFadeEffect
-                onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
-                data-testid="drafts-section"
-              />
-            )}
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>Error loading exhibitions.</div>
+      ) : (
+        <>
+          {currentPage === 1 && drafts.length > 0 && (
             <ExhibitionSection
-              title="Published Exhibitions"
-              data-testid="published"
-              exhibitions={publishedExhibitions}
+              title="Drafts"
+              exhibitions={drafts.slice(0, visibleDrafts)}
               onExhibitionClick={handleExhibitionClick}
-              showPagination
+              viewAllPath="/dashboard/drafts"
+              maxVisibleItems={visibleDrafts}
+              showFadeEffect
+              onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
+              data-testid="drafts-section"
             />
-          </>
-        )}
-      </div>
-    </Suspense>
+          )}
+          <ExhibitionSection
+            title="Published Exhibitions"
+            data-testid="published"
+            exhibitions={publishedExhibitions}
+            onExhibitionClick={handleExhibitionClick}
+            showPagination
+          />
+        </>
+      )}
+    </>
   );
 };
+
+const ExhibitionsPage = () => (
+  <Suspense fallback={<div>Loading search parameters...</div>}>
+    <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
+      <ExhibitionPageContent />
+    </div>
+  </Suspense>
+);
 
 export default ExhibitionsPage;
