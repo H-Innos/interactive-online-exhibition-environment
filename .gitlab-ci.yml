@@ -6,7 +6,7 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 default:
-  image: node:22
+  image: cypress/browsers:node16.14.2-chrome100-ff99
 
 stages:
   - build
@@ -30,10 +30,12 @@ test:
     - pnpm install
     - pnpm dev &
     - npx wait-on http://localhost:3000
+    - Xvfb :99 -screen 0 1280x1024x24 &
+    - export DISPLAY=:99
     - pnpm cypress:run
   variables:
     CYPRESS_baseUrl: http://localhost:3000
-    
+
 deploy:
   stage: deploy
   only:
@@ -50,3 +52,4 @@ deploy:
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
+
