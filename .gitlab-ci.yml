@@ -13,12 +13,27 @@ stages:
   - test
   - deploy
 
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: local-db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+
 build:
   stage: build
   script:
-    - npm install -g pnpm
+    - npm install -g pnpm 
     - pnpm install
-    - pnpm build
+    - pnpm build 
   except:
     - main
   interruptible: true
@@ -29,11 +44,12 @@ test:
   services:
     - postgres:16-alpine
   script:
-    - npm install -g pnpm
+    - npm install -g pnpm 
     - pnpm install
-    - pnpm start &
+    - pnpm build
+    - pnpm start & 
     - npx wait-on http://localhost:3000
-    - pnpm exec cypress run --browser chrome
+    - pnpm exec cypress run --browser chrome 
     - pnpm exec cypress run --browser firefox
     - pnpm exec cypress run --browser edge
   variables:
@@ -42,7 +58,7 @@ test:
   only:
     - merge_requests
     - branches
-    
+
 deploy:
   stage: deploy
   only:
