@@ -31,9 +31,9 @@ volumes:
 build:
   stage: build
   script:
-    - npm install -g pnpm 
+    - npm install -g pnpm
     - pnpm install
-    - pnpm build 
+    - pnpm build
   except:
     - main
   interruptible: true
@@ -44,12 +44,12 @@ test:
   services:
     - postgres:16-alpine
   script:
-    - npm install -g pnpm 
+    - npm install -g pnpm
     - pnpm install
     - pnpm build
-    - pnpm start & 
+    - pnpm start &
     - npx wait-on http://localhost:3000
-    - pnpm exec cypress run --browser chrome 
+    - pnpm exec cypress run --browser chrome
     - pnpm exec cypress run --browser firefox
     - pnpm exec cypress run --browser edge
   variables:
