@@ -25,7 +25,6 @@ export const useUpdateExhibition = () => {
   });
 }
 
-
 export const usePublishExhibition = () => {
   const utils = api.useUtils();
   const { setSuccessMessage, setErrorMessage } = useMessage();

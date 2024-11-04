@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { UploaderPlugin } from '~/utils/plugins';
 
 import {
 	ClassicEditor,
@@ -57,20 +56,16 @@ import {
 	Undo
 } from 'ckeditor5';
 
-import type { Editor } from '@ckeditor/ckeditor5-core';
-import type { EventInfo } from '@ckeditor/ckeditor5-utils';
-
-
 import 'ckeditor5/ckeditor5.css';
-
+import { UploaderPlugin } from '~/lib/utils/plugins';
 
 interface ExhibitionContentEditorProps {
     initialContent: string,
-    onBlur: (event: EventInfo, editor: Editor) => void
+    saveData: (data: string) => Promise<void>
 }
 
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
-    initialContent, onBlur }) => { 
+    initialContent, saveData }) => { 
         const editorContainerRef = useRef(null);
 	    const editorRef = useRef(null);
 	    const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -91,7 +86,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                         <CKEditor
                             editor={ClassicEditor}
                             data={initialContent}
-                            onBlur={onBlur}
                             config={{
                                 extraPlugins: [UploaderPlugin],
                                 toolbar: {
@@ -233,10 +227,15 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                 },
                                 table: {
                                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+                                },
+                                autosave: {
+                                    save (editor) {
+                                        console.log('Saved changes:', editor.getData());
+                                        return saveData(editor.getData());
+                                    }
                                 }
                             }}
                         />
-                    
                         }</div>
                     </div>
                 </div>
