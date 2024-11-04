@@ -13,6 +13,7 @@ const ExhibitionsPage = () => {
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
   const [isCreateExhibitionModalOpen, setIsCreateExhibitionModalOpen] = useState(false);
+  const [visibleDrafts, setVisibleDrafts] = useState(getInitialVisibleDrafts());
 
   const { data, error, isLoading } = api.exhibition.getAll.useQuery();
 
@@ -23,84 +24,84 @@ const ExhibitionsPage = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const updateVisibleDrafts = () => {
+      if (window.innerWidth < 768) {
+        setVisibleDrafts(1);
+      } else if (window.innerWidth < 1200) {
+        setVisibleDrafts(2);
+      } else if (window.innerWidth < 1536) {
+        setVisibleDrafts(3);
+      } else {
+        setVisibleDrafts(4);
+      }
+    };
+
+    window.addEventListener("resize", updateVisibleDrafts);
+    updateVisibleDrafts();
+
+    return () => window.removeEventListener("resize", updateVisibleDrafts);
+  }, []);
+
+  function getInitialVisibleDrafts() {
+    if (typeof window !== "undefined") {
+      if (window.innerWidth < 768) return 1;
+      if (window.innerWidth < 1200) return 2;
+      if (window.innerWidth < 1536) return 3;
+      return 4;
+    }
+    return 4;
+  }
+
   const handleExhibitionClick = (id: number) => {
     router.push(`/dashboard/${id}`);
   };
 
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SearchParamsWrapper
-        drafts={drafts}
-        publishedExhibitions={publishedExhibitions}
-        isCreateExhibitionModalOpen={isCreateExhibitionModalOpen}
-        setIsCreateExhibitionModalOpen={setIsCreateExhibitionModalOpen}
-        handleExhibitionClick={handleExhibitionClick}
-        isLoading={isLoading}
-        error={error}
-      />
-    </Suspense>
-  );
-};
-
-const SearchParamsWrapper = ({
-  drafts,
-  publishedExhibitions,
-  isCreateExhibitionModalOpen,
-  setIsCreateExhibitionModalOpen,
-  handleExhibitionClick,
-  isLoading,
-  error,
-}: {
-  drafts: Exhibition[];
-  publishedExhibitions: Exhibition[];
-  isCreateExhibitionModalOpen: boolean;
-  setIsCreateExhibitionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleExhibitionClick: (id: number) => void;
-  isLoading: boolean;
-  error: unknown;
-}) => {
   const searchParams = useSearchParams();
   const currentPage = searchParams ? parseInt(searchParams.get("page") ?? "1", 10) : 1;
 
   return (
-    <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
-      <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
-      <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
+        <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
+        <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
 
-      <MessageBanner />
+        <MessageBanner />
 
-      {isCreateExhibitionModalOpen && (
-        <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
-      )}
+        {isCreateExhibitionModalOpen && (
+          <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
+        )}
 
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : error ? (
-        <div>Error loading exhibitions.</div>
-      ) : (
-        <>
-          {currentPage === 1 && drafts.length > 0 && (
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div>Error loading exhibitions.</div>
+        ) : (
+          <>
+            {currentPage === 1 && drafts.length > 0 && (
+              <ExhibitionSection
+                title="Drafts"
+                exhibitions={drafts.slice(0, visibleDrafts)}
+                onExhibitionClick={handleExhibitionClick}
+                viewAllPath="/dashboard/drafts"
+                maxVisibleItems={visibleDrafts}
+                showFadeEffect
+                onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
+                data-testid="drafts-section"
+              />
+            )}
             <ExhibitionSection
-              title="Drafts"
-              exhibitions={drafts.slice(0, 4)}
+              title="Published Exhibitions"
+              data-testid="published"
+              exhibitions={publishedExhibitions}
               onExhibitionClick={handleExhibitionClick}
-              viewAllPath="/dashboard/drafts"
-              maxVisibleItems={4}
-              showFadeEffect
-              onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
+              showPagination
             />
-          )}
-          <ExhibitionSection
-            title="Published Exhibitions"
-            exhibitions={publishedExhibitions}
-            onExhibitionClick={handleExhibitionClick}
-            showPagination
-          />
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </div>
+    </Suspense>
   );
 };
-
 
 export default ExhibitionsPage;

@@ -130,6 +130,7 @@ export default function ExhibitionCard({
             <button
               className="absolute right-1 top-1 p-2 text-gray-600 hover:text-gray-800"
               aria-label="Card options"
+              data-testid="card-options-button"
               onClick={(e) => e.stopPropagation()}
             >
               <Cog className="h-5 w-5" />
