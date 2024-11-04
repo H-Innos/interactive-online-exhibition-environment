@@ -9,12 +9,12 @@ import { Textarea } from "~/components/ui/textarea"
 import { Label } from "~/components/ui/label"
 import { PenSquare, Save, X } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Image from 'next/image'
 import { exhibitionFormSchema, type ExhibitionFormSchema } from '~/lib/types/schemas'
 import { configurations } from '~/constants/config'
 import { type Exhibition } from '../_types/exhibition'
 import { useUpdateExhibition } from '~/hooks/exhibition-actions'
 import { uploadImage } from '~/lib/utils/image-uploader'
+import ExhibitionThumbnail from '~/components/exhibition-thumbnail'
 
 interface ExhibitionDataFormProps {
   exhibition: Exhibition
@@ -122,14 +122,12 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
           <div className="space-y-2 mt-4">
             <Label htmlFor="thumbnail">Thumbnail</Label>
             <div className="flex flex-col items-center space-y-2">
-              <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200 align-bottom">
-              <Image
+              <ExhibitionThumbnail
                 src={thumbnailDataUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
                 alt="Thumbnail"
-                layout='fill'
-                objectFit='cover'
+                size={32}
               />
-            </div>
+
               {isEditing && (
                 <input
                   id="thumbnail"
