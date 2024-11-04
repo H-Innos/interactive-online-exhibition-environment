@@ -3,12 +3,10 @@
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { api } from "~/trpc/react";
-
-import type { Exhibition } from '~/app/_types/exhibition';
-import MessageBanner from '~/app/_components/message-banner';
 import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
 import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
 import { useUpdateExhibition } from '~/hooks/exhibition-actions';
+import type { Exhibition } from '~/app/_types/exhibition';
 
 const ExhibitionEditorPage = () => {
   const { id } = useParams();

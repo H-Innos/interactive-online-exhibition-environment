@@ -56,10 +56,6 @@ import {
 	Undo
 } from 'ckeditor5';
 
-import type { Editor } from '@ckeditor/ckeditor5-core';
-import type { EventInfo } from '@ckeditor/ckeditor5-utils';
-
-
 import 'ckeditor5/ckeditor5.css';
 import { UploaderPlugin } from '~/lib/utils/plugins';
 
