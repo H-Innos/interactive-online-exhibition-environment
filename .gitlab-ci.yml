@@ -23,6 +23,17 @@ build:
     - main
   interruptible: true
 
+test:
+  stage: test
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm dev &
+    - npx wait-on http://localhost:3000
+    - pnpm cypress:run
+  variables:
+    CYPRESS_baseUrl: http://localhost:3000
+    
 deploy:
   stage: deploy
   only:
