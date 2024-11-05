@@ -3,8 +3,8 @@
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { configurations } from "~/constants/config";
-import { api } from "~/trpc/react";
 import { uploadImage } from '~/lib/utils/image-uploader';
+import { useCreateExhibition } from "~/hooks/exhibition-actions";
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
@@ -17,21 +17,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const utils = api.useUtils();
-
-  const createExhibition = api.exhibition.create.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.invalidate();
-      onClose();
-    },
-    onError: (error: { message?: string }) => {
-      if (error.message === "An exhibition with this name already exists.") {
-        setErrorMessage("An exhibition with this name already exists. Please choose a different name.");
-      } else {
-        setErrorMessage(`Failed to create exhibition: ${error.message}`);
-      }
-    },
-  });
+  const createExhibition = useCreateExhibition();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,11 +33,13 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
       coverImageUrl = (await uploadImage(coverImage)) ?? configurations.DEFAULT_COVER_IMAGE_URL;
     }
 
-    createExhibition.mutate({
+    await createExhibition.mutateAsync({
       name,
       description,
       coverImageUrl,
     });
+
+    onClose();
   };
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

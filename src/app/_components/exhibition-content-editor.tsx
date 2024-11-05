@@ -64,8 +64,6 @@ interface ExhibitionContentEditorProps {
     saveData: (data: string) => Promise<void>
 }
 
-
-
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
     initialContent, saveData }) => { 
         const editorContainerRef = useRef(null);

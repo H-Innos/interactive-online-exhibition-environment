@@ -2,6 +2,18 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 
+export const useCreateExhibition = () => {
+  const utils = api.useUtils();
+  return api.exhibition.create.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.invalidate();
+    },
+    onError: (error: { message?: string }) => {
+      toast.error(`Failed to create exhibition: ${error.message}`); 
+    },
+  });
+} 
+
 export const useUpdateExhibition = () => {
   const utils = api.useUtils();
 
