@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
 import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
-import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
+import { usePublishExhibition, useAutosaveExhibition } from '~/hooks/exhibition-actions';
 import type { Exhibition } from '~/app/_types/exhibition';
 
 const ExhibitionEditorPage = () => {
@@ -20,13 +20,13 @@ const ExhibitionEditorPage = () => {
       setExhibition(exhibitionData);
     }
   }, [exhibitionData]);
-
-  const updateExhibition = useUpdateExhibition();
+;
   const publishExhibition = usePublishExhibition();
+  const autosaveExhibition = useAutosaveExhibition();
 
   function saveData(data: string): Promise<void> {
     if (!exhibition) return Promise.resolve();
-    return updateExhibition.mutateAsync({
+    return autosaveExhibition.mutateAsync({
       id: exhibition.id,
       name: exhibition.name ?? "",
       content: data
@@ -43,7 +43,7 @@ const ExhibitionEditorPage = () => {
       <div className="flex justify-between min-h-screen p-8">
         <div>
           <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
-          <p>Status: {updateExhibition.isPending ? "Saving..." : "Saved"}</p> 
+          <p>Status: {autosaveExhibition.isPending ? "Saving..." : "Saved"}</p> 
           { exhibition && 
           (
             <div className='max-w-5xl justify-center'> 
@@ -68,7 +68,7 @@ const ExhibitionEditorPage = () => {
               <button
                 type='button'
                 className="bg-lime-600 text-text-light mt-4 ml-4 px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none"
-                disabled={updateExhibition.isPending}
+                disabled={autosaveExhibition.isPending}
                 onClick={handlePublish}
               >
                 {publishExhibition.isPending ? "Publishing..." : "Publish"}

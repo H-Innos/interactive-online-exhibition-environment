@@ -6,7 +6,6 @@ import { api } from "~/trpc/react";
 import type { Exhibition } from "../_types/exhibition";
 import ExhibitionSection from "../_components/exhibition-section";
 import CreateExhibitionModal from "../_components/create-exhibition-modal";
-import MessageBanner from "../_components/message-banner";
 
 const ExhibitionPageContent = () => {
   const router = useRouter();
@@ -64,8 +63,6 @@ const ExhibitionPageContent = () => {
     <>
       <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
       <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
-
-      <MessageBanner />
 
       {isCreateExhibitionModalOpen && (
         <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />

@@ -36,7 +36,7 @@ export const exhibitionRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number(),
-        name: z.string().min(1),
+        name: z.string().min(1, { message: "Exhibition name is required." }),
         description: z.string().max(configurations.MAX_DESCRIPTION_LENGTH).optional(),
         coverImageUrl: z.string().optional(),
         content: z.string().optional(),

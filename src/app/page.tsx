@@ -4,7 +4,6 @@ import { configurations } from "~/constants/config";
 import PaginationControls from "../components/pagination-controls";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
-import MessageBanner from "./_components/message-banner";
 import { useRouter } from "next/navigation";
 import { ExhibitionList } from "./_components/exhibition-visitor-cards";
 import type { Exhibition } from "./_types/exhibition";
@@ -41,9 +40,7 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
   return (
     <div className="text-text-dark min-h-screen flex flex-col items-center justify-center py-12">
     <h1 className="text-4xl mb-28 text-accent">Explore Exhibitions</h1>
-    
-    <MessageBanner />
-    
+        
     {isLoading ? (
       <div>Loading...</div>
     ) : error ? (
