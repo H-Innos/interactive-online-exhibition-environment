@@ -62,7 +62,7 @@ const ExhibitionSection = ({
           New Exhibition
         </button>
       )}
-      <h1 className="text-2xl font-bold text-accent">{title}</h1>
+      <h1 className="text-2xl font-bold text-neutral">{title}</h1>
       
       <div className="relative">
         <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick}/>

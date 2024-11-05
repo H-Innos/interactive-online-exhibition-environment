@@ -61,7 +61,7 @@ const ExhibitionPageContent = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-2 text-neutral">Dashboard</h1>
       <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
 
       {isCreateExhibitionModalOpen && (
