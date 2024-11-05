@@ -46,9 +46,5 @@ yarn-error.log*
 .idea
 .vercel
 
-# Ignore pnpm and npm lock files
+# Ignore pnpm-lock.yaml
 pnpm-lock.yaml
-package-lock.json
-
-# Ignore Cypress videos
-cypress/videos/
