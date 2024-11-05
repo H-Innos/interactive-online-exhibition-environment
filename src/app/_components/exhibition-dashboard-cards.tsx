@@ -22,7 +22,6 @@ interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
 }
-
 export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
@@ -65,6 +64,7 @@ export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardPr
   return (
     <div className="mt-8">
       <div
+        data-testid="exhibition-card"
         className="relative flex h-48 w-full cursor-pointer overflow-hidden rounded-lg bg-background_dark p-4 md:w-[320px]"
         onClick={() => onClick(exhibition.id)}
       >
@@ -77,8 +77,8 @@ export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardPr
               objectFit="cover"
             />
           </div>
-          <div className="mt-2 flex flex-grow flex-col justify-between overflow-hidden pl-3">
-            <h2 className="text-dark truncate text-xl font-semibold">{exhibition.name}</h2>
+          <div className="flex flex-grow flex-col justify-start pl-3 pr-2">
+            <h2 className="text-dark truncate text-l font-semibold pt-4">{exhibition.name}</h2>
             <p className="mt-1 text-sm text-text-dark">
               {truncateDescription(exhibition.description ?? "", configurations.MAX_DESCRIPTION_LENGTH)}
             </p>
@@ -112,6 +112,7 @@ export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardPr
     </div>
   );
 }
+
 
 export function ExhibitionList({
   exhibitions,

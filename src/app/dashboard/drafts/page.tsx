@@ -33,7 +33,7 @@ const DraftsPage = () => {
       <div className="text-text-dark min-h-screen pl-32 pr-12 relative">
         <button
           onClick={handleBackToDashboard}
-          className="absolute text-4xl text-black rounded-md hover:text-gray-500 transition duration-300"
+          className="absolute text-4xl text-black rounded-md hover:text-gray-500 transition duration-300 mt-5"
           style={{ top: '-100px', left: '16px' }}
         >
           ❬
