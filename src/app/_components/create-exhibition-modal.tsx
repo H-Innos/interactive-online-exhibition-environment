@@ -149,7 +149,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
             </button>
             <button
               type="submit"
-              className="bg-accent text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
+              className="bg-primary text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
               disabled={createExhibition.isPending}
             >
               {createExhibition.isPending ? "Saving..." : "Create"}

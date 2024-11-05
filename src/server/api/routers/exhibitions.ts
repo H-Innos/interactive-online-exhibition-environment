@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { sql } from "drizzle-orm";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { exhibitions } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
@@ -15,14 +14,6 @@ export const exhibitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq }) => eq(exhibitions.name, input.name),
-      });
-
-      if (existingExhibition) {
-        throw new Error("An exhibition with this name already exists.");
-      }
-
       const newExhibition = await ctx.db.insert(exhibitions).values({
         name: input.name,
         description: input.description ?? "",
@@ -43,15 +34,6 @@ export const exhibitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq, and }) =>
-          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
-      });
-
-      if (existingExhibition) {
-        throw new Error("An exhibition with this name already exists.");
-      }
-
       await ctx.db
         .update(exhibitions)
         .set({
@@ -121,7 +103,7 @@ export const exhibitionRouter = createTRPCRouter({
       return publishedExhibition;
     }),
 
-    unpublish: publicProcedure
+  unpublish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const unpublishedExhibition = await ctx.db.query.exhibitions.findFirst({
@@ -137,20 +119,5 @@ export const exhibitionRouter = createTRPCRouter({
       }).where(eq(exhibitions.id, input.id));
 
       return { ...unpublishedExhibition, isPublished: false };
-    }),
-
-    checkTitleUnique: publicProcedure
-    .input(z
-      .object(
-        { id: z.number(),
-          name: z.string(),
-        }))
-    .query(async ({ ctx, input }) => {
-      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq, and }) =>
-          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
-      });
-
-      return existingExhibition !== null;
     }),
 });
