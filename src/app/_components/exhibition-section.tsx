@@ -33,8 +33,7 @@ const ExhibitionSection = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const page = parseInt(searchParams?.get("page") ?? "1", 10);
-    setCurrentPage(page);
+    setCurrentPage(parseInt(searchParams?.get("page") ?? "1", 10));
   }, [searchParams]);
 
   const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
@@ -42,15 +41,8 @@ const ExhibitionSection = ({
   const indexOfFirstExhibition = indexOfLastExhibition - configurations.EXHIBITIONS_PER_PAGE;
   const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
 
-  const handlePageChange = (newPage: number) => {
-    router.push(`?page=${newPage}`);
-  };
 
-  const handleViewAll = () => {
-    if (viewAllPath) {
-      router.push(viewAllPath);
-    }
-  };
+  const handleViewAll = () => viewAllPath && router.push(viewAllPath);
 
   return (
     <div className="mb-10">
@@ -63,9 +55,8 @@ const ExhibitionSection = ({
         </button>
       )}
       <h1 className="text-2xl font-bold text-accent">{title}</h1>
-      
       <div className="relative">
-        <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick}/>
+        <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick} />
         {showFadeEffect && currentExhibitions.length === maxVisibleItems && (
           <div className="absolute top-0 right-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
         )}
@@ -77,9 +68,7 @@ const ExhibitionSection = ({
           </div>
         )}
       </div>
-      {showPagination && (
-        <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-      )}
+      {showPagination && <PaginationControls currentPage={currentPage} totalPages={totalPages} />}
     </div>
   );
 };

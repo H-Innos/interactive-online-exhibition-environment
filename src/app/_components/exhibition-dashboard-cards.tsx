@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { Cog } from "lucide-react";
+import { Settings } from "lucide-react";
 import { configurations } from "~/constants/config";
 import {
   useDeleteExhibition,
@@ -13,32 +13,17 @@ import {
 } from "~/hooks/exhibition-actions";
 import { type Exhibition } from "~/app/_types/exhibition";
 
-const DropdownMenu = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
-);
-const DropdownMenuTrigger = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then(
-    (mod) => mod.DropdownMenuTrigger,
-  ),
-);
-const DropdownMenuContent = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then(
-    (mod) => mod.DropdownMenuContent,
-  ),
-);
-const DropdownMenuItem = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem),
-);
+const DropdownMenu = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu));
+const DropdownMenuTrigger = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger));
+const DropdownMenuContent = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuContent));
+const DropdownMenuItem = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem));
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
 }
 
-export default function ExhibitionCard({
-  exhibition,
-  onClick,
-}: ExhibitionCardProps) {
+export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -48,49 +33,34 @@ export default function ExhibitionCard({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id) {
-      router.push(`/dashboard/${exhibition.id}`);
-      setIsMenuOpen(false);
-    }
+    router.push(`/dashboard/${exhibition.id}`);
+    setIsMenuOpen(false);
   };
 
   const handleChangePublishedState = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id) {
-      if (exhibition.isPublished) {
-        if (
-          window.confirm(
-            "Are you sure you want to move this exhibition back to drafts?",
-          )
-        ) {
-          unpublishExhibition.mutate({ id: exhibition.id });
-        }
-      } else {
-        if (
-          window.confirm("Are you sure you want to publish this exhibition?")
-        ) {
-          publishExhibition.mutate({ id: exhibition.id });
-        }
+    if (exhibition.isPublished) {
+      if (window.confirm("Are you sure you want to move this exhibition back to drafts?")) {
+        unpublishExhibition.mutate({ id: exhibition.id });
       }
-      setIsMenuOpen(false);
+    } else {
+      if (window.confirm("Are you sure you want to publish this exhibition?")) {
+        publishExhibition.mutate({ id: exhibition.id });
+      }
     }
+    setIsMenuOpen(false);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (
-      exhibition.id &&
-      window.confirm("Are you sure you want to delete this exhibition?")
-    ) {
+    if (window.confirm("Are you sure you want to delete this exhibition?")) {
       deleteExhibition.mutate({ id: exhibition.id });
       setIsMenuOpen(false);
     }
   };
 
-  const truncateDescription = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + "...";
-  };
+  const truncateDescription = (text: string, maxLength: number) =>
+    text.length <= maxLength ? text : `${text.slice(0, maxLength)}...`;
 
   return (
     <div className="mt-8">
@@ -101,27 +71,17 @@ export default function ExhibitionCard({
         <div className="flex w-full">
           <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">
             <Image
-              src={
-                exhibition.coverImageUrl ??
-                configurations.DEFAULT_COVER_IMAGE_URL
-              }
+              src={exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
               alt={exhibition.name ?? "Exhibition"}
               layout="fill"
               objectFit="cover"
             />
           </div>
           <div className="mt-2 flex flex-grow flex-col justify-between overflow-hidden pl-3">
-            <div>
-              <h2 className="text-dark truncate text-xl font-semibold">
-                {exhibition.name}
-              </h2>
-              <p className="mt-1 text-sm text-text-dark">
-                {truncateDescription(
-                  exhibition.description ?? "",
-                  configurations.MAX_DESCRIPTION_LENGTH,
-                )}
-              </p>
-            </div>
+            <h2 className="text-dark truncate text-xl font-semibold">{exhibition.name}</h2>
+            <p className="mt-1 text-sm text-text-dark">
+              {truncateDescription(exhibition.description ?? "", configurations.MAX_DESCRIPTION_LENGTH)}
+            </p>
           </div>
         </div>
 
@@ -133,26 +93,17 @@ export default function ExhibitionCard({
               data-testid="card-options-button"
               onClick={(e) => e.stopPropagation()}
             >
-              <Cog className="h-5 w-5" />
+              <Settings className="h-5 w-5" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36 bg-white">
-            <DropdownMenuItem
-              onClick={handleEdit}
-              className="hover:font-semibold"
-            >
+            <DropdownMenuItem onClick={handleEdit} className="hover:font-semibold">
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleChangePublishedState}
-              className="hover:font-semibold"
-            >
+            <DropdownMenuItem onClick={handleChangePublishedState} className="hover:font-semibold">
               {exhibition.isPublished ? "Unpublish" : "Publish"}
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className="text-red-600 hover:font-semibold hover:text-red-600"
-            >
+            <DropdownMenuItem onClick={handleDelete} className="text-red-600 hover:font-semibold">
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
