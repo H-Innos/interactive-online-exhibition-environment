@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export const useUpdateExhibition = () => {
   const utils = api.useUtils();
