@@ -16,7 +16,7 @@ interface ExhibitionListProps {
 
 const ExhibitionList: React.FC<ExhibitionListProps> = ({ exhibitions, onExhibitionClick }: ExhibitionListProps) => {
   return (
-    <div className="grid grid-cols-1 l:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-20">
+    <div className="grid grid-cols-1 gap-20 lg:grid-cols-2 2xl:grid-cols-3">
       {exhibitions.map((exhibition) => (
         <ExhibitionCard
           key={exhibition.id}
@@ -70,7 +70,5 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({ exhibition, onClick }) 
     </div>
   );
 };
-
-
 
 export { ExhibitionList, ExhibitionCard };

@@ -7,8 +7,8 @@ const useResponsiveVisibleDrafts = () => {
 
   useEffect(() => {
     const updateVisibleDrafts = () => {
-      if (window.innerWidth < 768) setVisibleDrafts(1);
-      else if (window.innerWidth < 1200) setVisibleDrafts(2);
+      if (window.innerWidth < 1024) setVisibleDrafts(1);
+      else if (window.innerWidth < 1280) setVisibleDrafts(2);
       else if (window.innerWidth < 1536) setVisibleDrafts(3);
       else setVisibleDrafts(4);
     };
@@ -21,8 +21,8 @@ const useResponsiveVisibleDrafts = () => {
 
   function getInitialVisibleDrafts() {
     if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) return 1;
-      if (window.innerWidth < 1200) return 2;
+      if (window.innerWidth < 1024) return 1;
+      if (window.innerWidth < 1280) return 2;
       if (window.innerWidth < 1536) return 3;
       return 4;
     }
@@ -33,3 +33,4 @@ const useResponsiveVisibleDrafts = () => {
 };
 
 export default useResponsiveVisibleDrafts;
+

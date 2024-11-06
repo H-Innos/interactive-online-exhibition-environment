@@ -122,7 +122,7 @@ export function ExhibitionList({
   onExhibitionClick: (id: number) => void;
 }) {
   return (
-    <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
+    <div className="lg:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
       {exhibitions.map((exhibition) => (
         <ExhibitionCard
           key={exhibition.id}
