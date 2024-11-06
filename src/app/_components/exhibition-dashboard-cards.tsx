@@ -54,38 +54,37 @@ export default function ExhibitionCard({
     }
   };
 
-  const handleChangePublishedState = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (exhibition.id) {
-      if (exhibition.isPublished) {
-        if (
-          window.confirm(
-            "Are you sure you want to move this exhibition back to drafts?",
-          )
-        ) {
-          unpublishExhibition.mutate({ id: exhibition.id });
-        }
-      } else {
-        if (
-          window.confirm("Are you sure you want to publish this exhibition?")
-        ) {
-          publishExhibition.mutate({ id: exhibition.id });
-        }
-      }
-      setIsMenuOpen(false);
-    }
-  };
+
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (
-      exhibition.id &&
-      window.confirm("Are you sure you want to delete this exhibition?")
-    ) {
+    if (exhibition.id && !exhibition.isPublished &&
+        window.confirm("Are you sure you want to delete this exhibition?")) {
       deleteExhibition.mutate({ id: exhibition.id });
       setIsMenuOpen(false);
     }
   };
+const handleChangePublishedState = (e: React.MouseEvent) => {
+  e.stopPropagation();
+  if (exhibition.id) {
+    if (exhibition.isPublished) {
+      if (
+        window.confirm(
+          "Are you sure you want to move this exhibition back to drafts?"
+        )
+      ) {
+        unpublishExhibition.mutate({ id: exhibition.id });
+      }
+    } else {
+      if (window.confirm("Are you sure you want to publish this exhibition?")) {
+        publishExhibition.mutate({ id: exhibition.id });
+      }
+    }
+    setIsMenuOpen(false);
+  }
+};
+
+
 
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
@@ -137,9 +136,10 @@ export default function ExhibitionCard({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36 bg-white">
-            <DropdownMenuItem
-              onClick={handleEdit}
-              className="hover:font-semibold"
+            <DropdownMenuItem 
+              onClick={handleEdit} 
+              className={`hover:font-semibold ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={exhibition.isPublished}
             >
               Edit
             </DropdownMenuItem>
@@ -151,7 +151,8 @@ export default function ExhibitionCard({
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleDelete}
-              className="text-red-600 hover:font-semibold hover:text-red-600"
+              className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={exhibition.isPublished}
             >
               Delete
             </DropdownMenuItem>
