@@ -217,12 +217,10 @@ export function ExhibitionList({
   exhibitions,
   onExhibitionClick,
   isArchivePage = false,
-  onArchive,
 }: {
   exhibitions: Exhibition[];
   onExhibitionClick: (id: number) => void;
   isArchivePage?: boolean;
-  onArchive?: (id: number) => void;
 }) {
   return (
     <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
@@ -232,7 +230,6 @@ export function ExhibitionList({
           exhibition={exhibition}
           onClick={onExhibitionClick}
           isArchivePage={isArchivePage}
-          onArchive={onArchive}
         />
       ))}
     </div>

@@ -10,7 +10,6 @@ interface PaginationControlsProps {
 const PaginationControls: React.FC<PaginationControlsProps> = ({
   currentPage,
   totalPages,
-  onPageChange,
 }) => {
   
   return (
