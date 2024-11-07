@@ -51,7 +51,7 @@ export default function ExhibitionCard({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id) {
+    if (exhibition.id && !exhibition.isPublished) {
       router.push(`/dashboard/${exhibition.id}`);
       setIsMenuOpen(false);
     }
@@ -59,7 +59,7 @@ export default function ExhibitionCard({
 
   const handleArchive = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to archive this exhibition?")) {
+    if (!exhibition.isPublished && window.confirm("Are you sure you want to archive this exhibition?")) {
       archiveExhibition.mutate({ id: exhibition.id });
     }
   };
@@ -177,7 +177,7 @@ export default function ExhibitionCard({
               <>
                 <DropdownMenuItem
                   onClick={handleEdit}
-                  className="hover:font-semibold"
+                  className={`hover:font-semibold ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={exhibition.isPublished}
                 >
                   Edit
@@ -190,19 +190,18 @@ export default function ExhibitionCard({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleArchive}
-                  className="hover:font-semibold"
+                  className={`hover:font-semibold ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={exhibition.isPublished}
                 >
                   Archive
                 </DropdownMenuItem>
-                {!exhibition.isPublished && (
-                  <DropdownMenuItem
-                    onClick={handleDelete}
-                    className="hover:font-semibold text-red-500"
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  className={`hover:font-semibold text-red-500 ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={exhibition.isPublished}
+                >
+                  Delete
+                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
