@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import type { Exhibition } from "../_types/exhibition";
+import type { Exhibition } from "../../lib/types/exhibition";
 import Image from "next/image";
 import { configurations } from "~/lib/constants/config";
 

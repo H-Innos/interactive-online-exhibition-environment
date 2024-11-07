@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
 import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
 import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
-import type { Exhibition } from '~/app/_types/exhibition';
+import type { Exhibition } from '~/lib/types/exhibition';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import type { Editor, EventInfo } from 'ckeditor5';
 

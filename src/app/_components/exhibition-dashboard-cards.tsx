@@ -11,7 +11,7 @@ import {
   usePublishExhibition,
   useUnpublishExhibition,
 } from "~/hooks/exhibition-actions";
-import { type Exhibition } from "~/app/_types/exhibition";
+import { type Exhibition } from "~/lib/types/exhibition";
 
 const DropdownMenu = dynamic(() =>
   import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),

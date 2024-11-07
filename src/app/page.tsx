@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
 import { ExhibitionList } from "./_components/exhibition-visitor-cards";
-import type { Exhibition } from "./_types/exhibition";
+import type { Exhibition } from "../lib/types/exhibition";
 
 interface MainPageProps {
   searchParams: Record<string, string | string[] | undefined>;

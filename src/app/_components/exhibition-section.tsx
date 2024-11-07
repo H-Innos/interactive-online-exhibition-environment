@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
-import type { Exhibition } from "../_types/exhibition";
+import type { Exhibition } from "../../lib/types/exhibition";
 import PaginationControls from "../../components/pagination-controls";
 import { configurations } from "~/lib/constants/config";
 
