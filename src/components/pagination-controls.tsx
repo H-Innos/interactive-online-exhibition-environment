@@ -4,12 +4,14 @@ import React from 'react';
 interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
-const PaginationControls: React.FC<PaginationControlsProps> = ({ currentPage, totalPages }) => {
-  if (totalPages <= 1) {
-    return null;
-  }
+const PaginationControls: React.FC<PaginationControlsProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
   
   return (
     <div className="flex justify-center items-center mt-8 space-x-4">

@@ -13,14 +13,13 @@ const ExhibitionPageContent = () => {
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
   const [isCreateExhibitionModalOpen, setIsCreateExhibitionModalOpen] = useState(false);
-  const [visibleDrafts, setVisibleDrafts] = useState(getInitialVisibleDrafts());
-
+  const [visibleDrafts, setVisibleDrafts] = useState(getInitialVisibleDrafts())
   const { data, error, isLoading } = api.exhibition.getAll.useQuery();
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished));
-      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished));
+      setDrafts(data.filter((exhibition) => !exhibition.isPublished && !exhibition.isArchived));
+      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished && !exhibition.isArchived));
     }
   }, [data]);
 

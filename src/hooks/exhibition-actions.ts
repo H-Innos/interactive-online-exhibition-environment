@@ -71,3 +71,23 @@ export const useDeleteExhibition = () => {
     },
   });
 }
+
+export const useArchiveExhibition = () => {
+  const utils = api.useContext();
+  return api.exhibition.archiveExhibition.useMutation({
+    onSuccess: () => {
+      utils.exhibition.getAll.invalidate();
+      utils.exhibition.getArchived.invalidate();
+    },
+  });
+};
+
+export const useUnarchiveExhibition = () => {
+  const utils = api.useContext();
+  return api.exhibition.unarchiveExhibition.useMutation({
+    onSuccess: () => {
+      utils.exhibition.getAll.invalidate();
+      utils.exhibition.getArchived.invalidate();
+    },
+  });
+};

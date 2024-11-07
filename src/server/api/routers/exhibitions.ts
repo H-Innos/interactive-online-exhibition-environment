@@ -153,4 +153,60 @@ export const exhibitionRouter = createTRPCRouter({
 
       return existingExhibition !== null;
     }),
+
+    unarchiveExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+    const exhibition = await ctx.db.query.exhibitions.findFirst({
+      where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+    });
+
+    if (!exhibition) {
+      throw new Error('Exhibition not found');
+    }
+
+    if (!exhibition.isArchived) {
+      throw new Error('Exhibition is not archived');
+    }
+
+    const updatedExhibition = await ctx.db
+      .update(exhibitions)
+      .set({ isArchived: false })
+      .where(eq(exhibitions.id, input.id))
+      .returning();
+
+    return updatedExhibition[0];
+  }),
+
+
+    getArchived: publicProcedure.query(async ({ ctx }) => {
+      const archivedExhibitions = await ctx.db.query.exhibitions.findMany({
+        where: (exhibitions, { eq }) => eq(exhibitions.isArchived, true),
+      });
+      return archivedExhibitions;
+    }),
+
+  archiveExhibition: publicProcedure
+  .input(z.object({ id: z.number() }))
+  .mutation(async ({ ctx, input }) => {
+    const exhibition = await ctx.db.query.exhibitions.findFirst({
+      where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+    });
+
+    if (!exhibition) {
+      throw new Error('Exhibition not found');
+    }
+
+    if (exhibition.isPublished) {
+      throw new Error('Cannot archive a published exhibition');
+    }
+
+    const updatedExhibition = await ctx.db
+      .update(exhibitions)
+      .set({ isArchived: true })
+      .where(eq(exhibitions.id, input.id))
+      .returning();
+
+    return updatedExhibition[0];
+  }),
 });

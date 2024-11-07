@@ -1,4 +1,4 @@
-"use client";
+
 
 import React, { useState } from "react";
 import Image from "next/image";
@@ -10,34 +10,35 @@ import {
   useDeleteExhibition,
   usePublishExhibition,
   useUnpublishExhibition,
+  useArchiveExhibition,
+  useUnarchiveExhibition,
 } from "~/hooks/exhibition-actions";
+
 import { type Exhibition } from "~/app/_types/exhibition";
 
 const DropdownMenu = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
+  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu)
 );
 const DropdownMenuTrigger = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then(
-    (mod) => mod.DropdownMenuTrigger,
-  ),
+  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger)
 );
 const DropdownMenuContent = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then(
-    (mod) => mod.DropdownMenuContent,
-  ),
+  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuContent)
 );
 const DropdownMenuItem = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem),
+  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem)
 );
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
+  isArchivePage?: boolean;
 }
 
 export default function ExhibitionCard({
   exhibition,
   onClick,
+  isArchivePage = false,
 }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
@@ -45,6 +46,8 @@ export default function ExhibitionCard({
   const deleteExhibition = useDeleteExhibition();
   const publishExhibition = usePublishExhibition();
   const unpublishExhibition = useUnpublishExhibition();
+  const archiveExhibition = useArchiveExhibition();
+  const unarchiveExhibition = useUnarchiveExhibition();
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -54,37 +57,56 @@ export default function ExhibitionCard({
     }
   };
 
+  const handleArchive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to archive this exhibition?")) {
+      archiveExhibition.mutate({ id: exhibition.id });
+    }
+  };
 
+  const handleUnarchive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to unarchive this exhibition?")) {
+      unarchiveExhibition.mutate({ id: exhibition.id });
+    }
+  };
+
+  const handleView = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClick(exhibition.id);
+  };
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id && !exhibition.isPublished &&
-        window.confirm("Are you sure you want to delete this exhibition?")) {
+    if (
+      exhibition.id &&
+      !exhibition.isPublished &&
+      window.confirm("Are you sure you want to delete this exhibition?")
+    ) {
       deleteExhibition.mutate({ id: exhibition.id });
       setIsMenuOpen(false);
     }
   };
-const handleChangePublishedState = (e: React.MouseEvent) => {
-  e.stopPropagation();
-  if (exhibition.id) {
-    if (exhibition.isPublished) {
-      if (
-        window.confirm(
-          "Are you sure you want to move this exhibition back to drafts?"
-        )
-      ) {
-        unpublishExhibition.mutate({ id: exhibition.id });
+
+  const handleChangePublishedState = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (exhibition.id) {
+      if (exhibition.isPublished) {
+        if (
+          window.confirm(
+            "Are you sure you want to move this exhibition back to drafts?"
+          )
+        ) {
+          unpublishExhibition.mutate({ id: exhibition.id });
+        }
+      } else {
+        if (window.confirm("Are you sure you want to publish this exhibition?")) {
+          publishExhibition.mutate({ id: exhibition.id });
+        }
       }
-    } else {
-      if (window.confirm("Are you sure you want to publish this exhibition?")) {
-        publishExhibition.mutate({ id: exhibition.id });
-      }
+      setIsMenuOpen(false);
     }
-    setIsMenuOpen(false);
-  }
-};
-
-
+  };
 
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
@@ -117,7 +139,7 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
               <p className="mt-1 text-sm text-text-dark">
                 {truncateDescription(
                   exhibition.description ?? "",
-                  configurations.MAX_DESCRIPTION_LENGTH,
+                  configurations.MAX_DESCRIPTION_LENGTH
                 )}
               </p>
             </div>
@@ -136,26 +158,53 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36 bg-white">
-            <DropdownMenuItem 
-              onClick={handleEdit} 
-              className={`hover:font-semibold ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={exhibition.isPublished}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleChangePublishedState}
-              className="hover:font-semibold"
-            >
-              {exhibition.isPublished ? "Unpublish" : "Publish"}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={exhibition.isPublished}
-            >
-              Delete
-            </DropdownMenuItem>
+            {isArchivePage ? (
+              <>
+                <DropdownMenuItem
+                  onClick={handleUnarchive}
+                  className="hover:font-semibold"
+                >
+                  Unarchive
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleView}
+                  className="hover:font-semibold"
+                >
+                  View
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem
+                  onClick={handleEdit}
+                  className="hover:font-semibold"
+                  disabled={exhibition.isPublished}
+                >
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleChangePublishedState}
+                  className="hover:font-semibold"
+                >
+                  {exhibition.isPublished ? "Move to Drafts" : "Publish"}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleArchive}
+                  className="hover:font-semibold"
+                  disabled={exhibition.isPublished}
+                >
+                  Archive
+                </DropdownMenuItem>
+                {!exhibition.isPublished && (
+                  <DropdownMenuItem
+                    onClick={handleDelete}
+                    className="hover:font-semibold text-red-500"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                )}
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -166,9 +215,11 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
 export function ExhibitionList({
   exhibitions,
   onExhibitionClick,
+  isArchivePage = false,
 }: {
   exhibitions: Exhibition[];
   onExhibitionClick: (id: number) => void;
+  isArchivePage?: boolean;
 }) {
   return (
     <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
@@ -177,6 +228,7 @@ export function ExhibitionList({
           key={exhibition.id}
           exhibition={exhibition}
           onClick={onExhibitionClick}
+          isArchivePage={isArchivePage}
         />
       ))}
     </div>
