@@ -46,8 +46,8 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
     const file = e.target.files?.[0];
 
     if (file) {
-      if (file.size > configurations.FILE_MAX_SIZE) {
-        setErrorMessage("The file size exceeds the maximum allowed size of 5MB.");
+      if (file.size > configurations.MAX_FILE_SIZE_BYTES) {
+        setErrorMessage(`The file size exceeds the maximum allowed size of ${configurations.MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB.`);
         return;
       }
       const reader = new FileReader();
