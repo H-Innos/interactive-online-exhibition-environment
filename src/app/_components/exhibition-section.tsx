@@ -79,7 +79,6 @@ const ExhibitionSection = ({
           exhibitions={currentExhibitions} 
           onExhibitionClick={onExhibitionClick}
           isArchivePage={showArchiveOption}
-          onArchive={showArchiveOption ? handleArchive : undefined}
         />
         {showFadeEffect && currentExhibitions.length === maxVisibleItems && (
           <div className="absolute top-0 right-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
