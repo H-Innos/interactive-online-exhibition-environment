@@ -29,19 +29,6 @@ export const useUpdateExhibition = () => {
   });
 }
 
-export const useAutosaveExhibition = () => {
-  const utils = api.useUtils();
-
-  return api.exhibition.update.useMutation({
-    onSuccess: async () => {
-      await utils.exhibition.invalidate();
-    },
-    onError: (error) => {
-      toast.error(`Failed to save exhibition content: ${error.message}`);
-    },
-  });
-}
-
 export const usePublishExhibition = () => {
   const utils = api.useUtils();
   const router = useRouter();
@@ -85,3 +72,19 @@ export const useDeleteExhibition = () => {
     },
   });
 }
+
+// delete if we have decided to not add autosaving back
+/* 
+export const useAutosaveExhibition = () => {
+  const utils = api.useUtils();
+
+  return api.exhibition.update.useMutation({
+    onSuccess: async () => {
+      await utils.exhibition.invalidate();
+    },
+    onError: (error) => {
+      toast.error(`Failed to save exhibition content: ${error.message}`);
+    },
+  });
+}
+*/

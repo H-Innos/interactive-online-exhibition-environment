@@ -232,7 +232,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                 table: {
                                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
                                 },
-                                /* can be uncommented, when we decide to use autosave
+                                /* delete if we have decided not to add autosaving back
                                 autosave: {
                                     save (editor) {
                                         console.log('Saved changes:', editor.getData());

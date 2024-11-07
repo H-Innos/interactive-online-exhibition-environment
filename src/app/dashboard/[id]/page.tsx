@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
 import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
-import { usePublishExhibition, useAutosaveExhibition } from '~/hooks/exhibition-actions';
+import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
 import type { Exhibition } from '~/app/_types/exhibition';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import type { Editor, EventInfo } from 'ckeditor5';
@@ -28,8 +28,11 @@ const ExhibitionEditorPage = () => {
   }, [exhibitionData]);
 ;
   const publishExhibition = usePublishExhibition();
-  const autosaveExhibition = useAutosaveExhibition();
+  const updateExhibition = useUpdateExhibition();
 
+// delete if we have decided to not add autosaving back
+/* 
+  const autosaveExhibition = useAutosaveExhibition();
   function saveData(data: string): Promise<void> {
     if (!exhibition) return Promise.resolve();
     return autosaveExhibition.mutateAsync({
@@ -38,6 +41,7 @@ const ExhibitionEditorPage = () => {
       content: data
     });
   }
+*/
 
   function handlePublish() {
     if (!exhibition || !window.confirm("Are you sure you want to publish this exhibition?")) return;
@@ -63,7 +67,7 @@ const ExhibitionEditorPage = () => {
     <div className="flex justify-between min-h-screen p-8">
       <div>
         <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
-        <p>Status: {autosaveExhibition.isPending ? "Saving..." : "Saved"}</p> 
+        <p>Status: {updateExhibition.isPending ? "Saving..." : "Saved"}</p> 
         { exhibition && 
         (
           <div className='max-w-5xl justify-center'> 
@@ -89,6 +93,7 @@ const ExhibitionEditorPage = () => {
             <button
               type="button"
               className="bg-gray-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-gray-600"
+              disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handleSaveEditorChanges}
             >
             Save changes
@@ -96,7 +101,7 @@ const ExhibitionEditorPage = () => {
             <button
               type='button'
               className="bg-lime-600 text-text-light mt-4 px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none"
-              disabled={autosaveExhibition.isPending}
+              disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handlePublish}
             >
               {publishExhibition.isPending ? "Publishing..." : "Publish"}
