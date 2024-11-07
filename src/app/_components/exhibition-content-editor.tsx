@@ -58,6 +58,7 @@ import {
 
 import 'ckeditor5/ckeditor5.css';
 import { UploaderPlugin } from '~/lib/utils/plugins';
+import Quiz from '~/lib/utils/quiz/quiz';
 
 interface ExhibitionContentEditorProps {
     initialContent: string,
@@ -173,7 +174,8 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                     TableProperties,
                                     TableToolbar,
                                     Underline,
-                                    Undo
+                                    Undo,
+                                    Quiz
                                 ],
                                 fontFamily: {
                                     supportAllValues: true
