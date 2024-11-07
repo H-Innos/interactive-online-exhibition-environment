@@ -1,6 +1,6 @@
 "use client";
 
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 import PaginationControls from "../components/pagination-controls";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";

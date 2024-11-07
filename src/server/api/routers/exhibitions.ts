@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { exhibitions } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure

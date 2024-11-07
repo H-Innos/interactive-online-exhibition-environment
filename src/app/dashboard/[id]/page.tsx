@@ -74,7 +74,6 @@ const ExhibitionEditorPage = () => {
             <ExhibitionContentEditor
               initialContent={exhibition.content ?? ""} 
               onChange={handleEditorChange}
-              saveData={saveData}
             />    
             
           </div>  

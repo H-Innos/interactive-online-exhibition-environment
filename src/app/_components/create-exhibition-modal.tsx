@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import React, { useRef, useState } from "react";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 

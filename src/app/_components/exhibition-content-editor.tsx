@@ -64,7 +64,6 @@ import { UploaderPlugin } from '~/lib/utils/plugins';
 interface ExhibitionContentEditorProps {
     initialContent: string,
     onChange: (event: EventInfo<string, unknown>, editor: Editor) => void,
-    saveData: (data: string) => Promise<void>
 }
 
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({

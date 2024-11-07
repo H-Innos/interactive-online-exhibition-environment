@@ -5,7 +5,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Cog } from "lucide-react";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 import {
   useDeleteExhibition,
   usePublishExhibition,

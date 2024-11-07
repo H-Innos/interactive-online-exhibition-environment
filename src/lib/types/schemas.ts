@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 
 const thumbnailSchema = z
   .instanceof(File)

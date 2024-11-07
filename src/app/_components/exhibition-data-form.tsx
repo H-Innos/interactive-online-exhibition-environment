@@ -10,7 +10,7 @@ import { Label } from "~/components/ui/label"
 import { PenSquare, Save, X } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { exhibitionFormSchema, type ExhibitionFormSchema } from '~/lib/types/schemas'
-import { configurations } from '~/constants/config'
+import { configurations } from '~/lib/constants/config'
 import { type Exhibition } from '../_types/exhibition'
 import { useUpdateExhibition } from '~/hooks/exhibition-actions'
 import { uploadImage } from '~/lib/utils/image-uploader'
