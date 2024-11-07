@@ -6,7 +6,6 @@ import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
 import type { Exhibition } from "../_types/exhibition";
 import PaginationControls from "../../components/pagination-controls";
 import { configurations } from "~/constants/config";
-import { useArchiveExhibition } from '~/hooks/exhibition-actions';
 
 interface ExhibitionSectionProps {
   title: string;
@@ -34,7 +33,6 @@ const ExhibitionSection = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const archiveExhibition = useArchiveExhibition();
 
   useEffect(() => {
     const page = parseInt(searchParams?.get("page") ?? "1", 10);
@@ -56,11 +54,7 @@ const ExhibitionSection = ({
     }
   };
 
-  const handleArchive = (id: number) => {
-    if (window.confirm("Are you sure you want to archive this exhibition?")) {
-      archiveExhibition.mutate({ id });
-    }
-  };
+
 
   return (
     <div className="mb-10">

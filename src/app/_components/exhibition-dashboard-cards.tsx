@@ -40,7 +40,6 @@ export default function ExhibitionCard({
   exhibition,
   onClick,
   isArchivePage = false,
-  onArchive,
 }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
