@@ -53,7 +53,9 @@ import {
 	TableProperties,
 	TableToolbar,
 	Underline,
-	Undo
+	Undo,
+    type Editor,
+    type EventInfo
 } from 'ckeditor5';
 
 import 'ckeditor5/ckeditor5.css';
@@ -61,11 +63,12 @@ import { UploaderPlugin } from '~/lib/utils/plugins';
 
 interface ExhibitionContentEditorProps {
     initialContent: string,
+    onChange: (event: EventInfo<string, unknown>, editor: Editor) => void,
     saveData: (data: string) => Promise<void>
 }
 
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
-    initialContent, saveData }) => { 
+    initialContent, onChange }) => {  
         const editorContainerRef = useRef(null);
 	    const editorRef = useRef(null);
 	    const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -86,6 +89,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                         <CKEditor
                             editor={ClassicEditor}
                             data={initialContent}
+                            onChange={onChange}
                             config={{
                                 extraPlugins: [UploaderPlugin],
                                 toolbar: {
@@ -228,12 +232,14 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                 table: {
                                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
                                 },
+                                /* can be uncommented, when we decide to use autosave
                                 autosave: {
                                     save (editor) {
                                         console.log('Saved changes:', editor.getData());
                                         return saveData(editor.getData());
                                     }
                                 }
+                                    */
                             }}
                         />
                         }</div>
