@@ -18,8 +18,8 @@ const ExhibitionPageContent = () => {
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished && !exhibition.isArchived));
-      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished && !exhibition.isArchived));
+      setDrafts(data.filter((exhibition) => !exhibition.isPublished && exhibition.isArchived === false));
+      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished && exhibition.isArchived === false));
     }
   }, [data]);
 

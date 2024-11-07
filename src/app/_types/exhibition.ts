@@ -5,7 +5,7 @@ export interface Exhibition {
     coverImageUrl: string | null;
     content: string | null;
     isPublished: boolean;
-    isArchived: boolean; 
+    isArchived: boolean | null; 
     createdAt: Date | string;
     updatedAt: Date | null;
   }

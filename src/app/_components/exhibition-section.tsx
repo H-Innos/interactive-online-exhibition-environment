@@ -78,6 +78,7 @@ const ExhibitionSection = ({
         <ExhibitionList 
           exhibitions={currentExhibitions} 
           onExhibitionClick={onExhibitionClick}
+          isArchivePage={showArchiveOption}
           onArchive={showArchiveOption ? handleArchive : undefined}
         />
         {showFadeEffect && currentExhibitions.length === maxVisibleItems && (

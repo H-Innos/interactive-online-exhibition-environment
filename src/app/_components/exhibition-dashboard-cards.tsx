@@ -33,12 +33,14 @@ interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
   isArchivePage?: boolean;
+  onArchive?: (id: number) => void;
 }
 
 export default function ExhibitionCard({
   exhibition,
   onClick,
   isArchivePage = false,
+  onArchive,
 }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
@@ -59,14 +61,14 @@ export default function ExhibitionCard({
 
   const handleArchive = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!exhibition.isPublished && window.confirm("Are you sure you want to archive this exhibition?")) {
+    if (!exhibition.isPublished && exhibition.isArchived !== null && !exhibition.isArchived && window.confirm("Are you sure you want to archive this exhibition?")) {
       archiveExhibition.mutate({ id: exhibition.id });
     }
   };
 
   const handleUnarchive = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to unarchive this exhibition?")) {
+    if (exhibition.isArchived && window.confirm("Are you sure you want to unarchive this exhibition?")) {
       unarchiveExhibition.mutate({ id: exhibition.id });
     }
   };
@@ -215,10 +217,12 @@ export function ExhibitionList({
   exhibitions,
   onExhibitionClick,
   isArchivePage = false,
+  onArchive,
 }: {
   exhibitions: Exhibition[];
   onExhibitionClick: (id: number) => void;
   isArchivePage?: boolean;
+  onArchive?: (id: number) => void;
 }) {
   return (
     <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
@@ -228,6 +232,7 @@ export function ExhibitionList({
           exhibition={exhibition}
           onClick={onExhibitionClick}
           isArchivePage={isArchivePage}
+          onArchive={onArchive}
         />
       ))}
     </div>
