@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
@@ -9,7 +10,7 @@ export const useCreateExhibition = () => {
       await utils.exhibition.invalidate();
     },
     onError: (error: { message?: string }) => {
-      toast.error(`Failed to create exhibition: ${error.message}`); 
+      toast.error(`Failed to create exhibition: ${error.message}`);
     },
   });
 } 
