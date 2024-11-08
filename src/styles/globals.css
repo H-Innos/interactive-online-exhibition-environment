@@ -31,6 +31,9 @@
   margin-bottom: 0.4em;
 } 
 
+.ck.ck-block-toolbar-button {
+  transform: translateX(2px);
+}
 
 @layer components {
 ::file-selector-button, ::-webkit-file-upload-button  {
