@@ -17,3 +17,19 @@ export const exhibitionFormSchema = z.object({
 });
   
 export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>; 
+
+const answerSchema = z.object({
+  text: z.string().min(1, { message: "Answer text is required." }),
+  isCorrect: z.boolean(),
+})
+
+const questionSchema = z.object({
+  text: z.string().min(1, { message: "Question text is required." }),
+  imageUrl: z.string().nullable(),
+  answers: z.array(answerSchema).min(2, { message: "At least two answers are required." }),
+})
+
+export const quizSchema = z.object({
+    title: z.string().min(1, { message: "Quiz title is required." }),
+    questions: z.array(questionSchema).min(1, { message: "At least one question is required." }),
+})
