@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import React, { useEffect, useState } from "react";
-import type { Exhibition } from "~/app/_types/exhibition";
+import type { Exhibition } from "~/lib/types/exhibition";
 
 import 'ckeditor5/ckeditor5.css';
 

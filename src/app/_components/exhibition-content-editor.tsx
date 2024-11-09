@@ -65,7 +65,6 @@ import { UploaderPlugin } from '~/lib/utils/plugins';
 interface ExhibitionContentEditorProps {
     initialContent: string,
     onChange: (event: EventInfo<string, unknown>, editor: Editor) => void,
-    saveData: (data: string) => Promise<void>
 }
 
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
@@ -250,7 +249,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                 table: {
                                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
                                 },
-                                /* can be uncommented, when we decide to use autosave
+                                /* delete if we have decided not to add autosaving back
                                 autosave: {
                                     save (editor) {
                                         console.log('Saved changes:', editor.getData());

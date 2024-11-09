@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
-import type { Exhibition } from "../_types/exhibition";
+import type { Exhibition } from "../../lib/types/exhibition";
 import PaginationControls from "../../components/pagination-controls";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 
 interface ExhibitionSectionProps {
   title: string;
@@ -62,7 +62,7 @@ const ExhibitionSection = ({
           New Exhibition
         </button>
       )}
-      <h1 className="text-2xl font-bold text-accent">{title}</h1>
+      <h1 className="text-2xl font-bold text-neutral">{title}</h1>
       
       <div className="relative">
         <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick}/>
