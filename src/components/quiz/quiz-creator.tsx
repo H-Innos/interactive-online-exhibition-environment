@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import { Question, QuestionCreator } from "./question-creator"
+import { type Question, QuestionCreator } from "./question-creator"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { useCreateQuiz } from "~/hooks/quiz-actions"
@@ -48,13 +48,13 @@ export default function QuizCreator() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (questions.every((q) => q.answers.some((a) => a.isCorrect))) {
       console.log("Quiz created:", questions)
       for (const question of questions) {
         if (!question.image) continue;
-        uploadImage(question.image);
+        question.image = await uploadImage(question.image);
       }
       createQuiz.mutate({
         title: "New Quiz",
@@ -67,7 +67,6 @@ export default function QuizCreator() {
           })),
         }))
       })
-      // Here you would typically send the data to your backend or state management system
     } else {
       alert("Please ensure each question has at least one correct answer.")
     }

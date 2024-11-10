@@ -1,10 +1,9 @@
-import { PlusCircle, X, Image as ImageIcon, Trash2 } from "lucide-react"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card"
+import { PlusCircle, X, Image as ImageIcon } from "lucide-react"
+import { Card, CardContent, CardTitle } from "../ui/card"
 import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Checkbox } from "../ui/checkbox"
-import { useCreateQuiz } from "~/hooks/quiz-actions"
 
 export type Answer = {
   text: string
@@ -60,17 +59,19 @@ export function QuestionCreator({
   }
 
   const updateAnswer = (index: number, text: string) => {
-    if (question.answers.length === 0) return;
-    if (index < 0 || index >= question.answers.length) return;
     const newAnswers = [...question.answers];
-    newAnswers[index].text = text
-    onUpdate({ ...question, answers: newAnswers })
+    if (newAnswers[index]) {
+      newAnswers[index].text = text;
+      onUpdate({ ...question, answers: newAnswers });
+  }
   }
 
   const toggleCorrect = (index: number) => {
     const newAnswers = [...question.answers];
-    newAnswers[index].isCorrect = !newAnswers[index].isCorrect;
-    onUpdate({ ...question, answers: newAnswers });
+    if (newAnswers[index]) {
+      newAnswers[index].isCorrect = !newAnswers[index].isCorrect;
+      onUpdate({ ...question, answers: newAnswers });
+    }
   }
 
   return (
