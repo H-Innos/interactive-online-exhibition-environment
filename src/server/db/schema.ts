@@ -7,7 +7,6 @@ import {
   text,
   uniqueIndex,
   boolean,
-  jsonb,
   integer,
 } from "drizzle-orm/pg-core";
 
@@ -41,6 +40,9 @@ export const quizzes = createTable(
   {
     id: serial("id").primaryKey(),
     title: varchar("name", { length: 256 }).notNull(),
+    exhibitionId: integer("exhibition_id")
+      .notNull()
+      .references(() => exhibitions.id),
   },
 );
 
@@ -53,7 +55,6 @@ export const questions = createTable(
       .references(() => quizzes.id),
     text: varchar("text", { length: 256 }).notNull(),
     imageUrl: varchar("image", { length: 512 }).default(""),
-    answers: jsonb("answers").notNull(),
   },
 );
 

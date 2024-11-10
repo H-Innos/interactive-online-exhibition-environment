@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
@@ -9,9 +9,12 @@ import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-ac
 import type { Exhibition } from '~/lib/types/exhibition';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import type { Editor, EventInfo } from 'ckeditor5';
+import { Button } from '~/components/ui/button';
+import { Plus } from 'lucide-react';
+import useExhibitionIdFromParams from '~/hooks/useExhibitionIdFromParams';
 
 const ExhibitionEditorPage = () => {
-  const { id } = useParams();
+  const id = useExhibitionIdFromParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [ editorContent, setEditorContent ] = useState<string>();
   const [ isDirty, setIsDirty ] = useState(false);
@@ -107,6 +110,12 @@ const ExhibitionEditorPage = () => {
             </button>
           </div>
           <ExhibitionDataForm exhibition={exhibition} />
+          <Button
+            onClick={() => router.push(`/dashboard/${id}/quizzes`)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Create Quiz
+          </Button>
         </aside>
     )}
     </div>

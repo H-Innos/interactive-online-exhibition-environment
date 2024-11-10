@@ -4,20 +4,10 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Checkbox } from "../ui/checkbox"
+import QuestionImage from "../question-image"
+import { type Question } from "~/lib/types/schemas"
 
-export type Answer = {
-  text: string
-  isCorrect: boolean
-}
-
-export type Question = {
-  id: string
-  text: string
-  image: string | null
-  answers: Answer[]
-}
-
-interface QuestionCreatorProps {
+type QuestionCreatorProps = {
   question: Question
   onUpdate: (updatedQuestion: Question) => void
   onDelete: () => void
@@ -34,7 +24,7 @@ export function QuestionCreator({
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        onUpdate({ ...question, image: reader.result as string })
+        onUpdate({ ...question, imageUrl: reader.result as string })
       }
       reader.readAsDataURL(file)
     }
@@ -44,7 +34,7 @@ export function QuestionCreator({
     if (question.answers.length < 4) {
       onUpdate({
         ...question,
-        answers: [...question.answers, { text: "", isCorrect: false }],
+        answers: [...question.answers, {id: Date.now(), text: "", isCorrect: false }],
       })
     }
   }
@@ -75,7 +65,8 @@ export function QuestionCreator({
   }
 
   return (
-    <Card className="mb-6">     
+    <Card className="mb-6">
+      
       <div className="flex items-center justify-end">
         <Button
           type="button"
@@ -120,15 +111,11 @@ export function QuestionCreator({
                 <ImageIcon className="mr-2 h-4 w-4" />
                 Upload Image
               </Button>
-              {question.image && <span className="text-sm text-muted-foreground">Image uploaded</span>}
+              {question.imageUrl && <span className="text-sm text-muted-foreground">Image uploaded</span>}
             </div>
           </div>
 
-          {question.image && (
-            <div className="mt-2">
-              <img src={question.image} alt="Question" className="max-w-full h-auto rounded-md" />
-            </div>
-          )}
+          {question.imageUrl && <QuestionImage src={question.imageUrl} />}
 
           <div className="space-y-4">
             <Label>Answers</Label>

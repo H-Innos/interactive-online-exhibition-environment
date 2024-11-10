@@ -8,8 +8,17 @@ export const quizRouter = createTRPCRouter({
       quizSchema
     )
     .mutation(async ({ ctx, input }) => {
+      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.exhibitionId),
+      });
+
+      if (!existingExhibition) {
+        throw new Error(`No exhibition found with ID ${input.exhibitionId}`);
+      }
+
       const newQuiz = await ctx.db.insert(quizzes).values({
           title: input.title,
+          exhibitionId: input.exhibitionId,
       }).returning();
 
       if (!newQuiz[0]) {
@@ -22,7 +31,6 @@ export const quizRouter = createTRPCRouter({
           quizId: quizId,
           text: question.text,
           imageUrl: question.imageUrl,
-          answers: question.answers,
         }).returning();
         
         if (!newQuestion[0]) {
