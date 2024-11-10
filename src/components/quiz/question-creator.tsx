@@ -75,8 +75,7 @@ export function QuestionCreator({
   }
 
   return (
-    <Card className="mb-6">
-      
+    <Card className="mb-6">     
       <div className="flex items-center justify-end">
         <Button
           type="button"
