@@ -50,22 +50,26 @@ const Header = () => {
 
       <nav className={`w-full bg-background text-text-dark overflow-hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4 sm:flex justify-center items-center space-x-0 sm:space-x-32`}>
         <Link href="/">
-          <span className="hover:text-primary-dark cursor-pointer text-text-dark text-lg hover:border-b-2 hover:border-[#2C5696] block sm:inline-block">
+          <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
             All exhibitions
+            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
           </span>
         </Link>
         <Link href="/dashboard">
-          <span className="hover:text-primary-dark cursor-pointer text-text-dark text-lg hover:border-b-2 hover:border-[#2C5696] block sm:inline-block">
+          <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
             Dashboard
+            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
           </span>
         </Link>
         <Link href="/archive">
-          <span className="hover:text-primary-dark cursor-pointer text-text-dark text-lg hover:border-b-2 hover:border-[#2C5696] block sm:inline-block">
+          <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
             Archive
+            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
           </span>
         </Link>
-    
       </nav>
+
+
     </>
   );
 };
