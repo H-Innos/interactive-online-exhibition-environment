@@ -30,20 +30,21 @@ const DraftsPage = () => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="text-text-dark min-h-screen pl-32 pr-12 relative">
-        <button
-          onClick={handleBackToDashboard}
-          className="absolute text-4xl text-black rounded-md hover:text-gray-500 transition duration-300"
-          style={{ top: '-100px', left: '16px' }}
-        >
-          ❬
-        </button>
-        <h1 className="text-3xl font-bold mb-4 text-accent mt-12">Drafts</h1>
+      <div className="text-text-dark min-h-screen px-4 sm:px-12 relative">
+        <div className="flex items-center mt-12">
+          <button
+            onClick={handleBackToDashboard}
+            className="text-4xl text-black rounded-md hover:text-gray-500 transition duration-300 mr-4 mb-10"
+          >
+            ❬
+          </button>
+          <h1 className="text-3xl font-bold text-dark mb-10">Drafts</h1>
+        </div>
         {isCreateExhibitionModalOpen && (
           <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
         )}
         <ExhibitionSection
-          title="Drafts"
+          title=""
           exhibitions={drafts}
           onExhibitionClick={handleExhibitionClick}
           showPagination

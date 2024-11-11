@@ -33,8 +33,7 @@ const ExhibitionSection = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const page = parseInt(searchParams?.get("page") ?? "1", 10);
-    setCurrentPage(page);
+    setCurrentPage(parseInt(searchParams?.get("page") ?? "1", 10));
   }, [searchParams]);
 
   const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
@@ -42,15 +41,7 @@ const ExhibitionSection = ({
   const indexOfFirstExhibition = indexOfLastExhibition - configurations.EXHIBITIONS_PER_PAGE;
   const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
 
-  const handlePageChange = (newPage: number) => {
-    router.push(`?page=${newPage}`);
-  };
-
-  const handleViewAll = () => {
-    if (viewAllPath) {
-      router.push(viewAllPath);
-    }
-  };
+  const handleViewAll = () => viewAllPath && router.push(viewAllPath);
 
   return (
     <div className="mb-10">
@@ -63,25 +54,26 @@ const ExhibitionSection = ({
         </button>
       )}
       <h1 className="text-2xl font-bold text-neutral">{title}</h1>
-      
+
       <div className="relative">
-        <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick}/>
+        <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick} />
         {showFadeEffect && currentExhibitions.length === maxVisibleItems && (
-          <div className="absolute top-0 right-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+          <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
         )}
+
+
         {viewAllPath && (
-          <div className="absolute top-1/2 right-8 transform -translate-y-1/2">
-            <button onClick={handleViewAll} className="text-black px-4 py-2 flex items-center group" data-testid="view-all-button">
-              <span className="ml-2 text-4xl">〉</span>
+          <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
+            <button onClick={handleViewAll} className="text-black flex items-center group" data-testid="view-all-button">
+              <span className="text-4xl"> 〉</span>
             </button>
           </div>
         )}
       </div>
-      {showPagination && (
-        <PaginationControls currentPage={currentPage} totalPages={totalPages} />
-      )}
+      {showPagination && <PaginationControls currentPage={currentPage} totalPages={totalPages} />}
     </div>
   );
 };
 
 export default ExhibitionSection;
+

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { Cog } from "lucide-react";
+import { Settings } from "lucide-react";
 import { configurations } from "~/lib/constants/config";
 import {
   useDeleteExhibition,
@@ -13,32 +13,16 @@ import {
 } from "~/hooks/exhibition-actions";
 import { type Exhibition } from "~/lib/types/exhibition";
 
-const DropdownMenu = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
-);
-const DropdownMenuTrigger = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then(
-    (mod) => mod.DropdownMenuTrigger,
-  ),
-);
-const DropdownMenuContent = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then(
-    (mod) => mod.DropdownMenuContent,
-  ),
-);
-const DropdownMenuItem = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem),
-);
+const DropdownMenu = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu));
+const DropdownMenuTrigger = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger));
+const DropdownMenuContent = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuContent));
+const DropdownMenuItem = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem));
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
 }
-
-export default function ExhibitionCard({
-  exhibition,
-  onClick,
-}: ExhibitionCardProps) {
+export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -48,10 +32,8 @@ export default function ExhibitionCard({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id) {
-      router.push(`/dashboard/${exhibition.id}`);
-      setIsMenuOpen(false);
-    }
+    router.push(`/dashboard/${exhibition.id}`);
+    setIsMenuOpen(false);
   };
 
 
@@ -86,41 +68,30 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
 
 
 
-  const truncateDescription = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + "...";
-  };
+  const truncateDescription = (text: string, maxLength: number) =>
+    text.length <= maxLength ? text : `${text.slice(0, maxLength)}...`;
 
   return (
     <div className="mt-8">
       <div
+        data-testid="exhibition-card"
         className="relative flex h-48 w-full cursor-pointer overflow-hidden rounded-lg bg-background_dark p-4 md:w-[320px]"
         onClick={() => onClick(exhibition.id)}
       >
         <div className="flex w-full">
           <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">
             <Image
-              src={
-                exhibition.coverImageUrl ??
-                configurations.DEFAULT_COVER_IMAGE_URL
-              }
+              src={exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
               alt={exhibition.name ?? "Exhibition"}
               layout="fill"
               objectFit="cover"
             />
           </div>
-          <div className="mt-2 flex flex-grow flex-col justify-between overflow-hidden pl-3">
-            <div>
-              <h2 className="text-dark truncate text-xl font-semibold">
-                {exhibition.name}
-              </h2>
-              <p className="mt-1 text-sm text-text-dark">
-                {truncateDescription(
-                  exhibition.description ?? "",
-                  configurations.MAX_DESCRIPTION_LENGTH,
-                )}
-              </p>
-            </div>
+          <div className="flex flex-grow flex-col justify-start pl-3 pr-2">
+            <h2 className="text-dark truncate text-l font-semibold pt-4">{exhibition.name}</h2>
+            <p className="mt-1 text-sm text-text-dark">
+              {truncateDescription(exhibition.description ?? "", configurations.MAX_DESCRIPTION_LENGTH)}
+            </p>
           </div>
         </div>
 
@@ -132,7 +103,7 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
               data-testid="card-options-button"
               onClick={(e) => e.stopPropagation()}
             >
-              <Cog className="h-5 w-5" />
+              <Settings className="h-5 w-5" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36 bg-white">
@@ -143,10 +114,7 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleChangePublishedState}
-              className="hover:font-semibold"
-            >
+            <DropdownMenuItem onClick={handleChangePublishedState} className="hover:font-semibold">
               {exhibition.isPublished ? "Unpublish" : "Publish"}
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -163,6 +131,7 @@ const handleChangePublishedState = (e: React.MouseEvent) => {
   );
 }
 
+
 export function ExhibitionList({
   exhibitions,
   onExhibitionClick,
@@ -171,7 +140,7 @@ export function ExhibitionList({
   onExhibitionClick: (id: number) => void;
 }) {
   return (
-    <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
+    <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
       {exhibitions.map((exhibition) => (
         <ExhibitionCard
           key={exhibition.id}
@@ -180,5 +149,6 @@ export function ExhibitionList({
         />
       ))}
     </div>
+
   );
 }
