@@ -17,9 +17,10 @@ type QuestionCardProps = {
   question: Question;
   isSubmitted: boolean;
   onSubmit: () => void;
+  onUnsubmit: () => void;
 };
 
-export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isSubmitted, onSubmit }) => {
+export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, onUnsubmit, isSubmitted }) => {
   const [selectedAnswers, setSelectedAnswers] = React.useState<Answer[]>([]);
   const [result, setResult] = React.useState<QuestionResult>(QuestionResult.INCORRECT);
 
@@ -40,6 +41,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isSubmitte
   }, [selectedAnswers, correctAnswers, incorrectAnswers]);
 
   function onAnswerToggle(selectedAnswer: Answer) {
+    onUnsubmit();
     setSelectedAnswers(prev => 
       prev.includes(selectedAnswer)
         ? prev.filter(answer => selectedAnswer !== answer)
@@ -79,7 +81,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, isSubmitte
             type="button"
             variant="ghost"
             size="icon"
-            onClick={onSubmit}
+            onClick={() => {onSubmit()}}
           >
             <Check className="h-4 w-4" /> Check Answer
           </Button>

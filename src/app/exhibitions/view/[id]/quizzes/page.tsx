@@ -1,11 +1,13 @@
+"use client";
+
 import React from 'react'
 import { QuizCard } from '~/components/quiz/quiz';
 import useExhibitionIdFromParams from '~/hooks/useExhibitionIdFromParams';
 import { api } from '~/trpc/react';
 
-export const QuizzesView = () => {
+const QuizzesView = () => {
   const id = useExhibitionIdFromParams();
-  const { data: quizzes, error: error, isLoading } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: Number(id) });
+  const { data: quizzes, error, isLoading } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: Number(id) });
 
   if (error) {
     return <div>Error loading quizzes.</div>;
@@ -15,7 +17,7 @@ export const QuizzesView = () => {
     return <div>Loading...</div>;
   }
 
-  if (!quizzes) {
+  if (!quizzes || quizzes.length === 0) {
     return <div>There are currently no quizzes.</div>;
   }
 
@@ -31,4 +33,6 @@ export const QuizzesView = () => {
       ))}
     </div>
   )
-}
+};
+
+export default QuizzesView;

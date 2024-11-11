@@ -29,6 +29,17 @@ export const QuizCard: React.FC<Quiz> = ({ title, questions }) => {
     )
   };
 
+  function handleUnsubmit() {
+    setQuestionsState(
+      questionsState.map((q, index) => {
+        if (index === currentQuestionIndex) {
+          return { ...q, isSubmitted: false };
+        }
+        return q;
+      })
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -39,6 +50,7 @@ export const QuizCard: React.FC<Quiz> = ({ title, questions }) => {
           question={currentQuestionState!.question}
           isSubmitted={currentQuestionState!.isSubmitted}
           onSubmit={handleSubmit}
+          onUnsubmit={handleUnsubmit}
         /> 
       </CardContent>
       <CardFooter className="flex justify-between p-6">

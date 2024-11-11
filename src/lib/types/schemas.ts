@@ -21,7 +21,7 @@ export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>;
 export const answerSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Answer text can't be empty." }),
-  questionId: z.number(),
+  questionId: z.number().optional(),
   isCorrect: z.boolean(),
 });
 
@@ -31,7 +31,7 @@ export const questionSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Question text is required." }),
   imageUrl: z.string().nullable(),
-  quizId: z.number(),
+  quizId: z.number().optional(),
   answers: z.array(answerSchema).min(2, { message: "At least two answers are required." }),
 });
 

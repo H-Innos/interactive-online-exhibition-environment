@@ -12,28 +12,39 @@ import { Input } from "../ui/input"
 import { type Question } from "~/lib/types/schemas"
 import useExhibitionIdFromParams from "~/hooks/useExhibitionIdFromParams"
 
-const emptyQuestion: Question = {
-  id: Date.now(),
-  text: "",
-  imageUrl: null,
-  answers: [
-    {id: Date.now(), text: "", isCorrect: false },
-    {id: Date.now()+1, text: "", isCorrect: false },
-  ],
+
+function generateId() {
+  return Date.now();
+}
+
+function generateEmptyQuestion(exhibitionId: number) {
+  const questionId = generateId();
+  return {
+    id: questionId,
+    text: "",
+    imageUrl: null,
+    answers: [
+      {id: generateId(), text: "", isCorrect: false, questionId: questionId },
+      {id: generateId(), text: "", isCorrect: false, questionId: questionId },
+    ],
+    quizId: exhibitionId,
+  }
 }
 
 export default function QuizCreator() {
-  const [title, setTitle ] = useState<string>("");
-  const [questions, setQuestions] = useState<Question[]>([
-    emptyQuestion,
-  ])
   const router = useRouter();
   const exhibitionId = useExhibitionIdFromParams();
-
   const createQuiz = useCreateQuiz();
 
+  const [title, setTitle ] = useState<string>("");
+  const [questions, setQuestions] = useState<Question[]>([
+    generateEmptyQuestion(exhibitionId),
+  ]);
+
+  
+
   const addQuestion = () => {
-    const newQuestion: Question = emptyQuestion;
+    const newQuestion: Question = generateEmptyQuestion(exhibitionId);
     setQuestions([...questions, newQuestion])
   }
 
@@ -58,7 +69,7 @@ export default function QuizCreator() {
         question.imageUrl = await uploadImage(question.imageUrl);
       }
       createQuiz.mutate({
-        title: "New Quiz",
+        title: title,
         exhibitionId: Number(exhibitionId),
         questions: questions.map((q) => ({
           text: q.text,
