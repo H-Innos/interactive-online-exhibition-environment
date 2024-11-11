@@ -9,50 +9,56 @@ export const quizRouter = createTRPCRouter({
       quizSchema
     )
     .mutation(async ({ ctx, input }) => {
-      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq }) => eq(exhibitions.id, input.exhibitionId),
-      });
-
-      if (!existingExhibition) {
-        throw new Error(`No exhibition found with ID ${input.exhibitionId}`);
-      }
-
-      const newQuiz = await ctx.db.insert(quizzes).values({
-          title: input.title,
-          exhibitionId: input.exhibitionId,
-      }).returning();
-
-      if (!newQuiz[0]) {
-        throw new Error("Failed to create quiz.");
-      }
-      const quizId = newQuiz[0].id;
-
-      for (const question of input.questions) {
-        const newQuestion = await ctx.db.insert(questions).values({
-          quizId: quizId,
-          text: question.text,
-          imageUrl: question.imageUrl,
-        }).returning();
-        
-        if (!newQuestion[0]) {
-          throw new Error("Failed to create question.");
+      await ctx.db.transaction(async (tx) => {
+        const existingExhibition = await tx.query.exhibitions.findFirst({
+          where: (exhibitions, { eq }) => eq(exhibitions.id, input.exhibitionId),
+        });
+  
+        if (!existingExhibition) {
+          tx.rollback();
+          throw new Error(`No exhibition found with ID ${input.exhibitionId}`);
         }
-        
-        const questionId = newQuestion[0].id;
-
-        for (const answer of question.answers) {
-          const newAnswer = await ctx.db.insert(answers).values({
-            questionId: questionId,
-            text: answer.text,
-            isCorrect: answer.isCorrect,
+  
+        const newQuiz = await tx.insert(quizzes).values({
+            title: input.title,
+            exhibitionId: input.exhibitionId,
+        }).returning();
+  
+        if (!newQuiz[0]) {
+          tx.rollback();
+          throw new Error("Failed to create quiz.");
+        }
+        const quizId = newQuiz[0].id;
+  
+        for (const question of input.questions) {
+          const newQuestion = await tx.insert(questions).values({
+            quizId: quizId,
+            text: question.text,
+            imageUrl: question.imageUrl,
           }).returning();
-
-          if (!newAnswer[0]) {
-            throw new Error("Failed to create answer.");
+          
+          if (!newQuestion[0]) {
+            tx.rollback();
+            throw new Error("Failed to create question.");
+          }
+          
+          const questionId = newQuestion[0].id;
+  
+          for (const answer of question.answers) {
+            const newAnswer = await tx.insert(answers).values({
+              questionId: questionId,
+              text: answer.text,
+              isCorrect: answer.isCorrect,
+            }).returning();
+  
+            if (!newAnswer[0]) {
+              tx.rollback();
+              throw new Error("Failed to create answer.");
+            }
           }
         }
-      }
-      return newQuiz;
+        return newQuiz;
+      });
     }),
     
   getAllByExhibitionId: publicProcedure
