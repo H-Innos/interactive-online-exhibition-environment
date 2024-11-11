@@ -30,7 +30,7 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
   }, [data]);
   
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/view/${id}`);
+    router.push(`/${id}`);
   };
   
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;

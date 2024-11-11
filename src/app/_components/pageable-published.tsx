@@ -7,27 +7,18 @@ import type { Exhibition } from "../../lib/types/exhibition";
 import PaginationControls from "../../components/pagination-controls";
 import { configurations } from "~/lib/constants/config";
 
-interface ExhibitionSectionProps {
+interface PublishedExhibitionsProps {
   title: string;
   exhibitions: Exhibition[];
   onExhibitionClick: (id: number) => void;
-  showPagination?: boolean;
   viewAllPath?: string;
-  maxVisibleItems?: number;
-  showFadeEffect?: boolean;
-  onCreateExhibition?: () => void;
 }
 
-const ExhibitionSection = ({
+const PublishedExhibitions = ({
   title,
   exhibitions,
   onExhibitionClick,
-  showPagination = false,
-  viewAllPath,
-  maxVisibleItems,
-  showFadeEffect = false,
-  onCreateExhibition,
-}: ExhibitionSectionProps) => {
+}: PublishedExhibitionsProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,39 +32,16 @@ const ExhibitionSection = ({
   const indexOfFirstExhibition = indexOfLastExhibition - configurations.EXHIBITIONS_PER_PAGE;
   const currentExhibitions = exhibitions.slice(indexOfFirstExhibition, indexOfLastExhibition);
 
-  const handleViewAll = () => viewAllPath && router.push(viewAllPath);
-
   return (
     <div className="mb-10">
-      {onCreateExhibition && (
-        <button
-          onClick={onCreateExhibition}
-          className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
-        >
-          New Exhibition
-        </button>
-      )}
       <h1 className="text-2xl font-bold text-neutral">{title}</h1>
 
       <div className="relative">
         <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick} />
-        {showFadeEffect && currentExhibitions.length === maxVisibleItems && (
-          <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
-        )}
-
-
-        {viewAllPath && (
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
-            <button onClick={handleViewAll} className="text-black flex items-center group" data-testid="view-all-button">
-              <span className="text-4xl"> 〉</span>
-            </button>
-          </div>
-        )}
       </div>
-      {showPagination && <PaginationControls currentPage={currentPage} totalPages={totalPages} />}
+      <PaginationControls currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 };
 
-export default ExhibitionSection;
-
+export default PublishedExhibitions;

@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import type { Exhibition } from "../../../../lib/types/exhibition";
-import ExhibitionSection from "../../../_components/exhibition-section";
+import DraftExhibitions from "../../../_components/shortened-drafts";
 import CreateExhibitionModal from "../../../_components/create-exhibition-modal";
 
 const DraftsPage = () => {
@@ -43,14 +43,15 @@ const DraftsPage = () => {
         {isCreateExhibitionModalOpen && (
           <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
         )}
-        <ExhibitionSection
-          title=""
-          exhibitions={drafts}
+        <DraftExhibitions
+          title="Drafts"
+          drafts={drafts}
           onExhibitionClick={handleExhibitionClick}
-          showPagination
-          onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
-        />
+          onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)} 
+          maxVisibleItems={10000000}        
+          />
       </div>
+      
     </Suspense>
   );
 };

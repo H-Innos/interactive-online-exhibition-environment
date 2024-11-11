@@ -4,7 +4,8 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import type { Exhibition } from "../../../lib/types/exhibition";
-import ExhibitionSection from "../../_components/exhibition-section";
+import DraftExhibitions from "../../_components/shortened-drafts";
+import PublishedExhibitions from "../../_components/pageable-published";
 import CreateExhibitionModal from "../../_components/create-exhibition-modal";
 import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
 
@@ -25,7 +26,7 @@ const ExhibitionPageContent = () => {
   }, [data]);
 
   const handleExhibitionClick = (id: number) => {
-    router.push(`/dashboard/${id}`);
+    router.push(`/admin/dashboard/${id}`);
   };
 
   const searchParams = useSearchParams();
@@ -35,13 +36,6 @@ const ExhibitionPageContent = () => {
     <>
       <h1 className="text-3xl font-bold mb-2 text-neutral">Dashboard</h1>
       <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
-
-      <button
-        onClick={() => setIsCreateExhibitionModalOpen(true)}
-        className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
-      >
-        New Exhibition
-      </button>
 
       {isCreateExhibitionModalOpen && (
         <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
@@ -53,24 +47,24 @@ const ExhibitionPageContent = () => {
         <div>Error loading exhibitions.</div>
       ) : (
         <>
-          {currentPage === 1 && drafts.length > 0 && (
-            <ExhibitionSection
-              title="Drafts"
-              exhibitions={drafts.slice(0, visibleDrafts)}
-              onExhibitionClick={handleExhibitionClick}
-              viewAllPath="/admin/dashboard/drafts"
-              maxVisibleItems={visibleDrafts}
-              showFadeEffect
-              onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
-              data-testid="drafts-section"
-            />
-          )}
-          <ExhibitionSection
+         {currentPage === 1 && drafts.length > 0 && (
+          <DraftExhibitions
+            title="Drafts"
+            drafts={drafts}
+            onExhibitionClick={handleExhibitionClick}
+            maxVisibleItems={visibleDrafts}
+            showFadeEffect
+            onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}
+            viewAllPath="/admin/dashboard/drafts"
+            data-testid="drafts-section"
+          />
+        )}
+          <PublishedExhibitions
             title="Published Exhibitions"
-            data-testid="published"
             exhibitions={publishedExhibitions}
             onExhibitionClick={handleExhibitionClick}
-            showPagination
+            viewAllPath="/admin/dashboard/published"
+            data-testid="published"
           />
         </>
       )}
