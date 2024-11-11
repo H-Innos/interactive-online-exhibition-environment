@@ -73,7 +73,7 @@ const ExhibitionPageContent = () => {
 
 const ExhibitionsPage = () => (
   <Suspense fallback={<div>Loading search parameters...</div>}>
-    <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
+    <div className="text-text-dark min-h-screen px-4 sm:px-12 py-8">
       <ExhibitionPageContent />
     </div>
   </Suspense>

@@ -38,7 +38,7 @@ export default function Component() {
     <>
       <Button
         variant="default"
-        className="sticky top-8 right-4 z-50 text-2xl"
+        className="sticky top-8 right-4 z-50 text-2xl text-gray-600"
         onClick={() => setIsOpen(true)}>
           ☰        
         <span className="sr-only">Open menu</span>
@@ -94,19 +94,19 @@ export default function Component() {
           </Link>
         </div>
 
-        <div className="mt-8 absolute bottom-6 w-full">
+        <div className="mt-8 w-full">
           <div className="flex space-x-4">
             <h3 className="text-lg font-semibold">Language:</h3>
             <div className="space-x-2">
               <button
-                className={`hover:text-primary-dark text-text-dark text-lg ${selectedLanguage === 'ENG' ? 'underline' : ''}`}
+                className={`hover:text-primary-dark text-text-dark text-lg ${selectedLanguage === 'ENG' ? 'font-bold' : ''}`}
                 onClick={() => setSelectedLanguage('ENG')}
               >
                 ENG
               </button>
               <span className="text-text-dark">|</span>
               <button
-                className={`hover:text-primary-dark text-text-dark text-lg ${selectedLanguage === 'EST' ? 'underline' : ''}`}
+                className={`hover:text-primary-dark text-text-dark text-lg ${selectedLanguage === 'EST' ? 'font-bold' : ''}`}
                 onClick={() => setSelectedLanguage('EST')}
               >
                 EST
@@ -118,3 +118,4 @@ export default function Component() {
     </>
   )
 }
+

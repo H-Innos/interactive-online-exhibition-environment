@@ -64,9 +64,7 @@ const Header = () => {
             Archive
           </span>
         </Link>
-        <button className="bg-primary-dark text-white px-4 py-2 rounded hover:bg-primary-dark_hover block sm:hidden mt-2">
-          Log In
-        </button>
+    
       </nav>
     </>
   );
