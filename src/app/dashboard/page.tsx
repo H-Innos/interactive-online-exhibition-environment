@@ -36,6 +36,13 @@ const ExhibitionPageContent = () => {
       <h1 className="text-3xl font-bold mb-2 text-neutral">Dashboard</h1>
       <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
 
+      <button
+        onClick={() => setIsCreateExhibitionModalOpen(true)}
+        className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
+      >
+        New Exhibition
+      </button>
+
       {isCreateExhibitionModalOpen && (
         <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
       )}
