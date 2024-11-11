@@ -58,12 +58,14 @@ const ExhibitionSection = ({
       <div className="relative">
         <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick} />
         {showFadeEffect && currentExhibitions.length === maxVisibleItems && (
-          <div className="absolute top-0 right-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+          <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
         )}
+
+
         {viewAllPath && (
           <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
             <button onClick={handleViewAll} className="text-black flex items-center group" data-testid="view-all-button">
-              <span className="text-4xl">〉</span>
+              <span className="text-4xl"> 〉</span>
             </button>
           </div>
         )}

@@ -7,10 +7,11 @@ const useResponsiveVisibleDrafts = () => {
 
   useEffect(() => {
     const updateVisibleDrafts = () => {
-      if (window.innerWidth < 768) setVisibleDrafts(1);
-      else if (window.innerWidth < 1280) setVisibleDrafts(2);
-      else if (window.innerWidth < 1280) setVisibleDrafts(3);
-      else setVisibleDrafts(4);
+      if (window.innerWidth < 768) setVisibleDrafts(1); // sm: 1 column
+      else if (window.innerWidth < 1024) setVisibleDrafts(2); // md: 2 columns
+      else if (window.innerWidth < 1280) setVisibleDrafts(3); // lg: 3 columns
+      else if (window.innerWidth < 1536) setVisibleDrafts(3); // xl: 3 columns
+      else setVisibleDrafts(4); // 2xl: 4 columns
     };
 
     window.addEventListener("resize", updateVisibleDrafts);
@@ -21,10 +22,11 @@ const useResponsiveVisibleDrafts = () => {
 
   function getInitialVisibleDrafts() {
     if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) return 1; 
-      if (window.innerWidth < 1280) return 2;
-      if (window.innerWidth < 1280) return 3;
-      return 4;
+      if (window.innerWidth < 768) return 1; // sm: 1 column
+      if (window.innerWidth < 1024) return 2; // md: 2 columns
+      if (window.innerWidth < 1280) return 3; // lg: 3 columns
+      if (window.innerWidth < 1536) return 3; // xl: 3 columns
+      return 4; // 2xl: 4 columns
     }
     return 4;
   }
