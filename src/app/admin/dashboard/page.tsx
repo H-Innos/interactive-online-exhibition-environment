@@ -3,9 +3,9 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
-import type { Exhibition } from "../../lib/types/exhibition";
-import ExhibitionSection from "../_components/exhibition-section";
-import CreateExhibitionModal from "../_components/create-exhibition-modal";
+import type { Exhibition } from "../../../lib/types/exhibition";
+import ExhibitionSection from "../../_components/exhibition-section";
+import CreateExhibitionModal from "../../_components/create-exhibition-modal";
 import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
 
 const ExhibitionPageContent = () => {
@@ -58,7 +58,7 @@ const ExhibitionPageContent = () => {
               title="Drafts"
               exhibitions={drafts.slice(0, visibleDrafts)}
               onExhibitionClick={handleExhibitionClick}
-              viewAllPath="/dashboard/drafts"
+              viewAllPath="/admin/dashboard/drafts"
               maxVisibleItems={visibleDrafts}
               showFadeEffect
               onCreateExhibition={() => setIsCreateExhibitionModalOpen(true)}

@@ -1,12 +1,12 @@
 "use client";
 
 import { configurations } from "~/lib/constants/config";
-import PaginationControls from "../components/pagination-controls";
+import PaginationControls from "../../components/pagination-controls";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
-import { ExhibitionList } from "./_components/exhibition-visitor-cards";
-import type { Exhibition } from "../lib/types/exhibition";
+import { ExhibitionList } from "./../_components/exhibition-visitor-cards";
+import type { Exhibition } from "../../lib/types/exhibition";
 
 interface MainPageProps {
   searchParams: Record<string, string | string[] | undefined>;

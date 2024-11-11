@@ -3,9 +3,9 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import type { Exhibition } from "../../../lib/types/exhibition";
-import ExhibitionSection from "../../_components/exhibition-section";
-import CreateExhibitionModal from "../../_components/create-exhibition-modal";
+import type { Exhibition } from "../../../../lib/types/exhibition";
+import ExhibitionSection from "../../../_components/exhibition-section";
+import CreateExhibitionModal from "../../../_components/create-exhibition-modal";
 
 const DraftsPage = () => {
   const router = useRouter();
@@ -21,11 +21,11 @@ const DraftsPage = () => {
   }, [data]);
 
   const handleExhibitionClick = (id: number) => {
-    router.push(`/dashboard/${id}`);
+    router.push(`/admin/dashboard/${id}`);
   };
 
   const handleBackToDashboard = () => {
-    router.push("/dashboard");
+    router.push("/admin/dashboard");
   };
 
   return (
