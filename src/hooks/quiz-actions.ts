@@ -3,6 +3,7 @@ import { api } from "~/trpc/react";
 
 export const useCreateQuiz = () => {
   const utils = api.useUtils();
+  
   return api.quiz.create.useMutation({
     onSuccess: async () => {
       await utils.quiz.invalidate();

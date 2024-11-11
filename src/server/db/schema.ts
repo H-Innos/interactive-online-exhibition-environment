@@ -7,7 +7,6 @@ import {
   text,
   uniqueIndex,
   boolean,
-  integer,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -40,7 +39,7 @@ export const quizzes = createTable(
   {
     id: serial("id").primaryKey(),
     title: varchar("name", { length: 256 }).notNull(),
-    exhibitionId: integer("exhibition_id")
+    exhibitionId: serial("exhibition_id")
       .notNull()
       .references(() => exhibitions.id),
   },
@@ -50,7 +49,7 @@ export const questions = createTable(
   "question",
   {
     id: serial("id").primaryKey(),
-    quizId: integer("quiz_id")
+    quizId: serial("quiz_id")
       .notNull()
       .references(() => quizzes.id),
     text: varchar("text", { length: 256 }).notNull(),
@@ -62,7 +61,7 @@ export const answers = createTable(
   "answer",
   {
     id: serial("id").primaryKey(),
-    questionId: integer("question_id")
+    questionId: serial("question_id")
       .notNull()
       .references(() => questions.id),
     text: varchar("text", { length: 256 }).notNull(),

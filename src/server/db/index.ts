@@ -22,3 +22,5 @@ if (process.env.NODE_ENV === "production") {
 }
 
 export { db };
+
+export type DrizzleClient = typeof db;

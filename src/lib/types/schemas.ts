@@ -18,18 +18,20 @@ export const exhibitionFormSchema = z.object({
   
 export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>; 
 
-const answerSchema = z.object({
+export const answerSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Answer text can't be empty." }),
+  questionId: z.number(),
   isCorrect: z.boolean(),
 });
 
 export type Answer = z.infer<typeof answerSchema>;
 
-const questionSchema = z.object({
+export const questionSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Question text is required." }),
   imageUrl: z.string().nullable(),
+  quizId: z.number(),
   answers: z.array(answerSchema).min(2, { message: "At least two answers are required." }),
 });
 
