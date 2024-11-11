@@ -5,13 +5,13 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Settings } from "lucide-react";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 import {
   useDeleteExhibition,
   usePublishExhibition,
   useUnpublishExhibition,
 } from "~/hooks/exhibition-actions";
-import { type Exhibition } from "~/app/_types/exhibition";
+import { type Exhibition } from "~/lib/types/exhibition";
 
 const DropdownMenu = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu));
 const DropdownMenuTrigger = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger));
@@ -36,10 +36,25 @@ export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardPr
     setIsMenuOpen(false);
   };
 
-  const handleChangePublishedState = (e: React.MouseEvent) => {
+
+
+  const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (exhibition.id && !exhibition.isPublished &&
+        window.confirm("Are you sure you want to delete this exhibition?")) {
+      deleteExhibition.mutate({ id: exhibition.id });
+      setIsMenuOpen(false);
+    }
+  };
+const handleChangePublishedState = (e: React.MouseEvent) => {
+  e.stopPropagation();
+  if (exhibition.id) {
     if (exhibition.isPublished) {
-      if (window.confirm("Are you sure you want to move this exhibition back to drafts?")) {
+      if (
+        window.confirm(
+          "Are you sure you want to move this exhibition back to drafts?"
+        )
+      ) {
         unpublishExhibition.mutate({ id: exhibition.id });
       }
     } else {
@@ -48,15 +63,10 @@ export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardPr
       }
     }
     setIsMenuOpen(false);
-  };
+  }
+};
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this exhibition?")) {
-      deleteExhibition.mutate({ id: exhibition.id });
-      setIsMenuOpen(false);
-    }
-  };
+
 
   const truncateDescription = (text: string, maxLength: number) =>
     text.length <= maxLength ? text : `${text.slice(0, maxLength)}...`;
@@ -97,13 +107,21 @@ export default function ExhibitionCard({ exhibition, onClick }: ExhibitionCardPr
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36 bg-white">
-            <DropdownMenuItem onClick={handleEdit} className="hover:font-semibold">
+            <DropdownMenuItem 
+              onClick={handleEdit} 
+              className={`hover:font-semibold ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={exhibition.isPublished}
+            >
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleChangePublishedState} className="hover:font-semibold">
               {exhibition.isPublished ? "Unpublish" : "Publish"}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete} className="text-red-600 hover:font-semibold">
+            <DropdownMenuItem
+              onClick={handleDelete}
+              className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={exhibition.isPublished}
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

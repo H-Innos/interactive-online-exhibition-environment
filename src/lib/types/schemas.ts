@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 
 const thumbnailSchema = z
   .instanceof(File)
-  .refine((file) => file.size <= configurations.FILE_MAX_SIZE, {
-    message: `The file size exceeds the maximum allowed size of ${configurations.FILE_MAX_SIZE / (1024 * 1024)}MB.`,
+  .refine((file) => file.size <= configurations.MAX_FILE_SIZE_BYTES, {
+    message: `The file size exceeds the maximum allowed size of ${configurations.MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB.`,
   })
   .refine((file) => file.type.startsWith('image/'), {
     message: 'The file must be an image.',
