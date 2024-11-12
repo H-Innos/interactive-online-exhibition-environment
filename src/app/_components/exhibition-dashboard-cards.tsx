@@ -87,7 +87,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
       </div>
 
       {showOptions && (
-        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen} data-testid="card-options-button">
           <DropdownMenuTrigger asChild>
             <button
               className="absolute right-1 top-1 p-2 text-gray-600 hover:text-gray-800"

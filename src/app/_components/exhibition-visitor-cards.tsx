@@ -21,6 +21,7 @@ const VisitorExhibitionCard: React.FC<VisitorExhibitionCardProps> = ({
     <div
       className="flex flex-col bg-white border border-gray overflow-hidden cursor-pointer"
       onClick={() => onClick(exhibition.id)}
+      data-testid="exhibition-card"
     >
       <div className="relative h-52 bg-gray-200 overflow-hidden">
         <Image

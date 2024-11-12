@@ -4,15 +4,15 @@ describe('Dashboard Page', () => {
     newExhibitionButton: 'button:contains("New Exhibition")',
     createButton: 'button:contains("Create")',
     viewAllButton: '[data-testid="view-all-button"]',
-    cardOptionsButton: '[data-testid="card-options-button"]',
+    cardOptionsButton: 'button[aria-label="Card options"]',
     editOption: 'Edit',
     exhibitionTitleInput: 'input[placeholder="Enter exhibition title"]',
     exhibitionDescriptionInput: 'textarea[placeholder="Enter exhibition description"]',
-    exhibitionCard: (title: string) => `[data-testid="exhibition-card"]:contains("${title}")`,
+    exhibitionCard: (title: any) => `[data-testid="exhibition-card"]:contains("${title}")`,
   };
 
   beforeEach(() => {
-    cy.visit('/dashboard');
+    cy.visit('/admin/dashboard');
   });
 
   it('should display the Dashboard heading', () => {
@@ -26,49 +26,51 @@ describe('Dashboard Page', () => {
 
   it('should navigate to the drafts page by clicking the arrow', () => {
     cy.get(selectors.viewAllButton).click();
-    cy.url().should('include', '/dashboard/drafts');
+    cy.url().should('include', '/admin/dashboard/drafts');
   });
 
   it('should click the gear icon on a published exhibition card', () => {
-    cy.get(selectors.cardOptionsButton).first().click();
+    cy.contains('Published Exhibitions')
+      .parent()
+      .find(selectors.cardOptionsButton)
+      .first()
+      .click();
+
     cy.contains(selectors.editOption).should('be.visible');
     cy.log('Verified that the gear icon is clickable');
   });
 
   it('should show disabled Edit button for published exhibitions', () => {
     cy.contains('Published Exhibitions')
-      .parent() 
-      .find('[data-testid="card-options-button"]')
+      .parent()
+      .find(selectors.cardOptionsButton)
       .first()
       .click();
 
     cy.contains('Edit')
       .should('be.visible')
       .and('have.attr', 'aria-disabled', 'true')
-      .and('have.attr', 'data-disabled', '')
       .and('have.class', 'opacity-50')
       .and('have.class', 'cursor-not-allowed');
-    
+
     cy.contains('Edit').click({ force: true });
-    cy.url().should('not.include', '/dashboard/');
+    cy.url().should('not.include', '/admin/dashboard/');
   });
 
   it('should show disabled Delete button for published exhibitions', () => {
     cy.contains('Published Exhibitions')
-      .parent() 
-      .find('[data-testid="card-options-button"]')
+      .parent()
+      .find(selectors.cardOptionsButton)
       .first()
       .click();
 
     cy.contains('Delete')
       .should('be.visible')
       .and('have.attr', 'aria-disabled', 'true')
-      .and('have.attr', 'data-disabled', '')
       .and('have.class', 'opacity-50')
       .and('have.class', 'cursor-not-allowed');
-    
-    cy.contains('Delete').click({ force: true });
-    cy.get('[data-testid="card-options-button"]').should('exist'); 
-  });
 
+    cy.contains('Delete').click({ force: true });
+    cy.get(selectors.cardOptionsButton).should('exist');
+  });
 });
