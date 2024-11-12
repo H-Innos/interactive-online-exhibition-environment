@@ -68,8 +68,6 @@ const Header = () => {
           </span>
         </Link>
       </nav>
-
-
     </>
   );
 };
