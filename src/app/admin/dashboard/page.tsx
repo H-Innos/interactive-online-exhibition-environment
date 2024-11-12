@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import type { Exhibition } from "../../../lib/types/exhibition";
 import DraftExhibitions from "../../_components/shortened-drafts";
-import PublishedExhibitions from "../../_components/pageable-published";
 import CreateExhibitionModal from "../../_components/create-exhibition-modal";
 import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
+import PublishedExhibitions from "../../_components/pageable-published";
 
 const ExhibitionPageContent = () => {
   const router = useRouter();
@@ -63,7 +63,6 @@ const ExhibitionPageContent = () => {
             title="Published Exhibitions"
             exhibitions={publishedExhibitions}
             onExhibitionClick={handleExhibitionClick}
-            viewAllPath="/admin/dashboard/published"
             data-testid="published"
           />
         </>
@@ -72,7 +71,7 @@ const ExhibitionPageContent = () => {
   );
 };
 
-const ExhibitionsPage = () => (
+const Dashboard = () => (
   <Suspense fallback={<div>Loading search parameters...</div>}>
     <div className="text-text-dark min-h-screen px-4 sm:px-12 py-8">
       <ExhibitionPageContent />
@@ -80,4 +79,4 @@ const ExhibitionsPage = () => (
   </Suspense>
 );
 
-export default ExhibitionsPage;
+export default Dashboard;

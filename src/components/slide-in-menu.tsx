@@ -86,10 +86,10 @@ export default function Component() {
           <Link href="/" className="block border-t border-b border-gray-300 py-2">
             All exhibitions
           </Link>
-          <Link href="/dashboard" className="block border-gray-300">
+          <Link href="/admin/dashboard" className="block border-gray-300">
             Dashboard
           </Link>
-          <Link href="/archive" className="block border-t border-b border-gray-300 py-2">
+          <Link href="/admin/archive" className="block border-t border-b border-gray-300 py-2">
             Archive
           </Link>
         </div>

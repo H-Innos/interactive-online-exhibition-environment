@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
+import ExhibitionList from "../_components/exhibition-list";
 import type { Exhibition } from "../../lib/types/exhibition";
 import PaginationControls from "../../components/pagination-controls";
 import { configurations } from "~/lib/constants/config";
+import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 
 interface PublishedExhibitionsProps {
   title: string;
@@ -37,7 +38,13 @@ const PublishedExhibitions = ({
       <h1 className="text-2xl font-bold text-neutral">{title}</h1>
 
       <div className="relative">
-        <ExhibitionList exhibitions={currentExhibitions} onExhibitionClick={onExhibitionClick} />
+        <ExhibitionList
+          exhibitions={currentExhibitions}
+          onExhibitionClick={onExhibitionClick}
+          CardComponent={({ exhibition, onClick }) => (
+            <ExhibitionCard exhibition={exhibition} onClick={onClick} showOptions={true} />
+          )}
+        />
       </div>
       <PaginationControls currentPage={currentPage} totalPages={totalPages} />
     </div>

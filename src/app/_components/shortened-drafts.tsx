@@ -1,8 +1,9 @@
 "use client";
 
-import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
+import ExhibitionList from "~/app/_components/exhibition-list";
 import type { Exhibition } from "../../lib/types/exhibition";
 import { useRouter } from "next/navigation";
+import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 
 interface DraftExhibitionsProps {
   title: string;
@@ -19,7 +20,7 @@ const DraftExhibitions = ({
   drafts,
   onExhibitionClick,
   maxVisibleItems,
-  showFadeEffect = false, 
+  showFadeEffect = false,
   onCreateExhibition,
   viewAllPath,
 }: DraftExhibitionsProps) => {
@@ -45,16 +46,26 @@ const DraftExhibitions = ({
       <h1 className="text-2xl font-bold text-neutral">{title}</h1>
 
       <div className="relative">
-        <ExhibitionList exhibitions={visibleDrafts} onExhibitionClick={onExhibitionClick} />
-        
+        <ExhibitionList
+          exhibitions={visibleDrafts}
+          onExhibitionClick={onExhibitionClick}
+          CardComponent={({ exhibition, onClick }) => (
+            <ExhibitionCard exhibition={exhibition} onClick={onClick} showOptions />
+          )}
+        />
+
         {showFadeEffect && visibleDrafts.length === maxVisibleItems && (
           <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
         )}
 
         {viewAllPath && (
           <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
-            <button onClick={handleViewAll} className="text-black flex items-center group" data-testid="view-all-button">
-              <span className="text-4xl text-black">〉</span>
+            <button
+              onClick={handleViewAll}
+              className="text-black flex items-center group"
+              data-testid="view-all-button"
+            >
+              <span className="text-4xl text-black"> 〉</span>
             </button>
           </div>
         )}
