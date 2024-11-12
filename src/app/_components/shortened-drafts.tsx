@@ -1,74 +1,49 @@
 "use client";
 
-import ExhibitionList from "~/app/_components/exhibition-list";
+import React from "react";
+import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import type { Exhibition } from "../../lib/types/exhibition";
 import { useRouter } from "next/navigation";
-import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
+import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
 
 interface DraftExhibitionsProps {
-  title: string;
   drafts: Exhibition[];
   onExhibitionClick: (id: number) => void;
-  maxVisibleItems: number;
-  showFadeEffect?: boolean;
-  onCreateExhibition?: () => void;
-  viewAllPath?: string;
 }
 
-const DraftExhibitions = ({
-  title,
-  drafts,
-  onExhibitionClick,
-  maxVisibleItems,
-  showFadeEffect = false,
-  onCreateExhibition,
-  viewAllPath,
-}: DraftExhibitionsProps) => {
+const DraftExhibitions = ({ drafts, onExhibitionClick }: DraftExhibitionsProps) => {
   const router = useRouter();
+  const maxVisibleItems = useResponsiveVisibleDrafts();
   const visibleDrafts = drafts.slice(0, maxVisibleItems);
 
   const handleViewAll = () => {
-    if (viewAllPath) {
-      router.push(viewAllPath);
-    }
+    router.push("/dashboard/drafts");
   };
 
   return (
-    <div className="mb-10">
-      {onCreateExhibition && (
-        <button
-          onClick={onCreateExhibition}
-          className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
-        >
-          New Exhibition
-        </button>
+    <div className="relative mb-10">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {visibleDrafts.map((exhibition) => (
+          <ExhibitionCard
+            key={exhibition.id}
+            exhibition={exhibition}
+            onClick={() => onExhibitionClick(exhibition.id)}
+          />
+        ))}
+      </div>
+
+      {visibleDrafts.length === maxVisibleItems && (
+        <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
       )}
-      <h1 className="text-2xl font-bold text-neutral">{title}</h1>
 
-      <div className="relative">
-        <ExhibitionList
-          exhibitions={visibleDrafts}
-          onExhibitionClick={onExhibitionClick}
-          CardComponent={({ exhibition, onClick }) => (
-            <ExhibitionCard exhibition={exhibition} onClick={onClick} showOptions />
-          )}
-        />
-
-        {showFadeEffect && visibleDrafts.length === maxVisibleItems && (
-          <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
-        )}
-
-        {viewAllPath && (
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
-            <button
-              onClick={handleViewAll}
-              className="text-black flex items-center group"
-              data-testid="view-all-button"
-            >
-              <span className="text-4xl text-black"> 〉</span>
-            </button>
-          </div>
-        )}
+      <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
+        <button
+          onClick={handleViewAll}
+          className="text-black flex items-center group"
+          data-testid="view-all-button"
+        >
+          <span className="text-4xl text-black">〉</span>
+        </button>
       </div>
     </div>
   );

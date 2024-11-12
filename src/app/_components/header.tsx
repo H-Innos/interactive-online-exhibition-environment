@@ -55,21 +55,19 @@ const Header = () => {
             <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
           </span>
         </Link>
-        <Link href="/admin/dashboard">
+        <Link href="/dashboard">
           <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
             Dashboard
             <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
           </span>
         </Link>
-        <Link href="/admin/archive">
+        <Link href="/archive">
           <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
             Archive
             <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
           </span>
         </Link>
       </nav>
-
-
     </>
   );
 };

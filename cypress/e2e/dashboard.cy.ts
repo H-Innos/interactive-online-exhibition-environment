@@ -12,7 +12,7 @@ describe('Dashboard Page', () => {
   };
 
   beforeEach(() => {
-    cy.visit('/admin/dashboard');
+    cy.visit('/dashboard');
   });
 
   it('should display the Dashboard heading', () => {
@@ -26,7 +26,7 @@ describe('Dashboard Page', () => {
 
   it('should navigate to the drafts page by clicking the arrow', () => {
     cy.get(selectors.viewAllButton).click();
-    cy.url().should('include', '/admin/dashboard/drafts');
+    cy.url().should('include', '/dashboard/drafts');
   });
 
   it('should click the gear icon on a published exhibition card', () => {

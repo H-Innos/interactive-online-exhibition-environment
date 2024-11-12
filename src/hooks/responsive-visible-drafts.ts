@@ -11,7 +11,7 @@ const useResponsiveVisibleDrafts = () => {
       else if (window.innerWidth < 1024) setVisibleDrafts(2); // md: 2 columns
       else if (window.innerWidth < 1280) setVisibleDrafts(3); // lg: 3 columns
       else if (window.innerWidth < 1536) setVisibleDrafts(3); // xl: 3 columns
-      else setVisibleDrafts(3); // 2xl: 4 columns
+      else setVisibleDrafts(4); // 2xl: 4 columns
     };
 
     window.addEventListener("resize", updateVisibleDrafts);
@@ -25,10 +25,10 @@ const useResponsiveVisibleDrafts = () => {
       if (window.innerWidth < 768) return 1; // sm: 1 column
       if (window.innerWidth < 1024) return 2; // md: 2 columns
       if (window.innerWidth < 1280) return 3; // lg: 3 columns
-      if (window.innerWidth < 1536) return 3; // xl: 3 columns
-      return 3; // 2xl: 4 columns
+      if (window.innerWidth < 1536) return 4; // xl: 3 columns
+      return 4; // 2xl: 4 columns
     }
-    return 3;
+    return 4;
   }
 
   return visibleDrafts;
