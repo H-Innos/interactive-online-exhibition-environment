@@ -22,7 +22,7 @@ const PageableExhibitions = ({
   CardComponent,
 }: PageableExhibitionsProps) => {
   const searchParams = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const currentPage = parseInt(searchParams.get("page") ?? "1", 10);
   const exhibitionsPerPage = configurations.EXHIBITIONS_PER_PAGE;
 
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
