@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
-import type { Exhibition } from "../_types/exhibition";
+import type { Exhibition } from "../../lib/types/exhibition";
 import PaginationControls from "../../components/pagination-controls";
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 
 interface ExhibitionSectionProps {
   title: string;
@@ -35,8 +35,7 @@ const ExhibitionSection = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    const page = parseInt(searchParams?.get("page") ?? "1", 10);
-    setCurrentPage(page);
+    setCurrentPage(parseInt(searchParams?.get("page") ?? "1", 10));
   }, [searchParams]);
 
   const totalPages = Math.ceil(exhibitions.length / configurations.EXHIBITIONS_PER_PAGE);
@@ -54,8 +53,6 @@ const ExhibitionSection = ({
     }
   };
 
-
-
   return (
     <div className="mb-10">
       {onCreateExhibition && (
@@ -66,8 +63,8 @@ const ExhibitionSection = ({
           New Exhibition
         </button>
       )}
-      <h1 className="text-2xl font-bold text-accent">{title}</h1>
-      
+      <h1 className="text-2xl font-bold text-neutral">{title}</h1>
+
       <div className="relative">
         <ExhibitionList 
           exhibitions={currentExhibitions} 
@@ -75,12 +72,14 @@ const ExhibitionSection = ({
           isArchivePage={showArchiveOption}
         />
         {showFadeEffect && currentExhibitions.length === maxVisibleItems && (
-          <div className="absolute top-0 right-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+          <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
         )}
+
+
         {viewAllPath && (
-          <div className="absolute top-1/2 right-8 transform -translate-y-1/2">
-            <button onClick={handleViewAll} className="text-black px-4 py-2 flex items-center group" data-testid="view-all-button">
-              <span className="ml-2 text-4xl">〉</span>
+          <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
+            <button onClick={handleViewAll} className="text-black flex items-center group" data-testid="view-all-button">
+              <span className="text-4xl"> 〉</span>
             </button>
           </div>
         )}
@@ -97,3 +96,4 @@ const ExhibitionSection = ({
 };
 
 export default ExhibitionSection;
+

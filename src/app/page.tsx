@@ -1,13 +1,12 @@
 "use client";
 
-import { configurations } from "~/constants/config";
+import { configurations } from "~/lib/constants/config";
 import PaginationControls from "../components/pagination-controls";
 import { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
-import MessageBanner from "./_components/message-banner";
 import { useRouter } from "next/navigation";
 import { ExhibitionList } from "./_components/exhibition-visitor-cards";
-import type { Exhibition } from "./_types/exhibition";
+import type { Exhibition } from "../lib/types/exhibition";
 
 interface MainPageProps {
   searchParams: Record<string, string | string[] | undefined>;
@@ -44,10 +43,8 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
   
   return (
     <div className="text-text-dark min-h-screen flex flex-col items-center justify-center py-12">
-    <h1 className="text-4xl mb-28 text-accent">Explore Exhibitions</h1>
-    
-    <MessageBanner />
-    
+    <h1 className="text-4xl mb-28 text-neutral">Explore Exhibitions</h1>
+        
     {isLoading ? (
       <div>Loading...</div>
     ) : error ? (

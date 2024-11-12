@@ -3,17 +3,18 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
-import type { Exhibition } from "../_types/exhibition";
+import type { Exhibition } from "../../lib/types/exhibition";
 import ExhibitionSection from "../_components/exhibition-section";
 import CreateExhibitionModal from "../_components/create-exhibition-modal";
-import MessageBanner from "../_components/message-banner";
+import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
 
 const ExhibitionPageContent = () => {
   const router = useRouter();
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
   const [isCreateExhibitionModalOpen, setIsCreateExhibitionModalOpen] = useState(false);
-  const [visibleDrafts, setVisibleDrafts] = useState(getInitialVisibleDrafts())
+  const visibleDrafts = useResponsiveVisibleDrafts();
+
   const { data, error, isLoading } = api.exhibition.getAll.useQuery();
 
   useEffect(() => {
@@ -22,35 +23,6 @@ const ExhibitionPageContent = () => {
       setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished && exhibition.isArchived === false));
     }
   }, [data]);
-
-  useEffect(() => {
-    const updateVisibleDrafts = () => {
-      if (window.innerWidth < 768) {
-        setVisibleDrafts(1);
-      } else if (window.innerWidth < 1200) {
-        setVisibleDrafts(2);
-      } else if (window.innerWidth < 1536) {
-        setVisibleDrafts(3);
-      } else {
-        setVisibleDrafts(4);
-      }
-    };
-
-    window.addEventListener("resize", updateVisibleDrafts);
-    updateVisibleDrafts();
-
-    return () => window.removeEventListener("resize", updateVisibleDrafts);
-  }, []);
-
-  function getInitialVisibleDrafts() {
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) return 1;
-      if (window.innerWidth < 1200) return 2;
-      if (window.innerWidth < 1536) return 3;
-      return 4;
-    }
-    return 4;
-  }
 
   const handleExhibitionClick = (id: number) => {
     router.push(`/dashboard/${id}`);
@@ -61,10 +33,15 @@ const ExhibitionPageContent = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-2 text-accent">Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-2 text-neutral">Dashboard</h1>
       <h2 className="text-xl mb-6 text-gray-500">Manage Exhibitions</h2>
 
-      <MessageBanner />
+      <button
+        onClick={() => setIsCreateExhibitionModalOpen(true)}
+        className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
+      >
+        New Exhibition
+      </button>
 
       {isCreateExhibitionModalOpen && (
         <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
@@ -103,7 +80,7 @@ const ExhibitionPageContent = () => {
 
 const ExhibitionsPage = () => (
   <Suspense fallback={<div>Loading search parameters...</div>}>
-    <div className="text-text-dark min-h-screen pl-32 pr-12 py-8">
+    <div className="text-text-dark min-h-screen px-4 sm:px-12 py-8">
       <ExhibitionPageContent />
     </div>
   </Suspense>

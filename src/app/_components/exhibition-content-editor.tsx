@@ -9,7 +9,8 @@ import {
     AutoImage,
     Autoformat,
 	Autosave,
-	BlockQuote,
+    BlockQuote,
+    BlockToolbar,
 	Bold,
 	CloudServices,
 	Essentials,
@@ -53,7 +54,9 @@ import {
 	TableProperties,
 	TableToolbar,
 	Underline,
-	Undo
+	Undo,
+    type Editor,
+    type EventInfo
 } from 'ckeditor5';
 
 import 'ckeditor5/ckeditor5.css';
@@ -61,11 +64,11 @@ import { UploaderPlugin } from '~/lib/utils/plugins';
 
 interface ExhibitionContentEditorProps {
     initialContent: string,
-    saveData: (data: string) => Promise<void>
+    onChange: (event: EventInfo<string, unknown>, editor: Editor) => void,
 }
 
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
-    initialContent, saveData }) => { 
+    initialContent, onChange }) => {  
         const editorContainerRef = useRef(null);
 	    const editorRef = useRef(null);
 	    const [isLayoutReady, setIsLayoutReady] = useState(false);
@@ -86,6 +89,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                         <CKEditor
                             editor={ClassicEditor}
                             data={initialContent}
+                            onChange={onChange}
                             config={{
                                 extraPlugins: [UploaderPlugin],
                                 toolbar: {
@@ -123,6 +127,22 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                     ],
                                     shouldNotGroupWhenFull: false
                                 },
+                                blockToolbar: [
+                                    'undo',
+                                    'redo',
+                                    '|',
+                                    'heading',
+                                    '|',
+                                    'uploadImage',
+                                    'insertTable',
+                                    'blockQuote',
+                                    'mediaEmbed',
+                                    '|',
+                                    'bulletedList',
+                                    'numberedList',
+                                    'outdent',
+                                    'indent',
+                                ],
                                 plugins: [
                                     AccessibilityHelp,
                                     Alignment,
@@ -130,6 +150,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                     Autoformat,
                                     Autosave,
                                     BlockQuote,
+                                    BlockToolbar,
                                     Bold,
                                     CloudServices,
                                     Essentials,
@@ -228,12 +249,14 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                 table: {
                                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
                                 },
+                                /* delete if we have decided not to add autosaving back
                                 autosave: {
                                     save (editor) {
                                         console.log('Saved changes:', editor.getData());
                                         return saveData(editor.getData());
                                     }
                                 }
+                                    */
                             }}
                         />
                         }</div>
