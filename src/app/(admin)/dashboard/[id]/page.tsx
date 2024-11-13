@@ -9,6 +9,7 @@ import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-ac
 import type { Exhibition } from '~/lib/types/exhibition';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import type { Editor, EventInfo } from 'ckeditor5';
+import { useTranslation } from 'react-i18next';
 
 const ExhibitionEditorPage = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ const ExhibitionEditorPage = () => {
 
   const router = useRouter();
   useWarnIfUnsavedChanges(isDirty);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (exhibitionData) {
@@ -31,7 +33,7 @@ const ExhibitionEditorPage = () => {
   const updateExhibition = useUpdateExhibition();
 
   function handlePublish() {
-    if (!exhibition || !window.confirm("Are you sure you want to publish this exhibition?")) return;
+    if (!exhibition || !window.confirm(t("confirmPublish"))) return;
     publishExhibition.mutate({ id: exhibition.id });
   }
 
@@ -53,8 +55,8 @@ const ExhibitionEditorPage = () => {
   return (
     <div className="flex flex-col lg:flex-row justify-between min-h-screen p-4 lg:p-8 space-y-4 lg:space-y-0 lg:space-x-4">
       <div className="flex-1 w-full lg:w-[70%] mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
-        <p>Status: {updateExhibition.isPending ? "Saving..." : "Saved"}</p>
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">{t("editExhibition")} {id}</h1>
+        <p>{t("status")}: {updateExhibition.isPending ? t("saving") : t("saved")}</p>
         {exhibition && (
           <div className="w-full">
             <ExhibitionContentEditor
@@ -72,7 +74,7 @@ const ExhibitionEditorPage = () => {
               className="bg-gray-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-gray-600"
               onClick={() => router.push(`/dashboard`)}
             >
-              Exit
+              {t("exit")}
             </button>
             <button
               type="button"
@@ -80,7 +82,7 @@ const ExhibitionEditorPage = () => {
               disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handleSaveEditorChanges}
             >
-              Save changes
+              {t("saveChanges")}
             </button>
             <button
               type="button"
@@ -88,7 +90,7 @@ const ExhibitionEditorPage = () => {
               disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handlePublish}
             >
-              {publishExhibition.isPending ? "Publishing..." : "Publish"}
+              {publishExhibition.isPending ? t("publishing") : t("publish")}
             </button>
           </div>
           <ExhibitionDataForm exhibition={exhibition} />

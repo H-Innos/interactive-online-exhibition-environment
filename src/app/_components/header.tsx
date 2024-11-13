@@ -4,9 +4,24 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 import SlideInMenu from "~/components/slide-in-menu";
+import { useTranslation } from 'react-i18next';
+import i18n from '~/i18n';
 
 const Header = () => {
-  const [isMenuOpen] = useState(false);
+  const { t } = useTranslation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const changeLanguage = async (lng: string) => {
+    try {
+      await i18n.changeLanguage(lng);
+    } catch (error) {
+      console.error('Error changing language:', error);
+    }
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <>
@@ -36,38 +51,54 @@ const Header = () => {
           </a>
 
           <div className="relative z-10 flex items-center space-x-4 sm:space-x-6">
-            <button className="hover:text-primary-dark text-text-dark text-lg hidden sm:block">ENG</button>
-            <button className="hover:text-primary-dark text-text-dark text-lg hidden sm:block">EST</button>
+            <button 
+              onClick={() => changeLanguage('en')} 
+              className={`hover:text-primary-dark text-text-dark text-lg hidden sm:block ${i18n.language === 'en' ? 'font-bold' : ''}`}
+            >
+              ENG
+            </button>
+            <button 
+              onClick={() => changeLanguage('est')} 
+              className={`hover:text-primary-dark text-text-dark text-lg hidden sm:block ${i18n.language === 'est' ? 'font-bold' : ''}`}
+            >
+              EST
+            </button>
+
             <div className="block sm:hidden"> 
-              <SlideInMenu />
+              <button onClick={toggleMenu} className="text-text-dark">
+                <SlideInMenu />
+              </button>
             </div>
+
             <button className="bg-primary-dark text-white px-4 py-2 rounded hover:bg-primary-dark_hover hidden sm:block">
-              Log In
+              {t('login')}
             </button>
           </div>
         </div>
       </header>
 
-      <nav className={`w-full bg-background text-text-dark overflow-hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4 sm:flex justify-center items-center space-x-0 sm:space-x-32`}>
-        <Link href="/">
-          <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
-            All exhibitions
-            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
-          </span>
-        </Link>
-        <Link href="/dashboard">
-          <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
-            Dashboard
-            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
-          </span>
-        </Link>
-        <Link href="/archive">
-          <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
-            Archive
-            <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
-          </span>
-        </Link>
-      </nav>
+      {!isMenuOpen && (
+        <nav className="w-full bg-background text-text-dark overflow-hidden mt-4 sm:flex justify-center items-center space-x-0 sm:space-x-32">
+          <Link href="/">
+            <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
+              {t('allExhibitions')}
+              <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
+            </span>
+          </Link>
+          <Link href="/dashboard">
+            <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
+              {t('dashboardNav')}
+              <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
+            </span>
+          </Link>
+          <Link href="/archive">
+            <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
+              {t('archive')}
+              <span className="absolute left-0 bottom-0 w-full h-[2px] bg-[#2C5696] scale-x-0 transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
+            </span>
+          </Link>
+        </nav>
+      )}
     </>
   );
 };
