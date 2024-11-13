@@ -75,7 +75,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
   const watchedFields = watch();
 
   return (
-    <Card className="w-80 overflow-auto">
+    <Card className="w-full md:w-100 overflow-auto">
       <CardHeader className="sticky top-0 z-10 bg-background border-b">
         <div className="flex items-center justify-between">
           <CardTitle>Exhibition Details</CardTitle>
