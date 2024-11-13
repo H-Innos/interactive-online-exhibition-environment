@@ -65,9 +65,9 @@ const Header = () => {
             </button>
 
             <div className="block sm:hidden"> 
-              <button onClick={toggleMenu} className="text-text-dark">
+              <div onClick={toggleMenu} className="text-text-dark cursor-pointer">
                 <SlideInMenu />
-              </button>
+              </div>
             </div>
 
             <button className="bg-primary-dark text-white px-4 py-2 rounded hover:bg-primary-dark_hover hidden sm:block">
