@@ -116,8 +116,8 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
               <ExhibitionThumbnail
                 src={coverImage}
                 alt="Cover preview"
-                size={128} // Size can be adjusted as needed
-                onDelete={handleRemoveImage} // Use the same remove handler
+                size={128} 
+                onDelete={handleRemoveImage} 
               />
             </div>
           )}
