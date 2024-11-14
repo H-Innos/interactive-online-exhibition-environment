@@ -33,9 +33,6 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
     router.push(`/exhibitions/view/${id}`);
   };
 
-  const handlePageChange = (page: number) => {
-    router.push(`/?page=${page}`);
-  };
   
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
   const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
@@ -57,7 +54,6 @@ const MainPage: React.FC<MainPageProps> = ({ searchParams }) => {
     <PaginationControls
     currentPage={currentPage}
     totalPages={totalPages}
-    onPageChange={handlePageChange}
     />
     </div>
   );

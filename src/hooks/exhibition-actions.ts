@@ -112,49 +112,6 @@ export const useUnarchiveExhibition = () => {
     },
   });
 };
-/*
-export const useArchiveExhibition = () => {
-  const utils = api.useUtils();
-  const { setSuccessMessage, setErrorMessage } = useMessage();
-
-  return api.exhibition.archiveExhibition.useMutation({
-    onSuccess: async () => {
-      try {
-        await utils.exhibition.getAll.invalidate();
-        await utils.exhibition.getArchived.invalidate();
-        setSuccessMessage("Exhibition archived successfully!");
-      } catch (error) {
-        console.error("Error invalidating queries:", error);
-        setErrorMessage("Failed to update exhibition list");
-      }
-    },
-    onError: (error) => {
-      setErrorMessage(`Failed to archive exhibition: ${error.message}`);
-    },
-  });
-};
-
-export const useUnarchiveExhibition = () => {
-  const utils = api.useUtils();
-  const { setSuccessMessage, setErrorMessage } = useMessage();
-
-  return api.exhibition.unarchiveExhibition.useMutation({
-    onSuccess: async () => {
-      try {
-        await utils.exhibition.getAll.invalidate();
-        await utils.exhibition.getArchived.invalidate();
-        setSuccessMessage("Exhibition unarchived successfully!");
-      } catch (error) {
-        console.error("Error invalidating queries:", error);
-        setErrorMessage("Failed to update exhibition list");
-      }
-    },
-    onError: (error) => {
-      setErrorMessage(`Failed to unarchive exhibition: ${error.message}`);
-    },
-  });
-};
-*/
 
 // delete if we have decided to not add autosaving back
 /* 
