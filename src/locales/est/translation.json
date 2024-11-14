@@ -1,0 +1,78 @@
+{
+  "allExhibitions": "Kõik näitused",
+  "dashboardNav": "Töölaud",
+  "archive": "Arhiiv",
+  "login": "Logi sisse",
+  
+  "createExhibition": {
+    "title": "Loo uus näitus",
+    "nameLabel": "Pealkiri",
+    "namePlaceholder": "Sisestage näituse pealkiri",
+    "descriptionLabel": "Kirjeldus",
+    "descriptionPlaceholder": "Sisestage näituse kirjeldus",
+    "coverImageLabel": "Kaanepilt",
+    "imagePreview": "Pildi eelvaade:",
+    "discard": "Loobu",
+    "cancel": "Tühista",
+    "create": "Loo",
+    "saving": "Salvestamine...",
+    "nameRequired": "Näituse nimi on kohustuslik.",
+    "fileSizeExceeds": "Faili suurus ületab lubatud maksimaalse suuruse {{maxSize}} MB.",
+    "newExhibition": "Uus näitus"
+  },
+  
+  "dashboard": {
+    "title": "Töölaud",
+    "manageExhibitions": "Halda näitusi",
+    "loading": "Laadimine...",
+    "errorLoading": "Viga näituste laadimisel.",
+    "drafts": "Mustandid",
+    "publishedExhibitions": "Avaldatud näitused",
+    "allDrafts": "Kõik mustandid"
+  },
+
+  "mainPage": {
+    "exploreExhibitions": "Avasta näitusi",
+    "loading": "Laadimine...",
+    "errorLoading": "Viga näituste laadimisel.",
+    "noExhibitions": "Näitusi pole saadaval."
+  },
+
+  "slideInMenu": {
+    "openMenu": "Ava menüü",
+    "close": "Sulge",
+    "menu": "Menüü",
+    "email": "E-post",
+    "password": "Parool",
+    "logIn": "Logi sisse",
+    "language": "Keel"
+  },
+  
+    "pagination": {
+      "previous": "← Eelmine",
+      "next": "Järgmine →"
+    },
+     
+    "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",
+    "editExhibition": "Muuda näitust",
+    "status": "Staatus",
+    "saving": "Salvestamine...",
+    "saved": "Salvestatud",
+    "exit": "Välju",
+    "saveChanges": "Salvesta muudatused",
+    "publishing": "Avaldamine...",
+    "publish": "Avalda",
+    "exhibitionDetails": "Näituse üksikasjad",
+    "title": "Pealkiri",
+    "description": "Kirjeldus",
+    "descriptionPlaceholder": "Sisestage näituse kirjeldus",
+    "thumbnail": "Kaanepilt",
+    "thumbnailPlaceholder": "Valige pilt",
+    "edit": "Muuda",
+    "cancel": "Tühista",
+    "characters": "tähemärki",
+    "unpublish": "Mustandiks",
+    "delete": "Kustuta",
+    "confirmDelete": "Kas olete kindel, et soovite selle näituse kustutada?",
+    "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?"
+}

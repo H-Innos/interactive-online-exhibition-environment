@@ -3,9 +3,24 @@
 @tailwind utilities;
 
 .ck-editor__editable {
-    min-height: 700px;
-    width: 1000px;
+    min-height: 680px;
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
 }
+
+@media (max-width: 768px) {
+    .ck-editor__editable {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ck-editor__editable {
+        min-height: 200px;
+    }
+}
+
 
 .editor-container__editor h1, .ck-content h1 {
   font-size: 2.2rem;

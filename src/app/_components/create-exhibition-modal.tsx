@@ -5,12 +5,14 @@ import React, { useRef, useState } from "react";
 import { configurations } from "~/lib/constants/config";
 import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
+import { useTranslation } from 'react-i18next';
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
 }
 
 const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -23,7 +25,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
     e.preventDefault();
 
     if (!name.trim()) {
-      setErrorMessage("Exhibition name is required.");
+      setErrorMessage(t('createExhibition.nameRequired'));
       return;
     }
 
@@ -47,7 +49,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
 
     if (file) {
       if (file.size > configurations.MAX_FILE_SIZE_BYTES) {
-        setErrorMessage(`The file size exceeds the maximum allowed size of ${configurations.MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB.`);
+        setErrorMessage(t('createExhibition.fileSizeExceeds', { maxSize: configurations.MAX_FILE_SIZE_BYTES / (1024 * 1024) }));
         return;
       }
       const reader = new FileReader();
@@ -70,21 +72,21 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
-        <h2 className="text-2xl font-semibold mb-4 text-primary-dark">Create a New Exhibition</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-primary-dark">{t('createExhibition.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-dark mb-1">Title</label>
+            <label className="block text-sm font-medium text-text-dark mb-1">{t('createExhibition.nameLabel')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter exhibition title"
+              placeholder={t('createExhibition.namePlaceholder')}
               className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
             />
             {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-dark mb-1">Description</label>
+            <label className="block text-sm font-medium text-text-dark mb-1">{t('createExhibition.descriptionLabel')}</label>
             <textarea
               value={description ?? ""}
               onChange={(e) => {
@@ -92,13 +94,13 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
                   setDescription(e.target.value);
                 }
               }}
-              placeholder="Enter exhibition description"
+              placeholder={t('createExhibition.descriptionPlaceholder')}
               className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
             />
             <p className="text-xs text-gray-500 mt-1">{description?.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} characters</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-dark mb-1">Cover Image</label>
+            <label className="block text-sm font-medium text-text-dark mb-1">{t('createExhibition.coverImageLabel')}</label>
             <input
               type="file"
               ref={fileInputRef}
@@ -109,7 +111,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
           </div>
           {coverImage && (
             <div className="mt-4">
-              <p className="text-sm w-full text-gray-500">Image Preview:</p>
+              <p className="text-sm w-full text-gray-500">{t('createExhibition.imagePreview')}</p>
               <div className="relative w-32 h-32">
                 <Image
                   src={coverImage}
@@ -123,7 +125,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
                 onClick={handleRemoveImage}
                 className="text-black text-xs cursor-pointer hover:underline"
               >
-                Discard
+                {t('createExhibition.discard')}
               </span>
             </div>
           )}
@@ -133,14 +135,14 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
               onClick={() => { onClose(); handleRemoveImage(); }}
               className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600"
             >
-              Cancel
+              {t('createExhibition.cancel')}
             </button>
             <button
               type="submit"
               className="bg-primary text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover"
               disabled={createExhibition.isPending}
             >
-              {createExhibition.isPending ? "Saving..." : "Create"}
+              {createExhibition.isPending ? t('createExhibition.saving') : t('createExhibition.create')}
             </button>
           </div>
         </form>
