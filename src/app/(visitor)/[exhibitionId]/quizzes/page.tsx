@@ -26,9 +26,7 @@ const QuizzesView = () => {
       {quizzes?.map((quiz) => (
         <QuizCard
         key={quiz.id} 
-        title={quiz.title}
-        exhibitionId={quiz.exhibitionId}
-        questions={quiz.questions}
+        quiz={quiz}
         />
       ))}
     </div>

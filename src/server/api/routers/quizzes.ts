@@ -1,12 +1,13 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { answers, questions, quizzes } from "~/server/db/schema";
-import { quizSchema } from "~/lib/types/schemas";
 import { z } from "zod";
+import { createQuizSchema } from "~/lib/types/schemas";
+import { eq } from "drizzle-orm";
 
 export const quizRouter = createTRPCRouter({
   create: publicProcedure
     .input(
-      quizSchema
+      createQuizSchema
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.transaction(async (tx) => {
@@ -60,6 +61,14 @@ export const quizRouter = createTRPCRouter({
         return newQuiz;
       });
     }),
+  
+  delete: publicProcedure
+    .input(z.object({ quizId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.delete(quizzes)
+        .where(eq(quizzes.id, input.quizId))
+        .returning();
+    }),
     
   getAllByExhibitionId: publicProcedure
     .input(z.object({exhibitionId: z.number()}))
@@ -75,4 +84,19 @@ export const quizRouter = createTRPCRouter({
         }
        })
     }),
+
+  getOne: publicProcedure
+    .input(z.object({quizId: z.number()}))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.quizzes.findFirst({
+        where: (quizzes, { eq }) => eq(quizzes.id, input.quizId),
+        with: {
+          questions: {
+            with: {
+              answers: true,
+            }
+          },
+        }
+    })
+  }),
 });

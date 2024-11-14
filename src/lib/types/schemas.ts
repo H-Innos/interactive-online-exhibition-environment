@@ -18,26 +18,26 @@ export const exhibitionFormSchema = z.object({
   
 export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>; 
 
-export const answerSchema = z.object({
+export const createAnswerSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Answer text can't be empty." }),
   questionId: z.number().optional(),
   isCorrect: z.boolean(),
 });
 
-export type Answer = z.infer<typeof answerSchema>;
+export type CreateAnswerDTO = z.infer<typeof createAnswerSchema>;
 
-export const questionSchema = z.object({
+export const createQuestionSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Question text is required." }),
   imageUrl: z.string().nullable(),
   quizId: z.number().optional(),
-  answers: z.array(answerSchema).min(2, { message: "At least two answers are required." }),
+  answers: z.array(createAnswerSchema).min(2, { message: "At least two answers are required." }),
 });
 
-export type Question = z.infer<typeof questionSchema>;
+export type CreateQuestionDTO = z.infer<typeof createQuestionSchema>;
 
-export const quizSchema = z.object({
+export const createQuizSchema = z.object({
   id: z
     .number()
     .optional(),
@@ -47,8 +47,8 @@ export const quizSchema = z.object({
   exhibitionId: z
     .number(),
   questions: z
-    .array(questionSchema)
+    .array(createQuestionSchema)
     .min(1, { message: "At least one question is required." }),
 });
 
-export type Quiz = z.infer<typeof quizSchema>;
+export type CreateQuizDTO = z.infer<typeof createQuizSchema>;

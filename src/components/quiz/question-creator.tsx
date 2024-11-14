@@ -5,18 +5,22 @@ import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Checkbox } from "../ui/checkbox"
 import QuestionImage from "../question-image"
-import { type Question } from "~/lib/types/schemas"
+import { type CreateQuestionDTO } from "~/lib/types/schemas"
 
 type QuestionCreatorProps = {
-  question: Question
-  onUpdate: (updatedQuestion: Question) => void
+  question: CreateQuestionDTO
+  order: number
+  onUpdate: (updatedQuestion: CreateQuestionDTO) => void
   onDelete: () => void
+  disabled: boolean
 }
 
 export function QuestionCreator({ 
-  question, 
+  question,
+  order, 
   onUpdate, 
-  onDelete 
+  onDelete,
+  disabled
 }: QuestionCreatorProps) {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,19 +70,19 @@ export function QuestionCreator({
 
   return (
     <Card className="mb-6">
-      
       <div className="flex items-center justify-end">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={onDelete}
+          disabled={disabled}
         >
           <X className="h-4 w-4" />
         </Button>
       </div>
       <div className="flex items-center justify-between px-6 pb-6">
-        <CardTitle className="text-lg">Question</CardTitle>
+        <CardTitle className="text-lg">{`Question ${order + 1}`}</CardTitle>
       </div>
       <CardContent>
         <div className="space-y-4">
@@ -90,6 +94,7 @@ export function QuestionCreator({
               onChange={(e) => onUpdate({ ...question, text: e.target.value })}
               placeholder="Enter your question here"
               required
+              readOnly={disabled}
             />
           </div>
 
@@ -101,12 +106,14 @@ export function QuestionCreator({
                 type="file"
                 onChange={handleImageUpload}
                 accept="image/*"
+                readOnly={disabled}
                 className="hidden"
               />
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => document.getElementById(`image-${question.id}`)?.click()}
+                disabled={disabled}
               >
                 <ImageIcon className="mr-2 h-4 w-4" />
                 Upload Image
@@ -125,12 +132,14 @@ export function QuestionCreator({
                   id={`correct-${question.id}-${index}`}
                   checked={answer.isCorrect}
                   onCheckedChange={() => toggleCorrect(index)}
+                  disabled={disabled}
                 />
                 <Input
                   value={answer.text}
                   onChange={(e) => updateAnswer(index, e.target.value)}
                   placeholder={`Answer ${index + 1}`}
                   required
+                  readOnly={disabled}
                 />
                 {question.answers.length > 2 && (
                   <Button
@@ -138,6 +147,7 @@ export function QuestionCreator({
                     variant="ghost"
                     size="icon"
                     onClick={() => removeAnswer(index)}
+                    disabled={disabled}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -147,7 +157,7 @@ export function QuestionCreator({
           </div>
 
           {question.answers.length < 4 && (
-            <Button type="button" variant="outline" onClick={addAnswer}>
+            <Button type="button" variant="outline" onClick={addAnswer} disabled={disabled}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Answer
             </Button>

@@ -1,54 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Plus } from "lucide-react"
 import { QuestionCreator } from "./question-creator"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { useCreateQuiz } from "~/hooks/quiz-actions"
+import { useCreateQuiz, useDeleteQuiz } from "~/hooks/quiz-actions"
 import { uploadImage } from "~/lib/utils/image-uploader"
-import { useRouter } from "next/navigation"
 import { Input } from "../ui/input"
-import { type Question } from "~/lib/types/schemas"
 import useExhibitionIdFromParams from "~/hooks/useExhibitionIdFromParams"
+import type { CreateQuizDTO, CreateQuestionDTO } from "~/lib/types/schemas"
+import { generateEmptyQuestion } from "~/lib/utils/quiz-utils"
 
-
-function generateId() {
-  return Date.now();
+type QuizCreatorProps = {
+  creatorContent: CreateQuizDTO;
+  disabled: boolean;
+  onCreate: () => void;
 }
 
-function generateEmptyQuestion(exhibitionId: number) {
-  const questionId = generateId();
-  return {
-    id: questionId,
-    text: "",
-    imageUrl: null,
-    answers: [
-      {id: generateId(), text: "", isCorrect: false, questionId: questionId },
-      {id: generateId(), text: "", isCorrect: false, questionId: questionId },
-    ],
-    quizId: exhibitionId,
-  }
-}
-
-export default function QuizCreator() {
-  const router = useRouter();
+export default function QuizCreator({ creatorContent, disabled, onCreate }: QuizCreatorProps) {
   const exhibitionId = useExhibitionIdFromParams();
   const createQuiz = useCreateQuiz();
+  const deleteQuiz = useDeleteQuiz();
 
   const [title, setTitle ] = useState<string>("");
-  const [questions, setQuestions] = useState<Question[]>([
-    generateEmptyQuestion(exhibitionId),
-  ]);
+  const [questions, setQuestions] = useState<CreateQuestionDTO[]>([generateEmptyQuestion(exhibitionId)]);
 
-  
+  useEffect(() => {
+    if (creatorContent) {
+      setTitle(creatorContent.title);
+      setQuestions(creatorContent.questions);
+    }
+  }, [creatorContent]);
 
   const addQuestion = () => {
-    const newQuestion: Question = generateEmptyQuestion(exhibitionId);
+    const newQuestion: CreateQuestionDTO = generateEmptyQuestion(exhibitionId);
     setQuestions([...questions, newQuestion])
   }
 
-  const updateQuestion = (updatedQuestion: Question) => {
+  const updateQuestion = (updatedQuestion: CreateQuestionDTO) => {
     setQuestions(
       questions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
     )
@@ -63,7 +53,10 @@ export default function QuizCreator() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (questions.every((q) => q.answers.some((a) => a.isCorrect))) {
-      console.log("Quiz created:", questions)
+      if (creatorContent.id) {
+        deleteQuiz.mutate({ quizId: creatorContent.id });
+      }
+
       for (const question of questions) {
         if (!question.imageUrl) continue;
         question.imageUrl = await uploadImage(question.imageUrl);
@@ -80,7 +73,8 @@ export default function QuizCreator() {
           })),
         }))
       })
-      router.push(`/dashboard/${exhibitionId}`)
+      onCreate();
+      //router.push(`/dashboard/${exhibitionId}`)
     } else {
       alert("Please ensure each question has at least one correct answer.")
     }
@@ -99,26 +93,29 @@ export default function QuizCreator() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter quiz title"
               required
+              readOnly={disabled}
             />
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {questions.map((question) => (
+              {questions.map((question, index) => (
                 <QuestionCreator
                   key={question.id}
+                  order={index}
                   question={question}
                   onUpdate={updateQuestion}
                   onDelete={() => deleteQuestion(question.id!)}
+                  disabled={disabled}
                 />
               ))}
             </div>
             <div className="flex justify-between mt-4">
-              <Button type="button" onClick={addQuestion}>
+              <Button type="button" onClick={addQuestion} disabled={disabled}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add Question
               </Button>
-              <Button type="submit">Create Quiz</Button>
+              <Button type="submit" disabled={disabled}>Create/Update Quiz</Button>
             </div>
           </CardContent>
         </Card>

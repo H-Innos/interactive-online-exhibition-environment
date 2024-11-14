@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import QuestionImage from "../question-image";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
-import type { Answer, Question } from "~/lib/types/schemas";
 import { Button } from "../ui/button";
 import { Check } from "lucide-react";
+import type { Answer, Question } from "~/lib/types/entities";
 
 enum QuestionResult {
   CORRECT,
@@ -50,7 +50,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, 
   };
 
   return (
-    <Card>
+    <Card className="w-72">
       <CardHeader>
         {question.text}
         {question.imageUrl && (
@@ -68,19 +68,20 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, 
               />
               <Label
                 htmlFor={`answer-${index}`}
-                className="flex-grow cursor-pointer"
+                className="flex-grow cursor-pointer break-words"
               >
                 {answer.text}
               </Label>
             </div>
           ))}
         </div>
-        {isSubmitted && <FeedBackLabel result={result} correctAnswers={correctAnswers} />}
-        <div className="flex justify-end">
+        {isSubmitted 
+          ? <FeedBackLabel result={result} correctAnswers={correctAnswers} />
+          : <FeedBackLabelPlaceholder />
+        }
+        <div className="flex justify-end w-full mt-2">
           <Button
             type="button"
-            variant="ghost"
-            size="icon"
             onClick={() => {onSubmit()}}
           >
             <Check className="h-4 w-4" /> Check Answer
@@ -95,23 +96,29 @@ const FeedBackLabel: React.FC<{ result: QuestionResult, correctAnswers: Answer[]
   switch (result) {
     case QuestionResult.CORRECT:
       return (
-      <div className='p-4 rounded-md bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'>
+      <div className='w-full p-4 rounded-md bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 break-words'>
         Correct!
         </div>
       );
     case QuestionResult.INCORRECT:
       return (
-        <div className="p-4 rounded-md bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100">
+        <div className="w-full p-4 rounded-md bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100 break-words">
           Incorrect. The correct answer{correctAnswers.length > 1 ? 's are' : ' is'}: {correctAnswers.map(a => a.text).join(', ')}
         </div>
       );
     case QuestionResult.PARTIAL:
       return (
-        <div className="p-4 rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">
+        <div className="w-full p-4 rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 break-words">
           Partially correct. The correct answer{correctAnswers.length > 1 ? 's are' : ' is'}: {correctAnswers.map(a => a.text).join(', ')}
         </div>
       ); 
     default:
-      throw new Error('Invalid question result');
+      throw new Error('Unknown question result');
   }
+};
+
+const FeedBackLabelPlaceholder: React.FC = () => {
+  return (
+    <div className="p-4 rounded-md break-words">&nbsp;</div>
+  );
 };

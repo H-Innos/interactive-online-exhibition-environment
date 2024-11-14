@@ -1,18 +1,18 @@
 "use client";
 import type React from "react"
 import { useEffect, useState } from "react";
-import type { Question, Quiz } from "~/lib/types/schemas"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { QuestionCard } from "./question";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { Question, Quiz } from "~/lib/types/entities";
 
-export const QuizCard: React.FC<Quiz> = ({ title, questions }) => {
+export const QuizCard: React.FC<{ quiz: Quiz }> = ( { quiz }) => {
   const [questionsState, setQuestionsState] = useState<{question: Question, isSubmitted: boolean}[]>(
-    questions.map(q => ({ question: q, isSubmitted: false }))
+    quiz.questions.map(q => ({ question: q, isSubmitted: false }))
   );
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentQuestionState, setCurrentQuestionState] = useState(questionsState[currentQuestionIndex]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [currentQuestionState, setCurrentQuestionState] = useState<{question: Question, isSubmitted: boolean} | undefined >(questionsState[currentQuestionIndex]);
   
   useEffect(() => {
     setCurrentQuestionState(questionsState[currentQuestionIndex]);
@@ -41,9 +41,9 @@ export const QuizCard: React.FC<Quiz> = ({ title, questions }) => {
   }
 
   return (
-    <Card>
+    <Card className="mx-auto">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>{quiz.title}</CardTitle>
       </CardHeader>
       <CardContent>
         <QuestionCard 
@@ -62,8 +62,8 @@ export const QuizCard: React.FC<Quiz> = ({ title, questions }) => {
           <ChevronLeft className="mr-2 h-4 w-4" /> Previous
         </Button>
         <Button 
-          onClick={() => setCurrentQuestionIndex((prevIndex) => Math.min(questions.length - 1, prevIndex + 1))}
-          disabled={currentQuestionIndex === questions.length - 1}
+          onClick={() => setCurrentQuestionIndex((prevIndex) => Math.min(quiz.questions.length - 1, prevIndex + 1))}
+          disabled={currentQuestionIndex === quiz.questions.length - 1}
           variant="outline"
         >
           Next <ChevronRight className="ml-2 h-4 w-4" />

@@ -2,7 +2,7 @@
 import { useParams } from 'next/navigation';
 
 function useExhibitionIdFromParams(): number {
-  const { id } = useParams();
+  const { exhibitionId: id } = useParams();
 
   const resolvedId = Array.isArray(id) ? id[0] : id;
 
