@@ -3,21 +3,22 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { X } from 'lucide-react'
+import cn from 'classnames';
 
 interface ExhibitionThumbnailProps {
   src: string
   alt: string
-  size?: number
   onClick?: () => void
   onDelete?: () => void
+  className?: string
 }
 
 export default function ExhibitionThumbnail({ 
   src, 
   alt, 
-  size = 200, 
   onClick,
-  onDelete
+  onDelete,
+  className
 }: ExhibitionThumbnailProps) {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -28,8 +29,11 @@ export default function ExhibitionThumbnail({
 
   return (
     <div 
-      className={`relative flex-shrink-0 overflow-hidden rounded-md bg-gray-200 group`}
-      style={{ width: size, height: size }}
+      className={cn(
+        'relative flex-shrink-0 overflow-hidden rounded-md bg-gray-200 group',
+        { 'cursor-pointer': onClick },
+        className
+      )}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

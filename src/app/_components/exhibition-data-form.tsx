@@ -135,7 +135,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
               <ExhibitionThumbnail
                 src={thumbnailDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
                 alt={t('thumbnail')}
-                size={200}
+                className="w-48 h-48"
                 onDelete={isEditing ? handleThumbnailDelete : undefined}
               />
               <FileUploadButton

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Image from "next/image";
 import React, { useRef, useState } from "react";
@@ -7,6 +7,7 @@ import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 import { useTranslation } from 'react-i18next';
 import ExhibitionThumbnail from '~/components/exhibition-thumbnail';
+import cn from 'classnames';
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
@@ -82,7 +83,10 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('createExhibition.namePlaceholder')}
-              className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
+              className={cn("w-full rounded-md border-gray-300 px-4 py-2", {
+                "focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50": !errorMessage,
+                "border-red-600": errorMessage,
+              })}
             />
             {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
           </div>
@@ -116,8 +120,8 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
               <ExhibitionThumbnail
                 src={coverImage}
                 alt="Cover preview"
-                size={128} 
-                onDelete={handleRemoveImage} 
+                className="w-32 h-32"
+                onDelete={handleRemoveImage}
               />
             </div>
           )}
