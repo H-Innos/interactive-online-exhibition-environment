@@ -11,7 +11,7 @@ import { PenSquare, Save, X } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { exhibitionFormSchema, type ExhibitionFormSchema } from '~/lib/types/schemas';
 import { configurations } from '~/lib/constants/config';
-import { type Exhibition } from '../../lib/types/exhibition';
+import { type Exhibition } from '../../lib/types/entities';
 import { useUpdateExhibition } from '~/hooks/exhibition-actions';
 import { uploadImage } from '~/lib/utils/image-uploader';
 import ExhibitionThumbnail from '~/components/exhibition-thumbnail';

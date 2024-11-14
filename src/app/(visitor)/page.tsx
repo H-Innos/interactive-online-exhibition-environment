@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import VisitorExhibitionCard from "~/app/_components/exhibition-visitor-cards";
-import type { Exhibition } from "~/lib/types/exhibition";
+import type { Exhibition } from "~/lib/types/entities";
 import { useTranslation } from 'react-i18next';
 
 interface MainPageProps {

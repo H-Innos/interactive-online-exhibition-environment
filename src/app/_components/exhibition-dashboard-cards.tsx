@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Settings } from "lucide-react";
-import type { Exhibition } from "../../lib/types/exhibition";
+import type { Exhibition } from "../../lib/types/entities";
 import {
   useDeleteExhibition,
   usePublishExhibition,

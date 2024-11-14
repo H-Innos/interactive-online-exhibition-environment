@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import PaginationControls from "~/components/pagination-controls";
-import type { Exhibition } from "~/lib/types/exhibition";
+import type { Exhibition } from "~/lib/types/entities";
 import { configurations } from "~/lib/constants/config";
 
 interface PageableExhibitionsProps {
