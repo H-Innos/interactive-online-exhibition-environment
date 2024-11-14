@@ -16,7 +16,7 @@ const DraftsPage = () => {
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished));
+      setDrafts(data.filter((exhibition) => !exhibition.isPublished && !exhibition.isArchived));
     }
   }, [data]);
 
