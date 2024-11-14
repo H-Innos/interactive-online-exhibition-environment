@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   return (
     <Suspense fallback={<div>{t('dashboard.loading')}</div>}>
-      <div className="text-text-dark min-h-screen px-4 sm:px-12 py-8">
+      <div className="text-text-dark min-h-screen px-4 sm:px-12 py-8 max-w-full overflow-x-hidden">
         <h1 className="text-3xl font-bold mb-2 text-neutral">{t('dashboard.title')}</h1>
         <h2 className="text-xl mb-6 text-gray-500">{t('dashboard.manageExhibitions')}</h2>
 

@@ -41,13 +41,13 @@
   },
 
   "slideInMenu": {
-    "openMenu": "Ava menüü",
-    "close": "Sulge",
-    "menu": "Menüü",
-    "email": "E-post",
-    "password": "Parool",
-    "logIn": "Logi sisse",
-    "language": "Keel"
+    "openMenu": "Open Menu",
+    "close": "Close",
+    "menu": "Menu",
+    "email": "Email",
+    "password": "Password",
+    "logIn": "Log in",
+    "language": "Language"
   },
   
     "pagination": {

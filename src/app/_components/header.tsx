@@ -11,7 +11,7 @@ const Header = () => {
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const changeLanguage = async (lng: string) => {
+  const changeLanguage = async (lng: string | undefined) => {
     try {
       await i18n.changeLanguage(lng);
     } catch (error) {
@@ -28,17 +28,7 @@ const Header = () => {
       <header className="w-full bg-background_dark text-text-dark relative overflow-hidden h-28">
         <div className="relative flex justify-between items-center h-full px-4 sm:px-8">
           <div
-            className="
-              absolute inset-y-0 left-0
-              w-4/5
-              sm:w-1/2 
-              lg:w-[32%] 
-              bg-[#2C5696] 
-              skew-x-[15deg] 
-              origin-bottom-left 
-              z-0 
-              transition-all duration-300
-            "
+            className="absolute inset-y-0 left-0 w-4/5 sm:w-1/2 lg:w-[32%] bg-[#2C5696] skew-x-[15deg] origin-bottom-left z-0 transition-all duration-300"
           ></div>
 
           <a href="/" className="relative z-10 flex items-center pl-4 sm:pl-8">
@@ -78,7 +68,7 @@ const Header = () => {
       </header>
 
       {!isMenuOpen && (
-        <nav className="w-full bg-background text-text-dark overflow-hidden mt-4 sm:flex justify-center items-center space-x-0 sm:space-x-32">
+        <nav className="w-full bg-background text-text-dark overflow-hidden mt-4 hidden sm:flex justify-center items-center space-x-0 sm:space-x-32">
           <Link href="/">
             <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
               {t('allExhibitions')}
