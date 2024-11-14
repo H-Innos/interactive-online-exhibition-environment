@@ -6,6 +6,7 @@ import { configurations } from "~/lib/constants/config";
 import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 import { useTranslation } from 'react-i18next';
+import ExhibitionThumbnail from '~/components/exhibition-thumbnail';
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
@@ -111,22 +112,13 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
           </div>
           {coverImage && (
             <div className="mt-4">
-              <p className="text-sm w-full text-gray-500">{t('createExhibition.imagePreview')}</p>
-              <div className="relative w-32 h-32">
-                <Image
-                  src={coverImage}
-                  alt="Cover preview"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-md"
-                />
-              </div>
-              <span
-                onClick={handleRemoveImage}
-                className="text-black text-xs cursor-pointer hover:underline"
-              >
-                {t('createExhibition.discard')}
-              </span>
+              <p className="text-sm text-gray-500">{t('createExhibition.imagePreview')}</p>
+              <ExhibitionThumbnail
+                src={coverImage}
+                alt="Cover preview"
+                size={128} // Size can be adjusted as needed
+                onDelete={handleRemoveImage} // Use the same remove handler
+              />
             </div>
           )}
           <div className="flex justify-end space-x-4">
@@ -149,6 +141,6 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
       </div>
     </div>
   );
-}
+};
 
 export default CreateExhibitionModal;
