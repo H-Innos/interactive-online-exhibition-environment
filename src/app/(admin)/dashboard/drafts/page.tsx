@@ -7,8 +7,10 @@ import PageableExhibitions from "~/app/_components/pageable-cards";
 import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
 import type { Exhibition } from "../../../../lib/types/exhibition";
+import { useTranslation } from "react-i18next";
 
 const DraftsPage = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
 
@@ -25,7 +27,7 @@ const DraftsPage = () => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>{t('dashboard.loading')}</div>}>
       <div className="text-text-dark min-h-screen px-4 sm:px-12 relative">
         <div className="flex items-center mt-12">
           <button
@@ -34,23 +36,23 @@ const DraftsPage = () => {
           >
             ❬
           </button>
-          <h1 className="text-3xl font-bold text-dark mb-10">Drafts</h1>
+          <h1 className="text-3xl font-bold text-dark mb-10">{t('dashboard.drafts')}</h1>
         </div>
 
         <CreateExhibitionButton />
 
         {isLoading ? (
-          <div>Loading...</div>
+          <div>{t('dashboard.loading')}</div>
         ) : error ? (
-          <div>Error loading drafts.</div>
+          <div>{t('dashboard.errorLoading')}</div>
         ) : (
           <PageableExhibitions
-            title="All Drafts"
+            title={t('dashboard.allDrafts')}
             exhibitions={drafts}
             onExhibitionClick={handleExhibitionClick}
             showFadeEffect={true}
             CardComponent={(props) => <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />}
-            />
+          />
         )}
       </div>
     </Suspense>

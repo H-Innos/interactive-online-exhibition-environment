@@ -17,6 +17,7 @@ import {
   DropdownMenuItem,
 } from "~/components/ui/dropdown-menu";
 import { configurations } from "~/lib/constants/config";
+import { useTranslation } from "react-i18next";
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
@@ -29,6 +30,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const deleteExhibition = useDeleteExhibition();
   const publishExhibition = usePublishExhibition();
@@ -45,7 +47,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
     if (
       exhibition.id &&
       !exhibition.isPublished &&
-      window.confirm("Are you sure you want to delete this exhibition?")
+      window.confirm(t("confirmDelete"))
     ) {
       deleteExhibition.mutate({ id: exhibition.id });
       setIsMenuOpen(false);
@@ -56,17 +58,11 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
     e.stopPropagation();
     if (exhibition.id) {
       if (exhibition.isPublished) {
-        if (
-          window.confirm(
-            "Are you sure you want to move this exhibition back to drafts?",
-          )
-        ) {
+        if (window.confirm(t("confirmUnpublish"))) {
           unpublishExhibition.mutate({ id: exhibition.id });
         }
       } else {
-        if (
-          window.confirm("Are you sure you want to publish this exhibition?")
-        ) {
+        if (window.confirm(t("confirmPublish"))) {
           publishExhibition.mutate({ id: exhibition.id });
         }
       }
@@ -123,20 +119,20 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
             className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
             disabled={exhibition.isPublished}
           >
-            Edit
+            {t("edit")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleChangePublishedState}
             className="hover:font-semibold"
           >
-            {exhibition.isPublished ? "Unpublish" : "Publish"}
+            {exhibition.isPublished ? t("unpublish") : t("publish")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleDelete}
             className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
             disabled={exhibition.isPublished}
           >
-            Delete
+            {t("delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
