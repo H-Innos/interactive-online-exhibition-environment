@@ -6,7 +6,7 @@ import { configurations } from "~/lib/constants/config";
 import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 import { useTranslation } from 'react-i18next';
-import ExhibitionThumbnail from '~/components/exhibition-thumbnail';
+import ExhibitionThumbnail from '~/components/removable-image';
 import cn from 'classnames';
 
 interface CreateExhibitionModalProps {

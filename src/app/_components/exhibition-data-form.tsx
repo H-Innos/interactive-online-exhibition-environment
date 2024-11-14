@@ -14,7 +14,7 @@ import { configurations } from '~/lib/constants/config';
 import { type Exhibition } from '../../lib/types/exhibition';
 import { useUpdateExhibition } from '~/hooks/exhibition-actions';
 import { uploadImage } from '~/lib/utils/image-uploader';
-import ExhibitionThumbnail from '~/components/exhibition-thumbnail';
+import ExhibitionThumbnail from '~/components/removable-image';
 import FileUploadButton from '~/components/file-upload-button';
 import { useTranslation } from 'react-i18next';
 
