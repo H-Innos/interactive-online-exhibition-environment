@@ -11,9 +11,9 @@ it('should load the page and display the search bar', () => {
 
 it('should filter exhibitions based on search input', () => {
     cy.contains('Loading...').should('not.exist'); 
-    cy.get('input[type="text"]').type('Test Exhibition');   
+    cy.get('input[type="text"]').type('Venus de Milo');   
     cy.get('div.flex.flex-col.bg-white.border').should('have.length.at.least', 1);
-    cy.contains('Test Exhibition').should('be.visible');
+    cy.contains('Venus de Milo').should('be.visible');
 });
 
 it('should show "No exhibitions available" when search has no results', () => {
