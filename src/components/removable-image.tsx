@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { X } from 'lucide-react'
 import cn from 'classnames';
 
-interface ExhibitionThumbnailProps {
+interface RemovableImagePorps {
   src: string
   alt: string
   onClick?: () => void
@@ -13,13 +13,13 @@ interface ExhibitionThumbnailProps {
   className?: string
 }
 
-export default function ExhibitionThumbnail({ 
+export default function RemovableImage({ 
   src, 
   alt, 
   onClick,
   onDelete,
   className
-}: ExhibitionThumbnailProps) {
+}: RemovableImagePorps) {
   const [isHovered, setIsHovered] = useState(false)
 
   const handleDelete = (e: React.MouseEvent) => {

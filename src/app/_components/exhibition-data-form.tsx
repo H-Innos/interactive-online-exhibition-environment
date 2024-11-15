@@ -14,7 +14,7 @@ import { configurations } from '~/lib/constants/config';
 import { type Exhibition } from '../../lib/types/exhibition';
 import { useUpdateExhibition } from '~/hooks/exhibition-actions';
 import { uploadImage } from '~/lib/utils/image-uploader';
-import ExhibitionThumbnail from '~/components/removable-image';
+import RemovableImage from '~/components/removable-image';
 import FileUploadButton from '~/components/file-upload-button';
 import { useTranslation } from 'react-i18next';
 
@@ -132,7 +132,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
           <div className="space-y-2">
             <Label htmlFor="thumbnail">{t('thumbnail')}</Label>
             <div className="flex flex-col items-start space-y-2">
-              <ExhibitionThumbnail
+              <RemovableImage
                 src={thumbnailDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
                 alt={t('thumbnail')}
                 className="w-48 h-48"

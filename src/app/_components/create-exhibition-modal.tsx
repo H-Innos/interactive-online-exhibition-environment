@@ -1,12 +1,11 @@
 'use client';
 
-import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { configurations } from "~/lib/constants/config";
 import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 import { useTranslation } from 'react-i18next';
-import ExhibitionThumbnail from '~/components/removable-image';
+import RemovableImage from '~/components/removable-image';
 import cn from 'classnames';
 
 interface CreateExhibitionModalProps {
@@ -117,7 +116,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
           {coverImage && (
             <div className="mt-4">
               <p className="text-sm text-gray-500">{t('createExhibition.imagePreview')}</p>
-              <ExhibitionThumbnail
+              <RemovableImage
                 src={coverImage}
                 alt="Cover preview"
                 className="w-32 h-32"
