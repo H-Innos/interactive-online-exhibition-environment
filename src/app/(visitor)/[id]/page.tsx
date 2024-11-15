@@ -5,7 +5,6 @@ import { api } from "~/trpc/react";
 import React, { useEffect, useState } from "react";
 import type { Exhibition } from "~/lib/types/exhibition";
 
-import 'ckeditor5/ckeditor5.css';
 
 const ExhibitionViewPage: React.FC = () => {
   const { id } = useParams();
@@ -47,7 +46,7 @@ const ExhibitionViewPage: React.FC = () => {
           {exhibition.name}
         </h1>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="ck-content mt-8" />
+      <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="blocknote-content mt-8" />
     </div>
   );
 };

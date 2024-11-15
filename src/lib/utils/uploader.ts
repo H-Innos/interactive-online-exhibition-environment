@@ -1,29 +1,21 @@
-import type { FileLoader, UploadResponse } from "@ckeditor/ckeditor5-upload";
 
 interface UploadResult {
   url: string;
 }
 
 export default class FileUploader {
-  loader: FileLoader;
-  constructor(loader: FileLoader) {
-    this.loader = loader;
+  file: File;
+
+  constructor(file: File) {
+    this.file = file;
   }
 
   upload() {
     console.log("Attempting to upload the file...");
-    return this.loader.file
-      .then((file: File | null) => {
-        if (!file) {
-          console.error("No file found.");
-          throw new Error('File is not available.');
-        }
 
-        console.log("File found:", file);
-
-        return new Promise<UploadResponse>((resolve, reject) => {
+        return new Promise<string>((resolve, reject) => {
           const formData = new FormData();
-          formData.append('file', file);
+          formData.append('file', this.file);
 
           fetch('/api/upload', {
             method: 'POST',
@@ -33,9 +25,7 @@ export default class FileUploader {
             .then((result: UploadResult) => {
               if (result.url) {
                 console.log("File uploaded successfully:", result.url);
-                resolve({
-                  default: result.url,
-                });
+                resolve(result.url);
               } else {
                 console.error("No URL in the response.");
                 reject(new Error('No URL in the response'));
@@ -46,10 +36,5 @@ export default class FileUploader {
               reject(error);
             });
         });
-      })
-      .catch((error: Error) => {
-        console.error('Upload failed:', error);
-        return Promise.reject(error);
-      });
   }
 }
