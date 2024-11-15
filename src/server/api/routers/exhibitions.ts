@@ -83,6 +83,16 @@ export const exhibitionRouter = createTRPCRouter({
       return deletedExhibition[0];
     }),
 
+  getDrafts: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.exhibitions.findMany({
+      where: (exhibitions, { eq, and }) => 
+        and(
+          eq(exhibitions.isPublished, false),
+          eq(exhibitions.isArchived, false)
+        ),
+    });
+  }),
+
   publish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
@@ -103,7 +113,7 @@ export const exhibitionRouter = createTRPCRouter({
       return publishedExhibition;
     }),
 
-  unpublish: publicProcedure
+    unpublish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       const unpublishedExhibition = await ctx.db.query.exhibitions.findFirst({
@@ -120,4 +130,76 @@ export const exhibitionRouter = createTRPCRouter({
 
       return { ...unpublishedExhibition, isPublished: false };
     }),
+
+    /*
+    checkTitleUnique: publicProcedure
+    .input(z
+      .object(
+        { id: z.number(),
+          name: z.string(),
+        }))
+    .query(async ({ ctx, input }) => {
+      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq, and }) =>
+          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
+      });
+
+      return existingExhibition !== null;
+    }),
+*/
+    unarchiveExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+    const exhibition = await ctx.db.query.exhibitions.findFirst({
+      where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+    });
+
+    if (!exhibition) {
+      throw new Error('Exhibition not found');
+    }
+
+    if (!exhibition.isArchived) {
+      throw new Error('Exhibition is not archived');
+    }
+
+    const updatedExhibition = await ctx.db
+      .update(exhibitions)
+      .set({ isArchived: false })
+      .where(eq(exhibitions.id, input.id))
+      .returning();
+
+    return updatedExhibition[0];
+  }),
+
+
+    getArchived: publicProcedure.query(async ({ ctx }) => {
+      const archivedExhibitions = await ctx.db.query.exhibitions.findMany({
+        where: (exhibitions, { eq }) => eq(exhibitions.isArchived, true),
+      });
+      return archivedExhibitions;
+    }),
+
+  archiveExhibition: publicProcedure
+  .input(z.object({ id: z.number() }))
+  .mutation(async ({ ctx, input }) => {
+    const exhibition = await ctx.db.query.exhibitions.findFirst({
+      where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+    });
+
+    if (!exhibition) {
+      throw new Error('Exhibition not found');
+    }
+
+    if (exhibition.isPublished) {
+      throw new Error('Cannot archive a published exhibition');
+    }
+
+    const updatedExhibition = await ctx.db
+      .update(exhibitions)
+      .set({ isArchived: true })
+      .where(eq(exhibitions.id, input.id))
+      .returning();
+
+    return updatedExhibition[0];
+  }),
 });

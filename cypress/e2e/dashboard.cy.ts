@@ -40,7 +40,7 @@ describe('Dashboard Page', () => {
     cy.log('Verified that the gear icon is clickable');
   });
 
-  it('should show disabled Edit button for published exhibitions', () => {
+  it('should show disabled Delete, Edit, and Archive buttons for published exhibitions', () => {
     cy.contains('Published Exhibitions')
       .parent()
       .find(selectors.cardOptionsButton)

@@ -9,6 +9,7 @@ import {
   useDeleteExhibition,
   usePublishExhibition,
   useUnpublishExhibition,
+  useArchiveExhibition,
 } from "~/hooks/exhibition-actions";
 import {
   DropdownMenu,
@@ -35,11 +36,26 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
   const deleteExhibition = useDeleteExhibition();
   const publishExhibition = usePublishExhibition();
   const unpublishExhibition = useUnpublishExhibition();
+  const archiveExhibition = useArchiveExhibition();
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/dashboard/${exhibition.id}`);
-    setIsMenuOpen(false);
+    if (exhibition.id) {
+      router.push(`/dashboard/${exhibition.id}`);
+      setIsMenuOpen(false);
+    }
+  };
+
+  const handleArchive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (
+      exhibition.id &&
+      !exhibition.isPublished &&
+      window.confirm(t("confirmArchive"))
+    ) {
+      archiveExhibition.mutate({ id: exhibition.id });
+      setIsMenuOpen(false);
+    }
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -120,6 +136,13 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
             disabled={exhibition.isPublished}
           >
             {t("edit")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleArchive}
+            disabled={exhibition.isPublished}
+            className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+          >
+            {t("archive")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleChangePublishedState}
