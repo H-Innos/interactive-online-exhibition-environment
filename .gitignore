@@ -7,6 +7,7 @@
 
 # testing
 /coverage
+/cypress/downloads
 
 # database
 /prisma/db.sqlite
@@ -45,3 +46,4 @@ yarn-error.log*
 # idea files
 .idea
 .vercel
+

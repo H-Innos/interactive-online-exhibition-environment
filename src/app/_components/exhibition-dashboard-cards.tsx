@@ -2,42 +2,36 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Settings } from "lucide-react";
-import { configurations } from "~/lib/constants/config";
+import type { Exhibition } from "../../lib/types/exhibition";
 import {
   useDeleteExhibition,
   usePublishExhibition,
   useUnpublishExhibition,
   useArchiveExhibition,
 } from "~/hooks/exhibition-actions";
-import { type Exhibition } from "~/lib/types/exhibition";
-
-const DropdownMenu = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu)
-);
-const DropdownMenuTrigger = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger)
-);
-const DropdownMenuContent = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuContent)
-);
-const DropdownMenuItem = dynamic(() =>
-  import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem)
-);
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "~/components/ui/dropdown-menu";
+import { configurations } from "~/lib/constants/config";
+import { useTranslation } from "react-i18next";
 
 interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
 }
 
-export default function ExhibitionCard({
+const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
   exhibition,
   onClick,
-}: ExhibitionCardProps) {
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const deleteExhibition = useDeleteExhibition();
   const publishExhibition = usePublishExhibition();
@@ -57,7 +51,7 @@ export default function ExhibitionCard({
     if (
       exhibition.id &&
       !exhibition.isPublished &&
-      window.confirm("Are you sure you want to delete this exhibition?")
+      window.confirm(t("confirmDelete"))
     ) {
       deleteExhibition.mutate({ id: exhibition.id });
       setIsMenuOpen(false);
@@ -68,15 +62,11 @@ export default function ExhibitionCard({
     e.stopPropagation();
     if (exhibition.id) {
       if (exhibition.isPublished) {
-        if (
-          window.confirm(
-            "Are you sure you want to move this exhibition back to drafts?"
-          )
-        ) {
+        if (window.confirm(t("confirmUnpublish"))) {
           unpublishExhibition.mutate({ id: exhibition.id });
         }
       } else {
-        if (window.confirm("Are you sure you want to publish this exhibition?")) {
+        if (window.confirm(t("confirmPublish"))) {
           publishExhibition.mutate({ id: exhibition.id });
         }
       }
@@ -84,118 +74,79 @@ export default function ExhibitionCard({
     }
   };
 
-  const handleArchive = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (
-      !exhibition.isPublished &&
-      exhibition.isArchived !== null &&
-      !exhibition.isArchived &&
-      window.confirm("Are you sure you want to archive this exhibition?")
-    ) {
-      archiveExhibition.mutate({ id: exhibition.id });
-    }
-  };
-
-  const truncateDescription = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + "...";
-  };
+  const truncateDescription = (text: string, maxLength: number) =>
+    text.length <= maxLength ? text : `${text.slice(0, maxLength)}...`;
 
   return (
-    <div className="mt-8">
-      <div
-        className="relative flex h-48 w-full cursor-pointer overflow-hidden rounded-lg bg-background_dark p-4 md:w-[320px]"
-        onClick={() => onClick(exhibition.id)}
-      >
-        <div className="flex w-full">
-          <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">
-            <Image
-              src={
-                exhibition.coverImageUrl ??
-                configurations.DEFAULT_COVER_IMAGE_URL
-              }
-              alt={exhibition.name ?? "Exhibition"}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-          <div className="mt-2 flex flex-grow flex-col justify-between overflow-hidden pl-3">
-            <div>
-              <h2 className="text-dark truncate text-xl font-semibold">
-                {exhibition.name}
-              </h2>
-              <p className="mt-1 text-sm text-text-dark">
-                {truncateDescription(
-                  exhibition.description ?? "",
-                  configurations.MAX_DESCRIPTION_LENGTH
-                )}
-              </p>
-            </div>
-          </div>
+    <div
+      className="relative flex h-48 w-100 cursor-pointer overflow-hidden rounded-lg bg-gray-100 p-4 shadow transition-shadow hover:shadow-lg"
+      onClick={() => onClick(exhibition.id)}
+    >
+      <div className="flex w-full">
+        <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">
+          <Image
+            src={
+              exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL
+            }
+            alt={exhibition.name}
+            layout="fill"
+            objectFit="cover"
+          />
         </div>
-
-        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="absolute right-1 top-1 p-2 text-gray-600 hover:text-gray-800"
-              aria-label="Card options"
-              data-testid="card-options-button"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Settings className="h-5 w-5" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-36 bg-white">
-            <DropdownMenuItem 
-              onClick={handleEdit} 
-              className={`hover:font-semibold ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={exhibition.isPublished}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleChangePublishedState}
-              className="hover:font-semibold"
-            >
-              {exhibition.isPublished ? "Unpublish" : "Publish"}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleArchive}
-              className={`hover:font-semibold ${exhibition.isPublished || exhibition.isArchived ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={exhibition.isPublished || exhibition.isArchived}
-            >
-              Archive
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={exhibition.isPublished}
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex flex-grow flex-col justify-start pl-3 pr-2">
+          <h2 className="text-dark truncate pt-4 text-lg font-semibold">
+            {exhibition.name}
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            {truncateDescription(exhibition.description ?? "", 100)}
+          </p>
+        </div>
       </div>
-    </div>
-  );
-}
 
-export function ExhibitionList({
-  exhibitions,
-  onExhibitionClick,
-}: {
-  exhibitions: Exhibition[];
-  onExhibitionClick: (id: number) => void;
-}) {
-  return (
-    <div className="l:grid-cols-2 grid grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-4">
-      {exhibitions.map((exhibition) => (
-        <ExhibitionCard
-          key={exhibition.id}
-          exhibition={exhibition}
-          onClick={onExhibitionClick}
-        />
-      ))}
+      <DropdownMenu
+        open={isMenuOpen}
+        onOpenChange={setIsMenuOpen}
+        data-testid="card-options-button"
+      >
+        <DropdownMenuTrigger asChild>
+          <button
+            className="absolute right-1 top-1 p-2 text-gray-600 hover:text-gray-800"
+            aria-label="Card options"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Settings className="h-5 w-5" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-36 bg-white">
+          <DropdownMenuItem
+            onClick={handleEdit}
+            className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+            disabled={exhibition.isPublished}
+          >
+            {t("edit")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleChangePublishedState}
+            className="hover:font-semibold"
+          >
+            {exhibition.isPublished ? t("unpublish") : t("publish")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => archiveExhibition.mutate({ id: exhibition.id })}
+            className={`text-gray-600 hover:font-semibold hover:text-gray-800 ${exhibition.isPublished? "cursor-not-allowed opacity-50" : ""}`}
+            disabled={exhibition.isPublished}
+          ></DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleDelete}
+            className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+            disabled={exhibition.isPublished}
+          >
+            {t("delete")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
-}
+};
+
+export default ExhibitionCard;

@@ -1,27 +1,29 @@
 'use client'
 
-import { useState } from 'react'
-import { useForm, type SubmitHandler } from 'react-hook-form'
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
-import { Textarea } from "~/components/ui/textarea"
-import { Label } from "~/components/ui/label"
-import { PenSquare, Save, X } from 'lucide-react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { exhibitionFormSchema, type ExhibitionFormSchema } from '~/lib/types/schemas'
-import { configurations } from '~/lib/constants/config'
-import { type Exhibition } from '../../lib/types/exhibition'
-import { useUpdateExhibition } from '~/hooks/exhibition-actions'
-import { uploadImage } from '~/lib/utils/image-uploader'
-import ExhibitionThumbnail from '~/components/exhibition-thumbnail'
-import FileUploadButton from '~/components/file-upload-button'
+import { useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
+import { Label } from "~/components/ui/label";
+import { PenSquare, Save, X } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { exhibitionFormSchema, type ExhibitionFormSchema } from '~/lib/types/schemas';
+import { configurations } from '~/lib/constants/config';
+import { type Exhibition } from '../../lib/types/exhibition';
+import { useUpdateExhibition } from '~/hooks/exhibition-actions';
+import { uploadImage } from '~/lib/utils/image-uploader';
+import ExhibitionThumbnail from '~/components/exhibition-thumbnail';
+import FileUploadButton from '~/components/file-upload-button';
+import { useTranslation } from 'react-i18next';
 
 interface ExhibitionDataFormProps {
-  exhibition: Exhibition
+  exhibition: Exhibition;
 }
 
 export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibition }) => {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState(exhibition.coverImageUrl ?? "");
   const {
@@ -38,7 +40,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
       thumbnail: undefined
     },
     resolver: zodResolver(exhibitionFormSchema)
-  })
+  });
 
   const updtateExhibition = useUpdateExhibition();
 
@@ -46,7 +48,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
     setIsEditing((isEditing) => !isEditing);
     setThumbnailDataUrl(exhibition.coverImageUrl ?? "");
     reset();
-  }
+  };
 
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
     const thumbnailUrl = await uploadImage(thumbnailDataUrl);
@@ -58,8 +60,8 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
       description: data.description,
       coverImageUrl: thumbnailUrl
     });
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   const handleThumbnailChange = (file: File) => {
     const reader = new FileReader();
@@ -75,20 +77,20 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
   const watchedFields = watch();
 
   return (
-    <Card className="w-80 overflow-auto">
+    <Card className="w-full md:w-100 overflow-auto">
       <CardHeader className="sticky top-0 z-10 bg-background border-b">
         <div className="flex items-center justify-between">
-          <CardTitle>Exhibition Details</CardTitle>
+          <CardTitle>{t('exhibitionDetails')}</CardTitle>
           <Button onClick={handleEditToggle} variant="outline" size="sm" className=" w-32 h-10">
             {isEditing ? (
               <>
                 <X className="mr-2 h-4 w-4" />
-                Cancel
+                {t('cancel')}
               </>
             ) : (
               <>
                 <PenSquare className="mr-2 h-4 w-4" />
-                Edit
+                {t('edit')}
               </>
             )}
           </Button>
@@ -97,7 +99,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
       <CardContent className="space-y-6 p-6">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">{t('title')}</Label>
             <Input
               id="title"
               {...register("title")}
@@ -108,48 +110,49 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('description')}</Label>
             <Textarea
               id="description"
               {...register("description")}
               readOnly={!isEditing}
               rows={4}
               maxLength={configurations.MAX_DESCRIPTION_LENGTH}
-              placeholder='A brief description of the exhibition'
+              placeholder={t('descriptionPlaceholder')}
             />
-            <p className="text-xs text-gray-500 mt-1">{watchedFields.description.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} characters </p>
+            <p className="text-xs text-gray-500 mt-1">{watchedFields.description.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} {t('characters')}</p>
             <p className="text-sm h-5">
               {errors.description ? <span className="text-red-500">{errors.description.message}</span> : <span>&nbsp;</span>}
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="thumbnail">Thumbnail</Label>
+            <Label htmlFor="thumbnail">{t('thumbnail')}</Label>
             <div className="flex flex-col items-start space-y-2">
               <ExhibitionThumbnail
                 src={thumbnailDataUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
-                alt="Thumbnail"
+                alt={t('thumbnail')}
                 size={32}
               />
               <FileUploadButton
                 onFileSelect={handleThumbnailChange}
                 accept='image/*'
-                disabled={isSubmitting ||!isEditing}
+                disabled={isSubmitting || !isEditing}
               />
             </div>
             <p className="text-sm h-5">
               {errors.thumbnail ? <span className="text-red-500">{errors.thumbnail.message}</span> : <span>&nbsp;</span>}
             </p>
           </div>
-          <Button 
+          <Button
             type="submit"
             variant="outline"
             disabled={isSubmitting || !isEditing}
-            className="w-full mt-4">
+            className="w-full mt-4"
+          >
             <Save className="mr-2 h-4 w-4" />
-            Save Changes
+            {t('saveChanges')}
           </Button>
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

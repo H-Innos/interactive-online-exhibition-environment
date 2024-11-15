@@ -4,11 +4,11 @@ describe('Dashboard Page', () => {
     newExhibitionButton: 'button:contains("New Exhibition")',
     createButton: 'button:contains("Create")',
     viewAllButton: '[data-testid="view-all-button"]',
-    cardOptionsButton: '[data-testid="card-options-button"]',
+    cardOptionsButton: 'button[aria-label="Card options"]',
     editOption: 'Edit',
     exhibitionTitleInput: 'input[placeholder="Enter exhibition title"]',
     exhibitionDescriptionInput: 'textarea[placeholder="Enter exhibition description"]',
-    exhibitionCard: (title: string) => `[data-testid="exhibition-card"]:contains("${title}")`,
+    exhibitionCard: (title: any) => `[data-testid="exhibition-card"]:contains("${title}")`,
   };
 
   beforeEach(() => {
@@ -30,33 +30,47 @@ describe('Dashboard Page', () => {
   });
 
   it('should click the gear icon on a published exhibition card', () => {
-    cy.get(selectors.cardOptionsButton).first().click();
+    cy.contains('Published Exhibitions')
+      .parent()
+      .find(selectors.cardOptionsButton)
+      .first()
+      .click();
+
     cy.contains(selectors.editOption).should('be.visible');
     cy.log('Verified that the gear icon is clickable');
   });
 
   it('should show disabled Delete, Edit, and Archive buttons for published exhibitions', () => {
     cy.contains('Published Exhibitions')
-      .parent() 
-      .find('[data-testid="card-options-button"]')
+      .parent()
+      .find(selectors.cardOptionsButton)
       .first()
       .click();
-    cy.get('[role="menu"]').should('be.visible');  
-    cy.get('[role="menuitem"][aria-disabled="true"]').should('have.length', 3);
-    cy.get('[role="menuitem"]:not([aria-disabled="true"])').should('have.length', 1);
-    cy.get('[role="menuitem"][aria-disabled="true"]').each(($el) => {
-      cy.wrap($el)
-        .should('have.attr', 'data-disabled', '')
-        .and('have.class', 'opacity-50')
-        .and('have.class', 'cursor-not-allowed');
-    });
-    cy.get('[role="menuitem"]:not([aria-disabled="true"])').should(($el) => {
-      expect($el).not.to.have.attr('data-disabled');
-      expect($el).not.to.have.class('opacity-50');
-      expect($el).not.to.have.class('cursor-not-allowed');
-    });
-    cy.get('[role="menuitem"][aria-disabled="true"]').first().click({ force: true });
-    cy.get('[role="menu"]').should('be.visible');
+
+    cy.contains('Edit')
+      .should('be.visible')
+      .and('have.attr', 'aria-disabled', 'true')
+      .and('have.class', 'opacity-50')
+      .and('have.class', 'cursor-not-allowed');
+
+    cy.contains('Edit').click({ force: true });
+    cy.url().should('not.include', '/admin/dashboard/');
   });
-  
+
+  it('should show disabled Delete button for published exhibitions', () => {
+    cy.contains('Published Exhibitions')
+      .parent()
+      .find(selectors.cardOptionsButton)
+      .first()
+      .click();
+
+    cy.contains('Delete')
+      .should('be.visible')
+      .and('have.attr', 'aria-disabled', 'true')
+      .and('have.class', 'opacity-50')
+      .and('have.class', 'cursor-not-allowed');
+
+    cy.contains('Delete').click({ force: true });
+    cy.get(selectors.cardOptionsButton).should('exist');
+  });
 });

@@ -9,16 +9,18 @@ import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-ac
 import type { Exhibition } from '~/lib/types/exhibition';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import type { Editor, EventInfo } from 'ckeditor5';
+import { useTranslation } from 'react-i18next';
 
 const ExhibitionEditorPage = () => {
   const { id } = useParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
-  const [ editorContent, setEditorContent ] = useState<string>();
-  const [ isDirty, setIsDirty ] = useState(false);
-  const { data: exhibitionData} = api.exhibition.getOne.useQuery({ id: Number(id) });
+  const [editorContent, setEditorContent] = useState<string>();
+  const [isDirty, setIsDirty] = useState(false);
+  const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: Number(id) });
 
   const router = useRouter();
   useWarnIfUnsavedChanges(isDirty);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (exhibitionData) {
@@ -26,25 +28,12 @@ const ExhibitionEditorPage = () => {
       setEditorContent(exhibitionData.content ?? "");
     }
   }, [exhibitionData]);
-;
+
   const publishExhibition = usePublishExhibition();
   const updateExhibition = useUpdateExhibition();
 
-// delete if we have decided to not add autosaving back
-/* 
-  const autosaveExhibition = useAutosaveExhibition();
-  function saveData(data: string): Promise<void> {
-    if (!exhibition) return Promise.resolve();
-    return autosaveExhibition.mutateAsync({
-      id: exhibition.id,
-      name: exhibition.name ?? "",
-      content: data
-    });
-  }
-*/
-
   function handlePublish() {
-    if (!exhibition || !window.confirm("Are you sure you want to publish this exhibition?")) return;
+    if (!exhibition || !window.confirm(t("confirmPublish"))) return;
     publishExhibition.mutate({ id: exhibition.id });
   }
 
@@ -64,30 +53,28 @@ const ExhibitionEditorPage = () => {
   }
 
   return (
-    <div className="flex justify-between min-h-screen p-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-4">Edit Exhibition {id}</h1>
-        <p>Status: {updateExhibition.isPending ? "Saving..." : "Saved"}</p> 
-        { exhibition && 
-        (
-          <div className='max-w-5xl justify-center'> 
+    <div className="flex flex-col lg:flex-row justify-between min-h-screen p-4 lg:p-8 space-y-4 lg:space-y-0 lg:space-x-4">
+      <div className="flex-1 w-full lg:w-[70%] mx-auto">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4">{t("editExhibition")} {id}</h1>
+        <p>{t("status")}: {updateExhibition.isPending ? t("saving") : t("saved")}</p>
+        {exhibition && (
+          <div className="w-full">
             <ExhibitionContentEditor
-              initialContent={exhibition.content ?? ""} 
+              initialContent={exhibition.content ?? ""}
               onChange={handleEditorChange}
-            />    
-            
-          </div>  
+            />
+          </div>
         )}
       </div>
-      { exhibition && (
-        <aside className='w-80'>
-          <div className='flex flex-row justify-end m-4 gap-2'>
+      {exhibition && (
+        <aside className="w-full lg:w-[30%] mt-4 lg:mt-0 mx-auto">
+          <div className="flex flex-row justify-end m-4 gap-2">
             <button
               type="button"
               className="bg-gray-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-gray-600"
               onClick={() => router.push(`/dashboard`)}
             >
-              Exit
+              {t("exit")}
             </button>
             <button
               type="button"
@@ -95,20 +82,20 @@ const ExhibitionEditorPage = () => {
               disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handleSaveEditorChanges}
             >
-            Save changes
+              {t("saveChanges")}
             </button>
             <button
-              type='button'
+              type="button"
               className="bg-lime-600 text-text-light mt-4 px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none"
               disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handlePublish}
             >
-              {publishExhibition.isPending ? "Publishing..." : "Publish"}
+              {publishExhibition.isPending ? t("publishing") : t("publish")}
             </button>
           </div>
           <ExhibitionDataForm exhibition={exhibition} />
         </aside>
-    )}
+      )}
     </div>
   );
 };
