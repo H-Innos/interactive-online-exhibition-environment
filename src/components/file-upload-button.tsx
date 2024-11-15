@@ -40,6 +40,7 @@ export default function FileUploadButton({
         aria-label="File upload"
       />
       <Button 
+        variant='outline'
         type='button'
         onClick={handleButtonClick}
         disabled={disabled}
