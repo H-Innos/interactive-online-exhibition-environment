@@ -6,12 +6,13 @@ describe('Archive Functionality', () => {
         cy.get('input[placeholder="Enter exhibition title"]').type('Test Exhibition for Archiving');
         cy.get('textarea[placeholder="Enter exhibition description"]').type('This is a test exhibition for archive functionality');
         cy.get('button[type="submit"]').contains('Create').click();
+        cy.visit('/dashboard/drafts');
         cy.contains('Test Exhibition for Archiving', { timeout: 10000 }).should('be.visible');
     });
 
 
     it('should archive a newly created exhibition', () => {
-        cy.visit('/dashboard');
+        cy.visit('/dashboard/drafts');
         cy.contains('h2', 'Test Exhibition for Archiving', { timeout: 20000 }).should('be.visible');
         cy.contains('h2', 'Test Exhibition for Archiving')
             .closest('.relative')
@@ -66,7 +67,7 @@ describe('Archive Functionality', () => {
 
 
     it('should delete the unarchived exhibition', () => {
-        cy.visit('/dashboard');
+        cy.visit('/dashboard/drafts');
         cy.contains('h2', 'Test Exhibition for Archiving', { timeout: 20000 }).should('be.visible');
         cy.contains('h2', 'Test Exhibition for Archiving')
             .closest('.relative')

@@ -88,7 +88,6 @@ const ExhibitionSection = ({
         <PaginationControls 
           currentPage={currentPage} 
           totalPages={totalPages} 
-          onPageChange={handlePageChange}
         />
       )}
     </div>

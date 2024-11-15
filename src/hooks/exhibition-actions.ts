@@ -67,6 +67,7 @@ export const useDeleteExhibition = () => {
   return api.exhibition.delete.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
+      await utils.exhibition.getDrafts.invalidate();
       toast.success("Exhibition deleted successfully!");
     },
     onError: (error) => {

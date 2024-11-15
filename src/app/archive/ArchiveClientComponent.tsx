@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
-//import type { Exhibition } from "~/app/_types/exhibition";
+import type { Exhibition } from "~/lib/types/exhibition";
 
 const ArchiveClientComponent = () => {
   const router = useRouter();
