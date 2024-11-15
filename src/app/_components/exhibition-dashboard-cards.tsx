@@ -46,6 +46,18 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
     }
   };
 
+  const handleArchive = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (
+      exhibition.id &&
+      !exhibition.isPublished &&
+      window.confirm(t("confirmArchive"))
+    ) {
+      archiveExhibition.mutate({ id: exhibition.id });
+      setIsMenuOpen(false);
+    }
+  };
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (
@@ -126,16 +138,18 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
             {t("edit")}
           </DropdownMenuItem>
           <DropdownMenuItem
+            onClick={handleArchive}
+            disabled={exhibition.isPublished}
+            className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+          >
+            {t("archive")}
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={handleChangePublishedState}
             className="hover:font-semibold"
           >
             {exhibition.isPublished ? t("unpublish") : t("publish")}
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => archiveExhibition.mutate({ id: exhibition.id })}
-            className={`text-gray-600 hover:font-semibold hover:text-gray-800 ${exhibition.isPublished? "cursor-not-allowed opacity-50" : ""}`}
-            disabled={exhibition.isPublished}
-          ></DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleDelete}
             className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
