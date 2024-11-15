@@ -1,0 +1,81 @@
+{
+  "allExhibitions": "All exhibitions",
+  "dashboardNav": "Dashboard",
+  "archive": "Archive",
+  "login": "Log In",
+  
+  "createExhibition": {
+    "title": "Create a New Exhibition",
+    "nameLabel": "Title",
+    "namePlaceholder": "Enter exhibition title",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Enter exhibition description",
+    "coverImageLabel": "Cover Image",
+    "imagePreview": "Image Preview:",
+    "discard": "Discard",
+    "cancel": "Cancel",
+    "create": "Create",
+    "saving": "Saving...",
+    "nameRequired": "Exhibition name is required.",
+    "fileSizeExceeds": "The file size exceeds the maximum allowed size of {{maxSize}} MB.",
+    "newExhibition": "New Exhibition"
+
+  },
+  
+
+  "dashboard": {
+    "title": "Dashboard",
+    "manageExhibitions": "Manage Exhibitions",
+    "loading": "Loading...",
+    "errorLoading": "Error loading exhibitions.",
+    "drafts": "Drafts",
+    "publishedExhibitions": "Published Exhibitions",
+    "allDrafts": "All Drafts"
+  },
+
+  "mainPage": {
+    "exploreExhibitions": "Explore Exhibitions",
+    "loading": "Loading...",
+    "errorLoading": "Error loading exhibitions.",
+    "noExhibitions": "No exhibitions available."
+  },
+
+  "slideInMenu": {
+    "openMenu": "Open Menu",
+    "close": "Close",
+    "menu": "Menu",
+    "email": "Email",
+    "password": "Password",
+    "logIn": "Log in",
+    "language": "Language"
+  },
+  
+    "pagination": {
+      "previous": "← Previous",
+      "next": "Next →"
+    },
+    
+      "confirmPublish": "Are you sure you want to publish this exhibition?",
+      "editExhibition": "Edit Exhibition",
+      "status": "Status",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "exit": "Exit",
+      "saveChanges": "Save changes",
+      "publishing": "Publishing...",
+      "publish": "Publish",
+      "exhibitionDetails": "Exhibition Details",
+      "title": "Title",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter exhibition description",
+      "thumbnail": "Cover Image",
+      "thumbnailPlaceholder": "Choose cover image",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "characters": "characters",
+      "unpublish": "Unpublish",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure you want to delete this exhibition?",
+      "confirmUnpublish": "Are you sure you want to move this exhibition back to drafts?"
+}
+

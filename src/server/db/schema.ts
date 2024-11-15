@@ -22,6 +22,7 @@ export const exhibitions = createTable(
     coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
     content: text("content").default(""),
     isPublished: boolean("is_published").default(false).notNull(),
+    isArchived: boolean("is_archived").default(false).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
