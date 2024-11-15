@@ -9,7 +9,7 @@ const ArchiveClientComponent = () => {
   const { data: archivedExhibitions, isLoading } = api.exhibition.getArchived.useQuery();
 
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/view/${id}`);
+    router.push(`/${id}`);
   };
 
   if (isLoading) {
