@@ -24,7 +24,6 @@ interface ExhibitionCardProps {
   exhibition: Exhibition;
   onClick: (id: number) => void;
   isArchivePage?: boolean;
-  onArchive?: (id: number) => void;
 }
 export default function ExhibitionCard({ exhibition, onClick,   isArchivePage = false,
 }: ExhibitionCardProps) {

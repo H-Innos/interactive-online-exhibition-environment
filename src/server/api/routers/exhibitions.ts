@@ -83,6 +83,16 @@ export const exhibitionRouter = createTRPCRouter({
       return deletedExhibition[0];
     }),
 
+  getDrafts: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.exhibitions.findMany({
+      where: (exhibitions, { eq, and }) => 
+        and(
+          eq(exhibitions.isPublished, false),
+          eq(exhibitions.isArchived, false)
+        ),
+    });
+  }),
+
   publish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {

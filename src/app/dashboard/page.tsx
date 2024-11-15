@@ -8,25 +8,27 @@ import ExhibitionSection from "../_components/exhibition-section";
 import CreateExhibitionModal from "../_components/create-exhibition-modal";
 import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
 
+
+
 const ExhibitionPageContent = () => {
   const router = useRouter();
-  const [drafts, setDrafts] = useState<Exhibition[]>([]);
   const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
   const [isCreateExhibitionModalOpen, setIsCreateExhibitionModalOpen] = useState(false);
   const visibleDrafts = useResponsiveVisibleDrafts();
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
+  const { data: drafts, error: draftsError, isLoading: draftsLoading } = api.exhibition.getDrafts.useQuery();
+  const { data: allExhibitions, error: allError, isLoading: allLoading } = api.exhibition.getAll.useQuery();
 
   useEffect(() => {
-    if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished && exhibition.isArchived === false));
-      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished && exhibition.isArchived === false));
+    if (allExhibitions) {
+      setPublishedExhibitions(allExhibitions.filter((exhibition) => exhibition.isPublished && !exhibition.isArchived));
     }
-  }, [data]);
-
+  }, [allExhibitions]);
+  
   const handleExhibitionClick = (id: number) => {
     router.push(`/dashboard/${id}`);
   };
+
 
   const searchParams = useSearchParams();
   const currentPage = searchParams ? parseInt(searchParams.get("page") ?? "1", 10) : 1;
@@ -47,13 +49,13 @@ const ExhibitionPageContent = () => {
         <CreateExhibitionModal onClose={() => setIsCreateExhibitionModalOpen(false)} />
       )}
 
-      {isLoading ? (
+      {draftsLoading || allLoading ? (
         <div>Loading...</div>
-      ) : error ? (
+      ) : draftsError || allError ? (
         <div>Error loading exhibitions.</div>
       ) : (
         <>
-          {currentPage === 1 && drafts.length > 0 && (
+          {currentPage === 1 && drafts && drafts.length > 0 && (
             <ExhibitionSection
               title="Drafts"
               exhibitions={drafts.slice(0, visibleDrafts)}

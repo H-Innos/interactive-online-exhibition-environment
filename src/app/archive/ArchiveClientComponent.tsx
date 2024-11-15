@@ -3,14 +3,14 @@
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
-import type { Exhibition } from "~/app/_types/exhibition";
+//import type { Exhibition } from "~/app/_types/exhibition";
 
 const ArchiveClientComponent = () => {
   const router = useRouter();
   const { data: archivedExhibitions, isLoading } = api.exhibition.getArchived.useQuery();
 
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/view/${id}`);  // Updated this line
+    router.push(`/exhibitions/view/${id}`);
   };
 
   if (isLoading) {
@@ -25,14 +25,9 @@ const ArchiveClientComponent = () => {
     );
   }
 
-  const typedArchivedExhibitions: Exhibition[] = archivedExhibitions.map(exhibition => ({
-    ...exhibition,
-    isArchived: Boolean(exhibition.isArchived) 
-  }));
-
   return (
     <ExhibitionList
-      exhibitions={typedArchivedExhibitions}
+      exhibitions={archivedExhibitions}
       onExhibitionClick={handleExhibitionClick}
       isArchivePage={true}
     />
