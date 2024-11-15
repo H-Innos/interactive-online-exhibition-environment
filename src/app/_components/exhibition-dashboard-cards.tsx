@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { Cog } from "lucide-react";
+import { Settings } from "lucide-react";
 import { configurations } from "~/lib/constants/config";
 import {
   useDeleteExhibition,
@@ -142,7 +142,7 @@ export default function ExhibitionCard({
               data-testid="card-options-button"
               onClick={(e) => e.stopPropagation()}
             >
-              <Cog className="h-5 w-5" />
+              <Settings className="h-5 w-5" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36 bg-white">
