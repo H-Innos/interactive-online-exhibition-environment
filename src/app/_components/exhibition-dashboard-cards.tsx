@@ -40,11 +40,12 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id) {
+    if (exhibition.id && !exhibition.isPublished) {
       router.push(`/dashboard/${exhibition.id}`);
       setIsMenuOpen(false);
     }
   };
+
 
   const handleArchive = (e: React.MouseEvent) => {
     e.stopPropagation();
