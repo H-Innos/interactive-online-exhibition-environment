@@ -1,9 +1,8 @@
-"use client"; 
+"use client";
 
 import { useRouter } from "next/navigation";
+import { ArchivedExhibitionList } from "~/app/_components/exhibition-archive-cards";
 import { api } from "~/trpc/react";
-import { ExhibitionList } from "~/app/_components/exhibition-dashboard-cards";
-import type { Exhibition } from "~/lib/types/exhibition";
 
 const ArchiveClientComponent = () => {
   const router = useRouter();
@@ -26,10 +25,9 @@ const ArchiveClientComponent = () => {
   }
 
   return (
-    <ExhibitionList
+    <ArchivedExhibitionList
       exhibitions={archivedExhibitions}
       onExhibitionClick={handleExhibitionClick}
-      isArchivePage={true}
     />
   );
 };
