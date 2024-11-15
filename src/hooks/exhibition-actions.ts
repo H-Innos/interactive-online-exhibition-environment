@@ -51,6 +51,8 @@ export const useUnpublishExhibition = () => {
   return api.exhibition.unpublish.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
+      await utils.exhibition.getDrafts.invalidate();
+
       toast.success("Exhibition moved back to drafts!");
     },
     onError: (error) => {
@@ -81,6 +83,7 @@ export const useArchiveExhibition = () => {
       try {
         await utils.exhibition.getAll.invalidate();
         await utils.exhibition.getArchived.invalidate();
+        await utils.exhibition.getDrafts.invalidate();
         toast.success("Exhibition archived successfully!");
       } catch (error) {
         console.error("Error invalidating queries:", error);
@@ -101,6 +104,8 @@ export const useUnarchiveExhibition = () => {
       try {
         await utils.exhibition.getAll.invalidate();
         await utils.exhibition.getArchived.invalidate();
+        await utils.exhibition.getDrafts.invalidate(); 
+
         toast.success("Exhibition unarchived successfully!");
       } catch (error) {
         console.error("Error invalidating queries:", error);
