@@ -27,12 +27,24 @@ const QuizzesPage = () => {
   }, [existingQuizzes]);
 
   function handleSelect(quiz: CreateQuizDTO) {
+    console.log("selelect")
     setSelectedQuiz(quiz);
+    setIsEditable(false);
   };
 
   function handleDelete(id: number) {
     deleteQuiz.mutate({ quizId: id });
   };
+
+  function handleCancel() {
+    setIsEditable(false);
+    setSelectedQuiz(generateEmptyQuiz(id));
+  }
+
+  function handleNewQuiz() {
+    setIsEditable(true);
+    setSelectedQuiz(generateEmptyQuiz(id));
+  }
 
   return (
     <div className='flex p-4 gap-4'>
@@ -69,15 +81,13 @@ const QuizzesPage = () => {
           </ul>
         </CardContent>
       </Card>
-      <Card className="w-2/3">
+      <Card  className="w-2/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Quiz Preview</CardTitle>
           {selectedQuiz && (
-            <Button 
-              onClick={() => {setIsEditable(prev => (!prev)); setSelectedQuiz(generateEmptyQuiz(id))}}
-            >
-              {isEditable ? <><X /> Cancel</> : <><Plus className="h-4 w-4" /> New quiz</>} 
-            </Button>
+            isEditable ? 
+              <CancelButton onClick={handleCancel} /> : 
+              <NewQuizButton onClick={() => handleNewQuiz()} />
           )}
         </CardHeader>
         <CardContent>
@@ -94,6 +104,14 @@ const QuizzesPage = () => {
       
     </div>
     );
+}
+
+const CancelButton = ({ onClick }: { onClick: () => void }) => {
+  return <Button onClick={onClick}> <><X/> Cancel</></Button>;
+}
+
+const NewQuizButton = ({ onClick }: { onClick: () => void }) => {
+  return <Button onClick={onClick}> <><Plus className="h-4 w-4" /> New quiz</></Button>;
 }
 
 export default QuizzesPage;
