@@ -47,7 +47,7 @@ export const useUpdateQuiz = () => {
       toast.success("Quiz updated successfully!");
     },
     onError: (error) => {
-      toast.error(`Failed to update quiz: ${error.message}`);
+      toast.error(`Failed to update quiz: ${error.message ?? "Unknown error."}`);
     },
   });
 };

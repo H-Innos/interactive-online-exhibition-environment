@@ -10,7 +10,7 @@ import type { Exhibition } from '~/lib/types/entities';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import type { Editor, EventInfo } from 'ckeditor5';
 import { useTranslation } from 'react-i18next';
-import useExhibitionIdFromParams from '~/hooks/useExhibitionIdFromParams';
+import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import { Button } from '~/components/ui/button';
 
 const ExhibitionEditorPage = () => {

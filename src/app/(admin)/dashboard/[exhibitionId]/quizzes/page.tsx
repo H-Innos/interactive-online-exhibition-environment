@@ -5,8 +5,8 @@ import QuizCreator from '~/components/quiz/quiz-creator'
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
-import { useDeleteQuiz } from '~/hooks/quiz-actions';
-import useExhibitionIdFromParams from '~/hooks/useExhibitionIdFromParams';
+import { useCreateQuiz, useDeleteQuiz } from '~/hooks/quiz-actions';
+import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import { type CreateQuizDTO } from '~/lib/types/schemas';
 import { generateEmptyQuiz } from '~/lib/utils/quiz-utils';
 import { api } from '~/trpc/react';
@@ -19,6 +19,7 @@ const QuizzesPage = () => {
   const [ isEditable, setIsEditable ] = useState(false);
 
   const deleteQuiz = useDeleteQuiz();
+  const createQuiz = useCreateQuiz();
 
   useEffect(() => {
     if (existingQuizzes) {
@@ -35,7 +36,7 @@ const QuizzesPage = () => {
   };
 
   function handleNewQuiz() {
-    setQuizzes(prev => [...prev, generateEmptyQuiz(id)]);
+    createQuiz.mutate(generateEmptyQuiz(id));
   };
 
   return (
@@ -49,6 +50,7 @@ const QuizzesPage = () => {
         </CardHeader>
         <CardContent>
           {error && <div>Error loading quizzes.</div>}
+          {!selectedQuiz && <p> There are currently no quizzes.</p>}
           {isLoading && <div>Loading...</div>}
           <ul className="space-y-1">
             {quizzes.map((quiz) => (
@@ -87,11 +89,14 @@ const QuizzesPage = () => {
           )}
         </CardHeader>
         <CardContent>
-          <QuizCreator
-          creatorContent={selectedQuiz}
-          disabled={!isEditable}
-          onCreate={() => setIsEditable(false)}
-          />
+          {selectedQuiz ? 
+            <QuizCreator
+            creatorContent={selectedQuiz}
+            disabled={!isEditable}
+            onCreate={() => setIsEditable(false)}
+            /> :  
+            <div className="min-h-screen flex w-full justify-center items-center">Select a quiz to start editing.</div>
+          }
         </CardContent>
       </Card>
       

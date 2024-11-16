@@ -1,3 +1,5 @@
+"use client";
+
 import { PlusCircle, X, Image as ImageIcon } from "lucide-react"
 import { Card, CardContent, CardTitle } from "../ui/card"
 import { Label } from "../ui/label"

@@ -8,12 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { useCreateQuiz, useDeleteQuiz } from "~/hooks/quiz-actions"
 import { uploadImage } from "~/lib/utils/image-uploader"
 import { Input } from "../ui/input"
-import useExhibitionIdFromParams from "~/hooks/useExhibitionIdFromParams"
+import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams"
 import type { CreateQuizDTO, CreateQuestionDTO } from "~/lib/types/schemas"
 import { generateEmptyQuestion } from "~/lib/utils/quiz-utils"
 
 type QuizCreatorProps = {
-  creatorContent: CreateQuizDTO;
+  creatorContent: CreateQuizDTO | null;
   disabled: boolean;
   onCreate: () => void;
 }

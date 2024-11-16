@@ -18,11 +18,11 @@ export function generateEmptyQuestion(quizId: number) {
   const questionId = generateId();
   return {
     id: questionId,
-    text: "",
+    text: "New Question",
     imageUrl: null,
     answers: [
-    {id: generateId(), text: "", isCorrect: false, questionId: questionId },
-    {id: generateId(), text: "", isCorrect: false, questionId: questionId },
+    {id: generateId(), text: "Answer 1", isCorrect: true, questionId: questionId },
+    {id: generateId(), text: "Answer 2", isCorrect: false, questionId: questionId },
     ],
     quizId: quizId,
   }

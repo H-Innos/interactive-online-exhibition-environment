@@ -30,7 +30,7 @@ export const quizRouter = createTRPCRouter({
           throw new Error("Failed to create quiz.");
         }
         const quizId = newQuiz[0].id;
-  
+        
         for (const question of input.questions) {
           const newQuestion = await tx.insert(questions).values({
             quizId: quizId,
@@ -39,7 +39,7 @@ export const quizRouter = createTRPCRouter({
           }).returning();
           
           if (!newQuestion[0]) {
-            tx.rollback();
+          tx.rollback();
             throw new Error("Failed to create question.");
           }
           
@@ -50,10 +50,10 @@ export const quizRouter = createTRPCRouter({
               questionId: questionId,
               text: answer.text,
               isCorrect: answer.isCorrect,
-            }).returning();
-  
+        }).returning();
+
             if (!newAnswer[0]) {
-              tx.rollback();
+          tx.rollback();
               throw new Error("Failed to create answer.");
             }
           }

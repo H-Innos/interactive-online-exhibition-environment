@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from 'next/navigation';
 
-function useExhibitionIdFromParams(): number {
+export function useExhibitionIdFromParams(): number {
   const { exhibitionId: id } = useParams();
 
   const resolvedId = Array.isArray(id) ? id[0] : id;
@@ -19,4 +19,20 @@ function useExhibitionIdFromParams(): number {
   return exhibitionId;
 }
 
-export default useExhibitionIdFromParams;
+export function useQuizIdFromParams(): number {
+  const { quizId: id } = useParams();
+
+  const resolvedId = Array.isArray(id) ? id[0] : id;
+
+  if (!resolvedId || resolvedId.length === 0) {
+    throw new Error("Route must contain an quiz ID.");
+  }
+
+  const quizId = Number(resolvedId);
+
+  if (isNaN(quizId)) {
+    throw new Error("The quiz ID is not a valid number.");
+  }
+
+  return quizId;
+}
