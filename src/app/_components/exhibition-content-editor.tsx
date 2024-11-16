@@ -1,9 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
-import { PartialBlock } from "@blocknote/core";
-import { useCreateBlockNote } from "@blocknote/react";
-import { uploadImage } from '~/lib/utils/image-uploader';
+
+import { 
+    BlockNoteEditor, 
+    filterSuggestionItems, 
+    Block, 
+    BlockNoteSchema, 
+    defaultBlockSpecs, 
+    insertOrUpdateBlock 
+} from "@blocknote/core";
+
+import { 
+    type DefaultReactSuggestionItem,
+    getDefaultReactSlashMenuItems,
+    ReactSlashMenuItem,
+    SuggestionMenuController, 
+    useCreateBlockNote 
+} from "@blocknote/react";
+
+import { uploadFile } from '~/lib/utils/image-uploader';
+import { PDF } from "./PDFBlock";
+
+import { RiFilePdfFill } from "react-icons/ri";
+
 
 interface ExhibitionContentEditorProps {
     initialContent: string;
@@ -15,24 +35,46 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         const editorContainerRef = useRef(null);
         const editorRef = useRef(null);
         const [isLayoutReady, setIsLayoutReady] = useState(false);
-        const [blocks, setBlocks] = useState<PartialBlock[]>();
+        const [blocks, setBlocks] = useState<Block[]>();
 
         useEffect(() => {
             const getInitBlocks = async () => {
                 const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
                 editor.replaceBlocks(editor.document, parsedBlocks);
-                setBlocks(parsedBlocks);
             };
-            getInitBlocks();
+            void getInitBlocks();
             setIsLayoutReady(true);
 
             return () => setIsLayoutReady(false);
         }, []);
 
+        const schema = BlockNoteSchema.create({
+            blockSpecs: {
+              ...defaultBlockSpecs,
+              pdf: PDF,
+            },
+          });
+
         const editor = useCreateBlockNote({
-            initialBlocks: blocks
+            uploadFile: uploadFile,
+            schema: schema
         });
-    
+
+
+        const insertPDF: ReactSlashMenuItem<typeof schema> = (editor: BlockNoteEditor) => ({
+            title: "PDF",
+            onItemClick: () => {
+              // Block that the text cursor is currently in.
+              insertOrUpdateBlock(editor, {
+                type: "pdf",
+              });
+            },
+            aliases: ["pdf"],
+            group: "Other",
+            icon: <RiFilePdfFill />,
+            subtext: "PDF file with interactive preview window",
+          });
+
         return (
         <div>
             <div className="main-container">
@@ -46,12 +88,24 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                             linkToolbar={true}
                             formattingToolbar={true}
                             filePanel={true}
-                            // uploadFile={uploadImage}
+                            slashMenu={false}
                             onChange={async () => {
-                                setBlocks(editor.document);
-                                const blocks2html = await editor.blocksToFullHTML(blocks);
+                                const blocks2html = await editor.blocksToFullHTML(editor.document);
                                 onChange(blocks2html);
-                            }}/>
+                            }}>
+                                <SuggestionMenuController
+                                    triggerCharacter={"/"}
+                                    getItems={async (query: string) =>
+                                        filterSuggestionItems(
+                                          [
+                                            ...getDefaultReactSlashMenuItems(editor),
+                                            insertPDF(editor),
+                                          ],
+                                          query
+                                        )
+                                    }
+                                />
+                            </BlockNoteView>
                             
                         )}
                         </div>

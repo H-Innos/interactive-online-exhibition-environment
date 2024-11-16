@@ -2,52 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-.ck-editor__editable {
-    min-height: 680px;
+[data-content-type="pdf"] .bn-file-block-content-wrapper,
+[data-content-type="pdf"] .bn-file-and-caption-wrapper {
+    height: 700px;
     width: 100%;
-    max-width: 1200px;
-    box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-    .ck-editor__editable {
-        min-height: 300px;
-    }
-}
-
-@media (max-width: 480px) {
-    .ck-editor__editable {
-        min-height: 200px;
-    }
-}
-
-
-.editor-container__editor h1, .ck-content h1 {
-  font-size: 2.2rem;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-} 
-
-.editor-container__editor h2, .ck-content h2 {
-  font-size: 1.8rem;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-} 
-
-.editor-container__editor h3, .ck-content h3 {
-  font-size: 1.5rem;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-} 
-
-.editor-container__editor h4, .ck-content h4 {
-  font-size: 1.2rem;
-  margin-top: 0.4em;
-  margin-bottom: 0.4em;
-} 
-
-.ck.ck-block-toolbar-button {
-  transform: translateX(2px);
+[data-content-type="pdf"] embed {
+    height: 100%;
+    width: 100%;
 }
 
 @layer components {
