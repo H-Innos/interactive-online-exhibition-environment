@@ -29,25 +29,3 @@ export const useDeleteQuiz = () => {
   });
 }
 
-export const useUpdateQuiz = () => {
-  const utils = api.useUtils();
-
-  api.quiz.delete.useMutation({
-    onSuccess: async () => {
-      await utils.quiz.invalidate();
-    },
-    onError: (error) => {
-      toast.error(`Error while updating quiz: ${error.message}`);
-    },
-  })
-
-  return api.quiz.create.useMutation({
-    onSuccess: async () => {
-      await utils.quiz.invalidate();
-      toast.success("Quiz updated successfully!");
-    },
-    onError: (error) => {
-      toast.error(`Failed to update quiz: ${error.message ?? "Unknown error."}`);
-    },
-  });
-};

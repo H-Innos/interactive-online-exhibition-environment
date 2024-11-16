@@ -69,7 +69,7 @@ export const quizRouter = createTRPCRouter({
         .where(eq(quizzes.id, input.quizId))
         .returning();
     }),
-    
+      
   getAllByExhibitionId: publicProcedure
     .input(z.object({exhibitionId: z.number()}))
     .query(async ({ ctx, input }) => {
