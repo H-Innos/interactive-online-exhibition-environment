@@ -1,11 +1,11 @@
 "use client";
-import { Pencil, Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import QuizCreator from '~/components/quiz/quiz-creator'
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
-import { useCreateQuiz, useDeleteQuiz } from '~/hooks/quiz-actions';
+import { useDeleteQuiz } from '~/hooks/quiz-actions';
 import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import { type CreateQuizDTO } from '~/lib/types/schemas';
 import { generateEmptyQuiz } from '~/lib/utils/quiz-utils';
@@ -19,7 +19,6 @@ const QuizzesPage = () => {
   const [ isEditable, setIsEditable ] = useState(false);
 
   const deleteQuiz = useDeleteQuiz();
-  const createQuiz = useCreateQuiz();
 
   useEffect(() => {
     if (existingQuizzes) {
@@ -35,18 +34,11 @@ const QuizzesPage = () => {
     deleteQuiz.mutate({ quizId: id });
   };
 
-  function handleNewQuiz() {
-    createQuiz.mutate(generateEmptyQuiz(id));
-  };
-
   return (
     <div className='flex p-4 gap-4'>
        <Card className="w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Quizzes</CardTitle>
-          <Button size="icon" onClick={handleNewQuiz}>
-            <Plus className="h-4 w-4" />
-          </Button>
         </CardHeader>
         <CardContent>
           {error && <div>Error loading quizzes.</div>}
@@ -82,9 +74,9 @@ const QuizzesPage = () => {
           <CardTitle>Quiz Preview</CardTitle>
           {selectedQuiz && (
             <Button 
-              onClick={() => setIsEditable(prev => (!prev))}
+              onClick={() => {setIsEditable(prev => (!prev)); setSelectedQuiz(generateEmptyQuiz(id))}}
             >
-              {isEditable ? <><X /> Cancel</> : <><Pencil className="h-4 w-4" /> Edit</>} 
+              {isEditable ? <><X /> Cancel</> : <><Plus className="h-4 w-4" /> New quiz</>} 
             </Button>
           )}
         </CardHeader>

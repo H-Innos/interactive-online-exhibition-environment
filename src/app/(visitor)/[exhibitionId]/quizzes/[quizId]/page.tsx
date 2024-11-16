@@ -1,11 +1,11 @@
 "use client";
-import { useParams } from "next/navigation";
 import { QuizCard } from "~/components/quiz/quiz";
+import { useQuizIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { api } from "~/trpc/react";
 
 
 const QuizView = () => {
-  const  { quizId: id } = useParams();
+  const  id = useQuizIdFromParams();
 
   const { data: quiz, error, isLoading } = api.quiz.getOne.useQuery({ quizId: Number(id) });
 

@@ -5,7 +5,7 @@ import { Plus } from "lucide-react"
 import { QuestionCreator } from "./question-creator"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { useCreateQuiz, useDeleteQuiz } from "~/hooks/quiz-actions"
+import { useCreateQuiz } from "~/hooks/quiz-actions"
 import { uploadImage } from "~/lib/utils/image-uploader"
 import { Input } from "../ui/input"
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams"
@@ -21,7 +21,6 @@ type QuizCreatorProps = {
 export default function QuizCreator({ creatorContent, disabled, onCreate }: QuizCreatorProps) {
   const exhibitionId = useExhibitionIdFromParams();
   const createQuiz = useCreateQuiz();
-  const deleteQuiz = useDeleteQuiz();
 
   const [title, setTitle ] = useState<string>("");
   const [questions, setQuestions] = useState<CreateQuestionDTO[]>([generateEmptyQuestion(exhibitionId)]);
@@ -53,10 +52,6 @@ export default function QuizCreator({ creatorContent, disabled, onCreate }: Quiz
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (questions.every((q) => q.answers.some((a) => a.isCorrect))) {
-      if (creatorContent.id) {
-        deleteQuiz.mutate({ quizId: creatorContent.id });
-      }
-
       for (const question of questions) {
         if (!question.imageUrl) continue;
         question.imageUrl = await uploadImage(question.imageUrl);
@@ -74,7 +69,6 @@ export default function QuizCreator({ creatorContent, disabled, onCreate }: Quiz
         }))
       })
       onCreate();
-      //router.push(`/dashboard/${exhibitionId}`)
     } else {
       alert("Please ensure each question has at least one correct answer.")
     }
@@ -115,7 +109,7 @@ export default function QuizCreator({ creatorContent, disabled, onCreate }: Quiz
                 <Plus className="mr-2 h-4 w-4" />
                 Add Question
               </Button>
-              <Button type="submit" disabled={disabled}>Create/Update Quiz</Button>
+              <Button type="submit" disabled={disabled}>Create Quiz</Button>
             </div>
           </CardContent>
         </Card>

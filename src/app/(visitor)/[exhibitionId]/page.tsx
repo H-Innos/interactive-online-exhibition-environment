@@ -6,7 +6,7 @@ import React from "react";
 import 'ckeditor5/ckeditor5.css';
 import { useRouter } from "next/navigation";
 import { QuizDropdown } from "~/components/quiz-dropdown";
-import useExhibitionIdFromParams from "~/hooks/useExhibitionIdFromParams";
+import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 
 const ExhibitionViewPage: React.FC = () => {
   const router = useRouter();

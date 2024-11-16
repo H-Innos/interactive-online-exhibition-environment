@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { QuizCard } from '~/components/quiz/quiz';
-import useExhibitionIdFromParams from '~/hooks/useExhibitionIdFromParams';
+import {useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import { api } from '~/trpc/react';
 
 const QuizzesView = () => {
