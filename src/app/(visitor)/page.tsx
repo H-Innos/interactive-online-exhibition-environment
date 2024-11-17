@@ -40,7 +40,7 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
   return (
     <Suspense fallback={<div>{t('mainPage.loading')}</div>}>
       <div className="bg-white min-h-screen flex flex-col items-center py-8">
-        <div className="w-full max-w-md mb-6">
+        <div className="w-full flex justify-end mb-6 mr-48">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
         <div className="w-full px-2" style={{ maxWidth: "90%" }}>

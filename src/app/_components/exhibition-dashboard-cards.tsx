@@ -46,7 +46,6 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
     }
   };
 
-
   const handleArchive = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (
@@ -107,7 +106,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
           />
         </div>
         <div className="flex flex-grow flex-col justify-start pl-3 pr-2">
-          <h2 className="text-dark truncate pt-4 text-lg font-semibold">
+          <h2 className="text-dark pt-4 text-lg font-semibold">
             {exhibition.name}
           </h2>
           <p className="mt-1 text-sm text-gray-600">
@@ -115,7 +114,6 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
           </p>
         </div>
       </div>
-
       <DropdownMenu
         open={isMenuOpen}
         onOpenChange={setIsMenuOpen}
