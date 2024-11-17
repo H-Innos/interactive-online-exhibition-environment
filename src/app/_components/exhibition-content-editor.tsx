@@ -14,7 +14,7 @@ import {
 import { 
     type DefaultReactSuggestionItem,
     getDefaultReactSlashMenuItems,
-    ReactSlashMenuItem,
+    type ReactSlashMenuItem,
     SuggestionMenuController, 
     useCreateBlockNote 
 } from "@blocknote/react";
