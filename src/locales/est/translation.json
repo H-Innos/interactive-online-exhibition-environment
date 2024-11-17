@@ -78,6 +78,27 @@
     "correctAnswer": "Õige vastus on ",
     "activities": "Tegevused"
   },
+
+  "toasts": {
+    "failedCreateExhibition": "Näituse loomine ebaõnnestus: {{message}}",
+    "failedUpdateExhibition": "Näituse uuendamine ebaõnnestus: {{message}}",
+    "failedPublishExhibition": "Näituse avaldamine ebaõnnestus: {{message}}",
+    "failedUnpublishExhibition": "Mustanditesse viimine ebaõnnestus: {{message}}",
+    "failedDeleteExhibition": "Näituse kustutamine ebaõnnestus: {{message}}",
+    "failedArchiveExhibition": "Näituse arhiveerimine ebaõnnestus: {{message}}",
+    "failedUnarchiveExhibition": "Arhiivist eemaldamine ebaõnnestus: {{message}}",
+    "failedCreateQuiz": "Viktoriini loomine ebaõnnestus: {{message}}",
+    "failedDeleteQuiz": "Viktoriini kustutamine ebaõnnestus: {{message}}",
+    "exhibitionDeleted": "Näitus kustutatud.",
+    "exhibitionUpdated": "Näitus uuendatud.",
+    "exhibitionPublished": "Näitus avaldatud.", 
+    "exhibitionUnpublished": "Näitus viidud tagasi mustanditesse.",
+    "exhibitionArchived": "Näitus arhiveeritud.",
+    "exhibitionUnarchived": "Näitus arhiivist eemaldatud.",
+    "quizCreated": "Viktoriin loodud.",
+    "quizDeleted": "Viktoriin kustutatud",
+    "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte."
+  },
     
   "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",
   "editExhibition": "Muuda näitust",

@@ -80,6 +80,27 @@
     "correctAnswer": " The correct answer is: ",
     "activities": "Activities"
   },
+
+  "toasts": {
+    "failedCreateExhibition": "Failed to create exhibition: {{message}}",
+    "failedUpdateExhibition": "Failed to update exhibition: {{message}}",
+    "failedPublishExhibition": "Failed to publish exhibition: {{message}}",
+    "failedUnpublishExhibition": "Failed to unpublish exhibition: {{message}}",
+    "failedDeleteExhibition": "Failed to delete exhibition: {{message}}",
+    "failedArchiveExhibition": "Failed to archive exhibition: {{message}}",
+    "failedUnarchiveExhibition": "Failed to unarchive exhibition: {{message}}",
+    "failedCreateQuiz": "Failed to create quiz: {{message}}",
+    "failedDeleteQuiz": "Failed to delete quiz: {{message}}",
+    "exhibitionDeleted": "Exhibition deleted successfully!",
+    "exhibitionUpdated": "Exhibition updated successfully!",
+    "exhibitionPublished": "Exhibition published successfully!",
+    "exhibitionUnpublished": "Exhibition moved back to drafts!",
+    "exhibitionArchived": "Exhibition archived successfully!",
+    "exhibitionUnarchived": "Exhibition unarchived successfully!",
+    "quizCreated": "Quiz created successfully!",
+    "quizDeleted": "Quiz deleted successfully!",
+    "failedInvalidateCache": "Error updating page content. Please refresh the page."
+  },
     
   "confirmPublish": "Are you sure you want to publish this exhibition?",
   "editExhibition": "Edit Exhibition",
