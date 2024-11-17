@@ -5,7 +5,6 @@ import { api } from "~/trpc/react";
 import React, { useEffect, useState } from "react";
 import type { Exhibition } from "~/lib/types/exhibition";
 
-import 'ckeditor5/ckeditor5.css';
 
 const ExhibitionViewPage: React.FC = () => {
   const { id } = useParams();
@@ -18,7 +17,42 @@ const ExhibitionViewPage: React.FC = () => {
     if (data) {
       setExhibition(data);
     }
-  }, [data]);
+
+    if (exhibition) {
+      // Create img src with data-url; Blocknote bug
+      const parent = document.getElementById('editor-content');
+      if (parent) {
+        const divs = parent.querySelectorAll('div[data-file-block]'); // look at data blocks only
+        divs.forEach(div => {
+          const dataUrl = div.getAttribute('data-url');
+          if (!dataUrl) 
+            return;
+
+          const oldImg = div.querySelector('img');
+          const oldAudio = div.querySelector('audio');
+
+          if (oldImg) {
+            const newImg = document.createElement('img');
+            for (const attribute of oldImg.attributes) {
+              newImg.setAttribute(attribute.name, attribute.value);
+            }
+            newImg.src = dataUrl;
+            oldImg.replaceWith(newImg);
+          }
+
+          if (oldAudio) {
+            // Also replace audios, same bug            
+            const newAudio = document.createElement('audio');
+            for (const attribute of oldAudio.attributes) {
+              newAudio.setAttribute(attribute.name, attribute.value);
+            }
+            newAudio.src = dataUrl;
+            oldAudio.replaceWith(newAudio);
+          }
+        });
+      }
+    }
+  }, [data, exhibition]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -47,7 +81,7 @@ const ExhibitionViewPage: React.FC = () => {
           {exhibition.name}
         </h1>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="ck-content mt-8" />
+      <div id="editor-content" dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="blocknote-content mt-8" />
     </div>
   );
 };

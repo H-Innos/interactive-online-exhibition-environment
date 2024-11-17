@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, type UploadApiOptions } from 'cloudinary';
 import type { UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 import { NextResponse } from 'next/server';
 
@@ -7,6 +7,11 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+const options: UploadApiOptions = {
+  resource_type: "auto",
+};
+
 
 export async function POST(request: Request) {
   const headers = new Headers();
@@ -26,6 +31,7 @@ export async function POST(request: Request) {
 
     const result = await new Promise<UploadApiResponse>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
+        options,
         (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
           if (result) resolve(result);
           else reject(new Error('Upload failed'));
