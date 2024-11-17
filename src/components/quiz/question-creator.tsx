@@ -140,12 +140,14 @@ export function QuestionCreator({
             {question.answers.map((answer, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <Checkbox
+                  data-testid='answer-checkbox'
                   id={`correct-${question.id}-${index}`}
                   checked={answer.isCorrect}
                   onCheckedChange={() => toggleCorrect(index)}
                   disabled={disabled}
                 />
                 <Input
+                  data-testid='answer-input'
                   value={answer.text}
                   onChange={(e) => updateAnswer(index, e.target.value)}
                   placeholder={`${t('quizzes.answer')} ${index + 1}`}

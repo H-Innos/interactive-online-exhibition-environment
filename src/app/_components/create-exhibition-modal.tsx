@@ -71,7 +71,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" data-testid="create-exhibition-modal">
       <div className="bg-primary-light rounded-lg p-6 w-full max-w-lg">
         <h2 className="text-2xl font-semibold mb-4 text-primary-dark">{t('createExhibition.title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
