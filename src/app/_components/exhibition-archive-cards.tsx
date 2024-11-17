@@ -6,7 +6,7 @@ import { configurations } from "~/lib/constants/config";
 import {
   useUnarchiveExhibition,
 } from "~/hooks/exhibition-actions";
-import { type Exhibition } from "~/lib/types/exhibition";
+import { type Exhibition } from "~/lib/types/entities";
 
 const DropdownMenu = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu));
 const DropdownMenuTrigger = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger));

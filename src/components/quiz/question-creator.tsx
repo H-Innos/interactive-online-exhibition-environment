@@ -6,7 +6,6 @@ import { Label } from "../ui/label"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import { Checkbox } from "../ui/checkbox"
-import QuestionImage from "../question-image"
 import { type CreateQuestionDTO } from "~/lib/types/schemas"
 import { useTranslation } from "react-i18next";
 import RemovableImage from "../removable-image";
