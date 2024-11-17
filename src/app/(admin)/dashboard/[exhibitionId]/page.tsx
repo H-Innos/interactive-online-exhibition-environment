@@ -1,21 +1,23 @@
 "use client";
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
 import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
 import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
-import type { Exhibition } from '~/lib/types/exhibition';
+import type { Exhibition } from '~/lib/types/entities';
 import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import { useTranslation } from 'react-i18next';
+import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
+import { Button } from '~/components/ui/button';
 
 const ExhibitionEditorPage = () => {
-  const { id } = useParams();
+  const id = useExhibitionIdFromParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [editorContent, setEditorContent] = useState<string>();
   const [isDirty, setIsDirty] = useState(false);
-  const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: Number(id) });
+  const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: id });
 
   const router = useRouter();
   useWarnIfUnsavedChanges(isDirty);
@@ -93,6 +95,12 @@ const ExhibitionEditorPage = () => {
             </button>
           </div>
           <ExhibitionDataForm exhibition={exhibition} />
+          <Button
+            onClick={() => router.push(`/dashboard/${id}/quizzes`)}
+            className='mt-4'
+          >
+            Create Quiz
+          </Button>
         </aside>
       )}
     </div>

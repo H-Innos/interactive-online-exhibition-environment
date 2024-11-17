@@ -1,17 +1,19 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import React, { useEffect, useState } from "react";
-import type { Exhibition } from "~/lib/types/exhibition";
-
+import { type Exhibition } from "~/lib/types/entities";
+import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
+import { QuizDropdown } from "~/components/quiz-dropdown";
 
 const ExhibitionViewPage: React.FC = () => {
-  const { id } = useParams();
+  const id = useExhibitionIdFromParams();
   const router = useRouter();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
 
-  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: Number(id) });
+  const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
+  const { data: quizzes } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: id });
 
   useEffect(() => {
     if (data) {
@@ -81,6 +83,15 @@ const ExhibitionViewPage: React.FC = () => {
           {exhibition.name}
         </h1>
       </div>
+      {quizzes && quizzes.length > 0 &&
+        <QuizDropdown
+          className="mt-4"
+          quizzes={quizzes}
+          onQuizSelect={(quizId: number) => {
+            router.push(`${id}/quizzes/${quizId}`);
+          }}
+        /> 
+        }
       <div id="editor-content" dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="blocknote-content mt-8" />
     </div>
   );

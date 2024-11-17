@@ -8,7 +8,7 @@ import PageableExhibitions from "~/app/_components/pageable-cards";
 import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
 import ShortenedDrafts from "~/app/_components/shortened-drafts";
-import type { Exhibition } from "~/lib/types/exhibition";
+import type { Exhibition } from "~/lib/types/entities";
 
 const Dashboard = () => {
   const { t } = useTranslation();

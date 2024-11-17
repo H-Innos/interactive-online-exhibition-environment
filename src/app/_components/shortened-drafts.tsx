@@ -2,7 +2,7 @@
 
 import React from "react";
 import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
-import type { Exhibition } from "../../lib/types/exhibition";
+import type { Exhibition } from "../../lib/types/entities";
 import { useRouter } from "next/navigation";
 import useResponsiveVisibleDrafts from "~/hooks/responsive-visible-drafts";
 

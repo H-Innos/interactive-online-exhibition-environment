@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Settings } from "lucide-react";
-import type { Exhibition } from "../../lib/types/exhibition";
+import type { Exhibition } from "../../lib/types/entities";
 import {
   useDeleteExhibition,
   usePublishExhibition,
@@ -91,6 +91,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
 
   return (
     <div
+      data-testid="dashboard-exhibition-card"
       className="relative flex h-48 w-100 cursor-pointer overflow-hidden rounded-lg bg-gray-100 p-4 shadow transition-shadow hover:shadow-lg"
       onClick={() => onClick(exhibition.id)}
     >

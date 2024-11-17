@@ -54,7 +54,7 @@ describe('Dashboard Page', () => {
       .and('have.class', 'cursor-not-allowed');
 
     cy.contains('Edit').click({ force: true });
-    cy.url().should('not.include', '/admin/dashboard/');
+    cy.url().should('not.include', 'dashboard/');
   });
 
   it('should show disabled Delete button for published exhibitions', () => {

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ArchivedExhibitionList } from "~/app/_components/exhibition-archive-cards";
-import type { Exhibition } from "~/lib/types/exhibition";
+import { type Exhibition } from "~/lib/types/entities";
 
 interface ArchiveClientComponentProps {
   exhibitions: Exhibition[];

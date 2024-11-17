@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
-import type { Exhibition } from "../../../../lib/types/exhibition";
+import type { Exhibition } from "../../../../lib/types/entities";
 import { useTranslation } from "react-i18next";
 
 const DraftsPage = () => {

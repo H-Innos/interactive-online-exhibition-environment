@@ -40,14 +40,14 @@ export default function FileUploadButton({
         aria-label="File upload"
       />
       <Button 
-        variant='outline'
         type='button'
+        variant='outline'
         onClick={handleButtonClick}
         disabled={disabled}
         className="flex items-center space-x-2"
       >
         <Upload className="w-4 h-4" />
-        <span>Upload File</span>
+        <p>Upload File</p>
       </Button>
     </div>
   )
