@@ -2,7 +2,8 @@ interface UploadResponse {
     url?: string;
 }
 
-export async function uploadImage(imageDataUrl: string): Promise<string | null> {
+// TODO rename from Image to anything
+export async function uploadImage(imageDataUrl: string): Promise<string> {
     try {
         const imageBlob = await (await fetch(imageDataUrl)).blob();
         const formData = new FormData();
@@ -20,10 +21,10 @@ export async function uploadImage(imageDataUrl: string): Promise<string | null> 
         const result: unknown = await response.json();
 
         if (typeof result === 'object' && result !== null && 'url' in result) {
-            return (result as UploadResponse).url ?? null;
+            return (result as UploadResponse).url ?? "";
         } else {
             console.error("Unexpected response format:", result);
-            return null;
+            return "";
         }
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -31,6 +32,11 @@ export async function uploadImage(imageDataUrl: string): Promise<string | null> 
         } else {
             console.error("Unknown error during file upload");
         }
-        return null;
+        return "";
     }
+}
+
+export async function uploadFile(imgFile: File): Promise<string> {
+    const imageDataUrl = URL.createObjectURL(imgFile); // TODO check performance of this
+    return await uploadImage(imageDataUrl);
 }

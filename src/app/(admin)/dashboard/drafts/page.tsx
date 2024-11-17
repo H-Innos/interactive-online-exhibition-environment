@@ -50,7 +50,7 @@ const DraftsPage = () => {
             title={t('dashboard.allDrafts')}
             exhibitions={drafts}
             onExhibitionClick={handleExhibitionClick}
-            showFadeEffect={true}
+            showFadeEffect={false}
             CardComponent={(props) => <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />}
           />
         )}

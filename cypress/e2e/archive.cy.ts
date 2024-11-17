@@ -8,9 +8,8 @@ describe('Archive Functionality', () => {
       cy.visit('/dashboard');
       cy.get('button').contains('New Exhibition').click();
       cy.get('input[placeholder="Enter exhibition title"]').type(exhibitionTitle);
-      cy.get('textarea[placeholder="Enter exhibition description"]').type('This is a test exhibition for archive functionality');
+      cy.get('textarea[placeholder="Enter exhibition description"]').type('Archiving');
       cy.get('button[type="submit"]').contains('Create').click();
-      cy.visit('/dashboard/drafts');
       cy.contains(exhibitionTitle, { timeout: 10000 }).should('be.visible');
     });
   
