@@ -8,6 +8,7 @@ import { Button } from "../ui/button"
 import { Checkbox } from "../ui/checkbox"
 import QuestionImage from "../question-image"
 import { type CreateQuestionDTO } from "~/lib/types/schemas"
+import { useTranslation } from "react-i18next";
 
 type QuestionCreatorProps = {
   question: CreateQuestionDTO
@@ -24,6 +25,7 @@ export function QuestionCreator({
   onDelete,
   disabled
 }: QuestionCreatorProps) {
+  const { t } = useTranslation();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -84,24 +86,24 @@ export function QuestionCreator({
         </Button>
       </div>
       <div className="flex items-center justify-between px-6 pb-6">
-        <CardTitle className="text-lg">{`Question ${order + 1}`}</CardTitle>
+        <CardTitle className="text-lg">{`${t('quizzes.questionTitle')} ${order + 1}`}</CardTitle>
       </div>
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`question-${question.id}`}>Question Text</Label>
+            <Label htmlFor={`question-${question.id}`}>{t('quizzes.questionTextLabel')}</Label>
             <Input
               id={`question-${question.id}`}
               value={question.text}
               onChange={(e) => onUpdate({ ...question, text: e.target.value })}
-              placeholder="Enter your question here"
+              placeholder={t('quizzes.questionTextPlaceholder')}
               required
               readOnly={disabled}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`image-${question.id}`}>Question Image (optional)</Label>
+            <Label htmlFor={`image-${question.id}`}>{t('quizzes.questionImageLabel')}</Label>
             <div className="flex items-center space-x-2">
               <Input
                 id={`image-${question.id}`}
@@ -118,16 +120,16 @@ export function QuestionCreator({
                 disabled={disabled}
               >
                 <ImageIcon className="mr-2 h-4 w-4" />
-                Upload Image
+                {t('uploadImage')}
               </Button>
-              {question.imageUrl && <span className="text-sm text-muted-foreground">Image uploaded</span>}
+              {question.imageUrl && <span className="text-sm text-muted-foreground">{t('imageUploaded')}</span>}
             </div>
           </div>
 
           {question.imageUrl && <QuestionImage src={question.imageUrl} />}
 
           <div className="space-y-4">
-            <Label>Answers</Label>
+            <Label>{t('quizzes.answers')}</Label>
             {question.answers.map((answer, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <Checkbox
@@ -139,7 +141,7 @@ export function QuestionCreator({
                 <Input
                   value={answer.text}
                   onChange={(e) => updateAnswer(index, e.target.value)}
-                  placeholder={`Answer ${index + 1}`}
+                  placeholder={`${t('quizzes.answer')} ${index + 1}`}
                   required
                   readOnly={disabled}
                 />
@@ -161,7 +163,7 @@ export function QuestionCreator({
           {question.answers.length < 4 && (
             <Button type="button" variant="outline" onClick={addAnswer} disabled={disabled}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add Answer
+              {t('quizzes.addAnswer')}
             </Button>
           )}
         </div>

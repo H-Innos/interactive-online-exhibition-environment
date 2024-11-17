@@ -1,6 +1,7 @@
 "use client";
 import { Plus, Trash2, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next';
 import QuizCreator from '~/components/quiz/quiz-creator'
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -12,6 +13,7 @@ import { generateEmptyQuiz } from '~/lib/utils/quiz-utils';
 import { api } from '~/trpc/react';
 
 const QuizzesPage = () => {
+  const { t } = useTranslation();
   const id = useExhibitionIdFromParams();
   const { data: existingQuizzes, error, isLoading } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: Number(id) });
   const [ quizzes, setQuizzes ] = useState<CreateQuizDTO[]>([]);
@@ -27,7 +29,6 @@ const QuizzesPage = () => {
   }, [existingQuizzes]);
 
   function handleSelect(quiz: CreateQuizDTO) {
-    console.log("selelect")
     setSelectedQuiz(quiz);
     setIsEditable(false);
   };
@@ -50,11 +51,11 @@ const QuizzesPage = () => {
     <main className='flex p-4 gap-4'>
        <Card className="w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Quizzes</CardTitle>
+          <CardTitle>{t('quizzes.quizzes')}</CardTitle> 
         </CardHeader>
         <CardContent>
-          {error && <div>Error loading quizzes.</div>}
-          {!selectedQuiz && <p> There are currently no quizzes.</p>}
+          {error && <div>{t('quizzes.errorLoading')}</div>}
+          {!selectedQuiz && <p> {t('quizzes.noQuizzes')}</p>}
           {isLoading && <div>Loading...</div>}
           <ul className="space-y-1">
             {quizzes.map((quiz) => (
@@ -83,7 +84,7 @@ const QuizzesPage = () => {
       </Card>
       <Card  className="w-2/3">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Quiz Preview</CardTitle>
+          <CardTitle>{t('quizzes.quizPreview')}</CardTitle>
           {selectedQuiz && (
             isEditable ? 
               <CancelButton onClick={handleCancel} /> : 
@@ -97,7 +98,7 @@ const QuizzesPage = () => {
             disabled={!isEditable}
             onCreate={() => setIsEditable(false)}
             /> :  
-            <div className="min-h-screen flex w-full justify-center items-center">Select a quiz to start editing.</div>
+            <div className="min-h-screen flex w-full justify-center items-center">{t('quizzes.noQuizSelected')}</div>
           }
         </CardContent>
       </Card>
@@ -107,11 +108,13 @@ const QuizzesPage = () => {
 }
 
 const CancelButton = ({ onClick }: { onClick: () => void }) => {
-  return <Button onClick={onClick}> <><X/> Cancel</></Button>;
+  const { t } = useTranslation();
+  return <Button onClick={onClick}> <><X/>{t('cancel')}</></Button>;
 }
 
 const NewQuizButton = ({ onClick }: { onClick: () => void }) => {
-  return <Button onClick={onClick}> <><Plus className="h-4 w-4" /> New quiz</></Button>;
+  const { t } = useTranslation();
+  return <Button onClick={onClick}> <><Plus className="h-4 w-4" />{t('quizzes.newQuiz')}</></Button>;
 }
 
 export default QuizzesPage;

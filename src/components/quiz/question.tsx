@@ -6,6 +6,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { Check } from "lucide-react";
 import type { Answer, Question } from "~/lib/types/entities";
+import { useTranslation } from "react-i18next";
 
 enum QuestionResult {
   CORRECT,
@@ -21,6 +22,7 @@ type QuestionCardProps = {
 };
 
 export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, onUnsubmit, isSubmitted }) => {
+  const { t } = useTranslation();
   const [selectedAnswers, setSelectedAnswers] = React.useState<Answer[]>([]);
   const [result, setResult] = React.useState<QuestionResult>(QuestionResult.INCORRECT);
 
@@ -84,7 +86,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, 
             type="button"
             onClick={() => {onSubmit()}}
           >
-            <Check className="h-4 w-4" /> Check Answer
+            <Check className="h-4 w-4" /> {t('quizzes.checkAnswer')}
           </Button>
         </div>
       </CardContent>
@@ -93,23 +95,24 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, 
 }
 
 const FeedBackLabel: React.FC<{ result: QuestionResult, correctAnswers: Answer[] }> = ({ result, correctAnswers }) => {
+  const { t } = useTranslation();
   switch (result) {
     case QuestionResult.CORRECT:
       return (
       <div className='w-full p-4 rounded-md bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100 break-words'>
-        Correct!
+        {t('quizzes.correct')}
         </div>
       );
     case QuestionResult.INCORRECT:
       return (
         <div className="w-full p-4 rounded-md bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100 break-words">
-          Incorrect. The correct answer{correctAnswers.length > 1 ? 's are' : ' is'}: {correctAnswers.map(a => a.text).join(', ')}
+          {`${t('quizzes.incorrect')} ${correctAnswers.length > 1 ? t('quizzes.correctAnswers') : t('quizzes.correctAnswer')} ${correctAnswers.map(a => a.text).join(', ')}`}
         </div>
       );
     case QuestionResult.PARTIAL:
       return (
         <div className="w-full p-4 rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 break-words">
-          Partially correct. The correct answer{correctAnswers.length > 1 ? 's are' : ' is'}: {correctAnswers.map(a => a.text).join(', ')}
+          {`${t('quizzes.partiallyCorrect')} ${correctAnswers.length > 1 ? t('quizzes.correctAnswers') : t('quizzes.correctAnswer')} ${correctAnswers.map(a => a.text).join(', ')}`}
         </div>
       ); 
     default:

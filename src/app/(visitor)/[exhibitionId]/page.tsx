@@ -44,6 +44,7 @@ const ExhibitionViewPage: React.FC = () => {
       </div>
       {quizzes && quizzes.length > 0 &&
         <QuizDropdown
+          className="mt-4"
           quizzes={quizzes}
           onQuizSelect={(quizId: number) => {
             router.push(`${exhibitionId}/quizzes/${quizId}`);

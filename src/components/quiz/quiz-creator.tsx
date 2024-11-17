@@ -11,6 +11,7 @@ import { Input } from "../ui/input"
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams"
 import type { CreateQuizDTO, CreateQuestionDTO } from "~/lib/types/schemas"
 import { generateEmptyQuestion } from "~/lib/utils/quiz-utils"
+import { useTranslation } from "react-i18next"
 
 type QuizCreatorProps = {
   creatorContent: CreateQuizDTO | null;
@@ -19,6 +20,7 @@ type QuizCreatorProps = {
 }
 
 export default function QuizCreator({ creatorContent, disabled, onCreate }: QuizCreatorProps) {
+  const { t } = useTranslation();
   const exhibitionId = useExhibitionIdFromParams();
   const createQuiz = useCreateQuiz();
 
@@ -70,7 +72,7 @@ export default function QuizCreator({ creatorContent, disabled, onCreate }: Quiz
       })
       onCreate();
     } else {
-      alert("Please ensure each question has at least one correct answer.")
+      alert(t('quizzes.noCorrectAnswersSpecified'));
     }
 
   }
@@ -85,7 +87,7 @@ export default function QuizCreator({ creatorContent, disabled, onCreate }: Quiz
               id={`title-${title}`}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter quiz title"
+              placeholder={t('quizzes.titlePlaceholder')}
               required
               readOnly={disabled}
             />
@@ -109,7 +111,7 @@ export default function QuizCreator({ creatorContent, disabled, onCreate }: Quiz
                 <Plus className="mr-2 h-4 w-4" />
                 Add Question
               </Button>
-              <Button type="submit" disabled={disabled}>Create Quiz</Button>
+              <Button type="submit" disabled={disabled}>{t('quizzes.createQuiz')}</Button>
             </div>
           </CardContent>
         </Card>

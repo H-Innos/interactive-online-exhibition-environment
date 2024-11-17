@@ -6,6 +6,7 @@ import { QuestionCard } from "./question";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Question, Quiz } from "~/lib/types/entities";
+import { t } from "i18next";
 
 export const QuizCard: React.FC<{ quiz: Quiz }> = ( { quiz }) => {
   const [questionsState, setQuestionsState] = useState<{question: Question, isSubmitted: boolean}[]>(
@@ -59,14 +60,14 @@ export const QuizCard: React.FC<{ quiz: Quiz }> = ( { quiz }) => {
           disabled={currentQuestionIndex === 0}
           variant="outline"
         >
-          <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+          <ChevronLeft className="mr-2 h-4 w-4" /> {t("pagination.previous")}
         </Button>
         <Button 
           onClick={() => setCurrentQuestionIndex((prevIndex) => Math.min(quiz.questions.length - 1, prevIndex + 1))}
           disabled={currentQuestionIndex === quiz.questions.length - 1}
           variant="outline"
         >
-          Next <ChevronRight className="ml-2 h-4 w-4" />
+          {t("pagination.next")} <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>
