@@ -51,6 +51,8 @@ export const useUnpublishExhibition = () => {
   return api.exhibition.unpublish.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
+      await utils.exhibition.getDrafts.invalidate();
+
       toast.success("Exhibition moved back to drafts!");
     },
     onError: (error) => {
@@ -65,6 +67,7 @@ export const useDeleteExhibition = () => {
   return api.exhibition.delete.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
+      await utils.exhibition.getDrafts.invalidate();
       toast.success("Exhibition deleted successfully!");
     },
     onError: (error) => {
@@ -72,6 +75,49 @@ export const useDeleteExhibition = () => {
     },
   });
 }
+
+export const useArchiveExhibition = () => {
+  const utils = api.useUtils();
+
+  return api.exhibition.archiveExhibition.useMutation({
+    onSuccess: async () => {
+      try {
+        await utils.exhibition.getAll.invalidate();
+        await utils.exhibition.getArchived.invalidate();
+        await utils.exhibition.getDrafts.invalidate();
+        toast.success("Exhibition archived successfully!");
+      } catch (error) {
+        console.error("Error invalidating queries:", error);
+        toast.error("Failed to update exhibition list");
+      }
+    },
+    onError: (error) => {
+      toast.error(`Failed to archive exhibition: ${error.message}`);
+    },
+  });
+};
+
+export const useUnarchiveExhibition = () => {
+  const utils = api.useUtils();
+
+  return api.exhibition.unarchiveExhibition.useMutation({
+    onSuccess: async () => {
+      try {
+        await utils.exhibition.getAll.invalidate();
+        await utils.exhibition.getArchived.invalidate();
+        await utils.exhibition.getDrafts.invalidate(); 
+
+        toast.success("Exhibition unarchived successfully!");
+      } catch (error) {
+        console.error("Error invalidating queries:", error);
+        toast.error("Failed to update exhibition list");
+      }
+    },
+    onError: (error) => {
+      toast.error(`Failed to unarchive exhibition: ${error.message}`);
+    },
+  });
+};
 
 // delete if we have decided to not add autosaving back
 /* 

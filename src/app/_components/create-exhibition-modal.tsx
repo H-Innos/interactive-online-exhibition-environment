@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { configurations } from "~/lib/constants/config";
 import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 import { useTranslation } from 'react-i18next';
+import RemovableImage from '~/components/removable-image';
+import cn from 'classnames';
 
 interface CreateExhibitionModalProps {
   onClose: () => void;
@@ -81,7 +82,10 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('createExhibition.namePlaceholder')}
-              className="w-full rounded-md border-gray-300 focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50 px-4 py-2"
+              className={cn("w-full rounded-md border-gray-300 px-4 py-2", {
+                "focus:border-primary-dark focus:ring focus:ring-primary-dark focus:ring-opacity-50": !errorMessage,
+                "border-red-600": errorMessage,
+              })}
             />
             {errorMessage && <p className="text-red-600 text-sm mt-1">{errorMessage}</p>}
           </div>
@@ -111,22 +115,13 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
           </div>
           {coverImage && (
             <div className="mt-4">
-              <p className="text-sm w-full text-gray-500">{t('createExhibition.imagePreview')}</p>
-              <div className="relative w-32 h-32">
-                <Image
-                  src={coverImage}
-                  alt="Cover preview"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-md"
-                />
-              </div>
-              <span
-                onClick={handleRemoveImage}
-                className="text-black text-xs cursor-pointer hover:underline"
-              >
-                {t('createExhibition.discard')}
-              </span>
+              <p className="text-sm text-gray-500">{t('createExhibition.imagePreview')}</p>
+              <RemovableImage
+                src={coverImage}
+                alt="Cover preview"
+                className="w-32 h-32"
+                onDelete={handleRemoveImage}
+              />
             </div>
           )}
           <div className="flex justify-end space-x-4">
@@ -149,6 +144,6 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({ onClose }
       </div>
     </div>
   );
-}
+};
 
 export default CreateExhibitionModal;

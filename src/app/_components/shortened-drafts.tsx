@@ -14,7 +14,9 @@ interface DraftExhibitionsProps {
 const DraftExhibitions = ({ drafts, onExhibitionClick }: DraftExhibitionsProps) => {
   const router = useRouter();
   const maxVisibleItems = useResponsiveVisibleDrafts();
-  const visibleDrafts = drafts.slice(0, maxVisibleItems);
+
+  const activeDrafts = drafts.filter(draft => !draft.isArchived);
+  const visibleDrafts = activeDrafts.slice(0, maxVisibleItems);
 
   const handleViewAll = () => {
     router.push("/dashboard/drafts");

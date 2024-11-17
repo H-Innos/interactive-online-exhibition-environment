@@ -6,10 +6,15 @@ import React, { useState } from "react";
 import SlideInMenu from "~/components/slide-in-menu";
 import { useTranslation } from 'react-i18next';
 import i18n from '~/i18n';
+import { usePathname } from 'next/navigation';
 
 const Header = () => {
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const idPathRegex = /^\/\d+$/;
+  const isIdPath = idPathRegex.exec(pathname) !== null;
 
   const changeLanguage = async (lng: string | undefined) => {
     try {
@@ -67,7 +72,7 @@ const Header = () => {
         </div>
       </header>
 
-      {!isMenuOpen && (
+      {!isMenuOpen && !isIdPath && (
         <nav className="w-full bg-background text-text-dark overflow-hidden mt-4 hidden sm:flex justify-center items-center space-x-0 sm:space-x-32">
           <Link href="/">
             <span className="relative cursor-pointer text-text-dark text-lg block sm:inline-block group">
