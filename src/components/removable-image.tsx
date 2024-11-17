@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { X } from 'lucide-react'
-import cn from 'classnames';
+import { cn } from '~/lib/utils'
 
 interface RemovableImagePorps {
   src: string

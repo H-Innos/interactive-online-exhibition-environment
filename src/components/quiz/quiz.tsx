@@ -41,7 +41,7 @@ export const QuizCard: React.FC<{ quiz: Quiz }> = ( { quiz }) => {
   }
 
   return (
-    <Card className="mx-auto">
+    <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle>{quiz.title}</CardTitle>
       </CardHeader>
@@ -53,7 +53,7 @@ export const QuizCard: React.FC<{ quiz: Quiz }> = ( { quiz }) => {
           onUnsubmit={handleUnsubmit}
         /> 
       </CardContent>
-      <CardFooter className="flex justify-between p-6">
+      <CardFooter className="flex flex-row justify-between w-full p-6">
         <Button 
           onClick={() => setCurrentQuestionIndex((prevIndex) => Math.max(0, prevIndex - 1))}
           disabled={currentQuestionIndex === 0}

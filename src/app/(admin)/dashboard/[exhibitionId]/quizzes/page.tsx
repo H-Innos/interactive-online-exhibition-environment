@@ -47,7 +47,7 @@ const QuizzesPage = () => {
   }
 
   return (
-    <div className='flex p-4 gap-4'>
+    <main className='flex p-4 gap-4'>
        <Card className="w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Quizzes</CardTitle>
@@ -102,7 +102,7 @@ const QuizzesPage = () => {
         </CardContent>
       </Card>
       
-    </div>
+    </main>
     );
 }
 

@@ -9,7 +9,7 @@ export default function QuestionImage({
 }: ExhibitionThumbnailProps) {
   return (
     <div 
-     className={`relative flex-shrink-0 overflow-hidden rounded-md bg-gray-200 h-20 w-40`}
+     className={`relative flex-shrink-0 overflow-hidden rounded-md bg-gray-200 h-60 w-60`} 
     >
       <Image
         src={src}

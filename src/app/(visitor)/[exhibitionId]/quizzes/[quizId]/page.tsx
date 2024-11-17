@@ -18,9 +18,9 @@ const QuizView = () => {
   }
 
   return (
-    <div className="flex justify-center items-center">
+    <main className="flex justify-center items-center my-32">
       <QuizCard quiz={quiz} />
-      </div>
+    </main>
   );
 
 }

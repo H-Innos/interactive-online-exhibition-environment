@@ -6,7 +6,7 @@ import { uploadImage } from '~/lib/utils/image-uploader';
 import { useCreateExhibition } from "~/hooks/exhibition-actions";
 import { useTranslation } from 'react-i18next';
 import RemovableImage from '~/components/removable-image';
-import cn from 'classnames';
+import { cn } from "~/lib/utils";
 
 interface CreateExhibitionModalProps {
   onClose: () => void;

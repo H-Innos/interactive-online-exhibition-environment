@@ -50,7 +50,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({ question, onSubmit, 
   };
 
   return (
-    <Card className="w-72">
+    <Card>
       <CardHeader>
         {question.text}
         {question.imageUrl && (
