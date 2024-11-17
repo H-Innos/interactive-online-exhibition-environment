@@ -5,16 +5,13 @@ import "@blocknote/mantine/style.css";
 import { 
     BlockNoteEditor, 
     filterSuggestionItems, 
-    Block, 
     BlockNoteSchema, 
     defaultBlockSpecs, 
     insertOrUpdateBlock 
 } from "@blocknote/core";
 
 import { 
-    type DefaultReactSuggestionItem,
     getDefaultReactSlashMenuItems,
-    type ReactSlashMenuItem,
     SuggestionMenuController, 
     useCreateBlockNote 
 } from "@blocknote/react";
@@ -35,7 +32,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         const editorContainerRef = useRef(null);
         const editorRef = useRef(null);
         const [isLayoutReady, setIsLayoutReady] = useState(false);
-        const [blocks, setBlocks] = useState<Block[]>();
 
         useEffect(() => {
             const getInitBlocks = async () => {
@@ -61,7 +57,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         });
 
 
-        const insertPDF: ReactSlashMenuItem<typeof schema> = (editor: BlockNoteEditor) => ({
+        const insertPDF = (editor: typeof schema.BlockNoteEditor) => ({
             title: "PDF",
             onItemClick: () => {
               // Block that the text cursor is currently in.
@@ -97,10 +93,8 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                                     triggerCharacter={"/"}
                                     getItems={async (query: string) =>
                                         filterSuggestionItems(
-                                          [
-                                            ...getDefaultReactSlashMenuItems(editor),
-                                            insertPDF(editor),
-                                          ],
+                                          [...getDefaultReactSlashMenuItems(editor),
+                                            insertPDF(editor)], 
                                           query
                                         )
                                     }

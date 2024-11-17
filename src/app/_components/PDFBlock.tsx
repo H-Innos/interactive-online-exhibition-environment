@@ -1,8 +1,5 @@
 import { 
-    FileBlockConfig, 
-    BlockNoteEditor,
-    InlineContentSchema,
-    StyleSchema
+    FileBlockConfig
 } from "@blocknote/core";
 
 import {
@@ -15,9 +12,12 @@ import {
 
 import { RiFilePdfFill } from "react-icons/ri";
 
+// Weird type issues here, kinda unsolvable ATM without disabling lines.
+// Code lifted from official repo demo 
+
 export const PDFPreview = (
     props: Omit<
-      ReactCustomBlockRenderProps<FileBlockConfig, InlineContentSchema, StyleSchema>,
+      ReactCustomBlockRenderProps<FileBlockConfig, any, any>, // eslint-disable-line
       "contentRef"
     >
   ) => {
@@ -61,24 +61,27 @@ export const PDFPreview = (
           {props.block.props.url === "" ? (
             <AddFileButton
               {...props}
-              editor={props.editor as BlockNoteEditor}
+              editor={props.editor as any} // eslint-disable-line
               buttonText={"Add PDF"}
               buttonIcon={<RiFilePdfFill size={24} />}
             />
           ) : !props.block.props.showPreview ? (
             <FileAndCaptionWrapper
               block={props.block}
-              editor={props.editor as BlockNoteEditor}>
+              editor={props.editor as any} // eslint-disable-line
+              > 
               <DefaultFilePreview
                 block={props.block}
-                editor={props.editor as BlockNoteEditor}
+                editor={props.editor as any} // eslint-disable-line
               />
             </FileAndCaptionWrapper>
           ) : (
             <FileAndCaptionWrapper
               block={props.block}
-              editor={props.editor as BlockNoteEditor}>
-              <PDFPreview block={props.block} editor={props.editor as BlockNoteEditor} />
+              editor={props.editor as any} // eslint-disable-line
+              >
+              <PDFPreview block={props.block} editor={props.editor as any} // eslint-disable-line
+               />
             </FileAndCaptionWrapper>
           )}
         </div>
