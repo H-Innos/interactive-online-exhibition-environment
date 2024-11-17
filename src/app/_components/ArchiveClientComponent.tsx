@@ -2,31 +2,35 @@
 
 import { useRouter } from "next/navigation";
 import { ArchivedExhibitionList } from "~/app/_components/exhibition-archive-cards";
-import { api } from "~/trpc/react";
+import type { Exhibition } from "~/lib/types/exhibition";
 
-const ArchiveClientComponent = () => {
+interface ArchiveClientComponentProps {
+  exhibitions: Exhibition[];
+  isLoading: boolean;
+}
+
+const ArchiveClientComponent: React.FC<ArchiveClientComponentProps> = ({ exhibitions, isLoading }) => {
   const router = useRouter();
-  const { data: archivedExhibitions, isLoading } = api.exhibition.getArchived.useQuery();
 
   const handleExhibitionClick = (id: number) => {
-    router.push(`/exhibitions/view/${id}`);
+    router.push(`/${id}`);
   };
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!archivedExhibitions || archivedExhibitions.length === 0) {
+  if (exhibitions.length === 0) {
     return (
       <div className="text-center text-gray-500 mt-8">
-        <p className="text-xl">No archived exhibitions found.</p>
+        <p className="text-xl">No matching exhibitions found.</p>
       </div>
     );
   }
 
   return (
     <ArchivedExhibitionList
-      exhibitions={archivedExhibitions}
+      exhibitions={exhibitions}
       onExhibitionClick={handleExhibitionClick}
     />
   );
