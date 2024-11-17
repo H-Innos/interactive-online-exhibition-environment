@@ -9,6 +9,7 @@ import { Checkbox } from "../ui/checkbox"
 import QuestionImage from "../question-image"
 import { type CreateQuestionDTO } from "~/lib/types/schemas"
 import { useTranslation } from "react-i18next";
+import RemovableImage from "../removable-image";
 
 type QuestionCreatorProps = {
   question: CreateQuestionDTO
@@ -126,7 +127,14 @@ export function QuestionCreator({
             </div>
           </div>
 
-          {question.imageUrl && <QuestionImage src={question.imageUrl} />}
+          {question.imageUrl && 
+          <RemovableImage 
+            src={question.imageUrl} 
+            alt="Question image" 
+            onDelete={() => onUpdate({ ...question, imageUrl: null })}
+            className="w-60 h-60"  
+          />
+          }
 
           <div className="space-y-4">
             <Label>{t('quizzes.answers')}</Label>
