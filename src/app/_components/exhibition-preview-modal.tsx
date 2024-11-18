@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Exhibition } from '~/lib/types/entities';
+import type { Exhibition } from '~/lib/types/entities';
 import { useTranslation } from 'react-i18next';
 
 interface ExhibitionPreviewModalProps {
@@ -13,8 +13,8 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
 
   useEffect(() => {
     const handleIframeLoad = () => {
-      if (iframeRef.current && iframeRef.current.contentDocument) {
-        const doc = iframeRef.current.contentDocument;
+      const doc = iframeRef.current?.contentDocument;
+      if (doc) {
 
         const previewBanner = doc.createElement('div');
         previewBanner.id = 'preview-banner';
@@ -49,7 +49,7 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
           cursor: pointer;
           z-index: 1000;
         `;
-        backButton.onclick = (e) => {
+        backButton.onclick = (e: MouseEvent) => {
           e.preventDefault();
           onClose();
         };
@@ -62,22 +62,19 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
           if (el !== backButton) {
             el.style.pointerEvents = 'none';
             el.style.opacity = '0.5';
-            el.onclick = (e) => e.preventDefault();
+            el.onclick = (e: MouseEvent) => e.preventDefault();
           }
         };
 
-        for (let i = 0; i < allLinks.length; i++) {
-          const link = allLinks[i];
-          if (link) disableElement(link);
+        for (const link of allLinks) {
+          disableElement(link as HTMLElement);
         }
 
-        for (let i = 0; i < allButtons.length; i++) {
-          const button = allButtons[i];
-          if (button) disableElement(button);
+        for (const button of allButtons) {
+          disableElement(button as HTMLElement);
         }
 
-        doc.addEventListener('submit', (e) => e.preventDefault());
-
+        doc.addEventListener('submit', (e: Event) => e.preventDefault());
       }
     };
 
@@ -86,8 +83,9 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
     }
 
     return () => {
-      if (iframeRef.current) {
-        iframeRef.current.removeEventListener('load', handleIframeLoad);
+      const iframe = iframeRef.current;
+      if (iframe) {
+        iframe.removeEventListener('load', handleIframeLoad);
       }
     };
   }, [onClose, t]);
