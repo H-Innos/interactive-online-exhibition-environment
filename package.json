@@ -15,7 +15,8 @@
     "lint": "next lint",
     "start": "next start",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@blocknote/core": "^0.19.0",
@@ -83,6 +84,7 @@
     "drizzle-kit": "^0.24.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.4",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-drizzle": "^0.2.3",
     "postcss": "^8.4.39",
     "prettier": "^3.3.2",
@@ -93,5 +95,9 @@
   "ct3aMetadata": {
     "initVersion": "7.37.0"
   },
-  "packageManager": "pnpm@9.11.0"
+  "packageManager": "pnpm@9.11.0",
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,ts,tsx,json}": "prettier --write"
+  }
 }
