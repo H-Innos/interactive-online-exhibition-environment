@@ -142,7 +142,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
             disabled={exhibition.isPublished}
             className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
           >
-            {t("archive")}
+            {t("archive.now")}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleChangePublishedState}

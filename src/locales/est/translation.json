@@ -1,7 +1,6 @@
 {
   "allExhibitions": "Kõik näitused",
   "dashboardNav": "Töölaud",
-  "archive": "Arhiiv",
   "login": "Logi sisse",
   
   "createExhibition": {
@@ -99,6 +98,14 @@
     "quizDeleted": "Viktoriin kustutatud",
     "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte."
   },
+
+  "archive":{
+    "title": "Arhiiv",
+    "noExhibitionsFound": "Ühtegi sobivat näitust ei leitud.",
+    "unarchive": "Mustandiks",
+    "view": "Avalda",
+    "now":"Arhiveeri"
+  },
     
   "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",
   "editExhibition": "Muuda näitust",
@@ -109,6 +116,7 @@
   "uploadImage": "Laadi pilt üles",
   "imageUploaded": "Pilt üles laaditud",
   "saveChanges": "Salvesta muudatused",
+  "preview":"Eelvaade",
   "publishing": "Avaldamine...",
   "publish": "Avalda",
   "exhibitionDetails": "Näituse üksikasjad",
@@ -123,5 +131,6 @@
   "unpublish": "Mustandiks",
   "delete": "Kustuta",
   "confirmDelete": "Kas olete kindel, et soovite selle näituse kustutada?",
-  "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?"
+  "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?",
+  "backToEditor": "Tagasi"
 }

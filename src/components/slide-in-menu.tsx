@@ -100,7 +100,7 @@ export default function SlideInMenu() {
             {t('dashboardNav')}
           </Link>
           <Link href="/archive" className="block border-t border-b border-gray-300 py-2">
-            {t('archive')}
+            {t('archive.title')}
           </Link>
         </div>
 
