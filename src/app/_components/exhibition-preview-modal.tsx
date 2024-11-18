@@ -57,7 +57,7 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
 
         const allLinks = doc.getElementsByTagName('a');
         const allButtons = doc.getElementsByTagName('button');
-        
+
         const disableElement = (el: HTMLElement) => {
           if (el !== backButton) {
             el.style.pointerEvents = 'none';
@@ -66,10 +66,18 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
           }
         };
 
-        for (let i = 0; i < allLinks.length; i++) disableElement(allLinks[i]);
-        for (let i = 0; i < allButtons.length; i++) disableElement(allButtons[i]);
+        for (let i = 0; i < allLinks.length; i++) {
+          const link = allLinks[i];
+          if (link) disableElement(link);
+        }
+
+        for (let i = 0; i < allButtons.length; i++) {
+          const button = allButtons[i];
+          if (button) disableElement(button);
+        }
 
         doc.addEventListener('submit', (e) => e.preventDefault());
+
       }
     };
 
