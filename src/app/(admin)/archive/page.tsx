@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { api } from "~/trpc/react";
-import ArchiveClientComponent from "../../_components/ArchiveClientComponent";
+import ArchiveClientComponent from "../../_components/archive-client-component";
 import SearchBar from "~/app/_components/search-bar";
 import { useTranslation } from "react-i18next";
 
@@ -18,7 +18,7 @@ export default function ArchivePage() {
   return (
     <Suspense fallback={<div>{t('mainPage.loading')}</div>}>
       <div className="bg-white min-h-screen flex flex-col items-center py-8">
-        <div className="w-full flex justify-end mb-6 mr-48">
+        <div className="w-full flex justify-center sm:justify-end mb-6 px-4">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
         <div className="w-full px-2" style={{ maxWidth: "90%" }}>

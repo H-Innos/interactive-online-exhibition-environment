@@ -1,8 +1,8 @@
 "use client";
 import { Plus, Trash2, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import QuizCreator from '~/components/quiz/quiz-creator'
+import QuizCreator from '~/components/quiz/quiz-creator';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
@@ -11,14 +11,16 @@ import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import { type CreateQuizDTO } from '~/lib/types/schemas';
 import { generateEmptyQuiz } from '~/lib/utils/quiz-utils';
 import { api } from '~/trpc/react';
+import { useRouter } from 'next/navigation';
 
 const QuizzesPage = () => {
   const { t } = useTranslation();
+  const router = useRouter();
   const id = useExhibitionIdFromParams();
   const { data: existingQuizzes, error, isLoading } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: Number(id) });
-  const [ quizzes, setQuizzes ] = useState<CreateQuizDTO[]>([]);
-  const [ selectedQuiz, setSelectedQuiz ] = useState<CreateQuizDTO>(generateEmptyQuiz(id));
-  const [ isEditable, setIsEditable ] = useState(false);
+  const [quizzes, setQuizzes] = useState<CreateQuizDTO[]>([]);
+  const [selectedQuiz, setSelectedQuiz] = useState<CreateQuizDTO>(generateEmptyQuiz(id));
+  const [isEditable, setIsEditable] = useState(false);
 
   const deleteQuiz = useDeleteQuiz();
 
@@ -49,7 +51,16 @@ const QuizzesPage = () => {
 
   return (
     <main className='flex p-4 gap-4'>
-       <Card className="w-1/3">
+      <div className="flex items-center mt-12">
+        <button
+          onClick={() => router.push(`/dashboard/${id}`)}
+          className="text-4xl text-black rounded-md hover:text-gray-500 transition duration-300 mr-4 mb-10"
+        >
+          ❬
+        </button>
+        <h1 className="text-3xl font-bold text-dark mb-10">{}</h1>
+      </div>
+      <Card className="w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('quizzes.quizzes')}</CardTitle> 
         </CardHeader>
@@ -82,7 +93,7 @@ const QuizzesPage = () => {
           </ul>
         </CardContent>
       </Card>
-      <Card  className="w-2/3">
+      <Card className="w-2/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('quizzes.quizPreview')}</CardTitle>
           {selectedQuiz && (
@@ -94,17 +105,16 @@ const QuizzesPage = () => {
         <CardContent>
           {selectedQuiz ? 
             <QuizCreator
-            creatorContent={selectedQuiz}
-            disabled={!isEditable}
-            onCreate={() => setIsEditable(false)}
+              creatorContent={selectedQuiz}
+              disabled={!isEditable}
+              onCreate={() => setIsEditable(false)}
             /> :  
             <div className="min-h-screen flex w-full justify-center items-center">{t('quizzes.noQuizSelected')}</div>
           }
         </CardContent>
       </Card>
-      
     </main>
-    );
+  );
 }
 
 const CancelButton = ({ onClick }: { onClick: () => void }) => {

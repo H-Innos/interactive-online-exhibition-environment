@@ -47,22 +47,23 @@ export default function SlideInMenu() {
   return (
     <>
       <Button
-        variant="default"
-        className="sticky top-8 right-4 z-50 text-2xl text-gray-600"
-        onClick={() => setIsOpen(true)}>
+        variant="ghost"
+        className="sticky top-8 right-4 z-10 text-2xl text-gray-600"
+        onClick={() => setIsOpen(true)}
+      >
         ☰        
         <span className="sr-only">{t('slideInMenu.openMenu')}</span>
       </Button>
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black bg-opacity-50 z-9"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <div
-        className={`fixed top-0 right-0 h-full w-[70vw] sm:w-[400px] bg-background p-6 overflow-y-auto transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed top-0 right-0 h-full w-[70vw] sm:w-[400px] bg-background p-6 overflow-y-auto transition-transform duration-300 ease-in-out z-[1000] ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -70,7 +71,7 @@ export default function SlideInMenu() {
           variant="ghost"
           size="icon"
           onClick={() => setIsOpen(false)}
-          className="absolute right-4 top-4"
+          className="absolute right-4 top-4 z-10"
         >
           <X className="h-4 w-4" />
           <span className="sr-only">{t('slideInMenu.close')}</span>
