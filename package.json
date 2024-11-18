@@ -16,7 +16,7 @@
     "start": "next start",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@blocknote/core": "^0.19.0",
@@ -86,6 +86,8 @@
     "eslint-config-next": "^14.2.4",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-drizzle": "^0.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
     "postcss": "^8.4.39",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
