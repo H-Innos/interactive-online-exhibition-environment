@@ -3,7 +3,7 @@ import { selectors } from "cypress/support/selectors";
 
 
 describe("Create Exhibition", () => {
-  const exhibitionTitle = "create test";
+  const exhibitionTitle = `exhibition-${Date.now()}`;
   const exhibtionDescription = "create test description";
   beforeEach (() => {
     createExhibition(exhibitionTitle, exhibtionDescription);
