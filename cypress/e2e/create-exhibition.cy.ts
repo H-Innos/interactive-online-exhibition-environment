@@ -45,11 +45,11 @@ describe("Create Exhibition", () => {
       }
     );
 
-    cy.wait('@saveRequest')
-      .then((interception) => {
-        expect(interception.response?.statusCode).to.eq(200);
-      }
-    );
+    cy.visit('/dashboard/drafts');
+    cy.contains(exhibitionTitle, { timeout: 20000 })
+      .should('be.visible').click({ force: true });
+    cy.contains('test content', { timeout: 20000 })
+      .should('be.visible');
   });
 
   afterEach(() => {
