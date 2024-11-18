@@ -1,7 +1,6 @@
 {
   "allExhibitions": "All exhibitions",
   "dashboardNav": "Dashboard",
-  "archive": "Archive",
   "login": "Log In",
   
   "createExhibition": {
@@ -100,6 +99,14 @@
     "quizCreated": "Quiz created successfully!",
     "quizDeleted": "Quiz deleted successfully!",
     "failedInvalidateCache": "Error updating page content. Please refresh the page."
+  },
+
+  "archive":{
+    "title": "Archive",
+    "noExhibitionsFound": "No matching exhibitions found.",
+    "unarchive": "Unarchive",
+    "view": "View",
+    "now":"Archive"
   },
     
   "confirmPublish": "Are you sure you want to publish this exhibition?",

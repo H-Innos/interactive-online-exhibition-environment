@@ -1,7 +1,6 @@
 {
   "allExhibitions": "Kõik näitused",
   "dashboardNav": "Töölaud",
-  "archive": "Arhiiv",
   "login": "Logi sisse",
   
   "createExhibition": {
@@ -98,6 +97,14 @@
     "quizCreated": "Viktoriin loodud.",
     "quizDeleted": "Viktoriin kustutatud",
     "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte."
+  },
+
+  "archive":{
+    "title": "Arhiiv",
+    "noExhibitionsFound": "Ühtegi sobivat näitust ei leitud.",
+    "unarchive": "Mustandiks",
+    "view": "Avalda",
+    "now":"Arhiveeri"
   },
     
   "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",

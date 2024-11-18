@@ -3,10 +3,9 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Settings } from "lucide-react";
 import { configurations } from "~/lib/constants/config";
-import {
-  useUnarchiveExhibition,
-} from "~/hooks/exhibition-actions";
+import {useUnarchiveExhibition} from "~/hooks/exhibition-actions";
 import { type Exhibition } from "~/lib/types/entities";
+import { useTranslation } from 'react-i18next';
 
 const DropdownMenu = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu));
 const DropdownMenuTrigger = dynamic(() => import("~/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuTrigger));
@@ -21,7 +20,7 @@ interface ArchivedExhibitionCardProps {
 export default function ArchivedExhibitionCard({ exhibition, onClick }: ArchivedExhibitionCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const unarchiveExhibition = useUnarchiveExhibition();
-
+  const { t } = useTranslation();
   const handleUnarchive = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (exhibition.isArchived && window.confirm("Are you sure you want to unarchive this exhibition?")) {
@@ -77,13 +76,13 @@ export default function ArchivedExhibitionCard({ exhibition, onClick }: Archived
               onClick={handleUnarchive}
               className="hover:font-semibold"
             >
-              Unarchive
+              {t("archive.unarchive")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleView}
               className="hover:font-semibold"
             >
-              View
+              {t("archive.view")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

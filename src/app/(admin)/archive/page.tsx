@@ -22,7 +22,7 @@ export default function ArchivePage() {
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
         <div className="w-full px-2" style={{ maxWidth: "90%" }}>
-          <h1 className="text-3xl mb-8 text-neutral text-center">{t('Archive')}</h1>
+          <h1 className="text-3xl mb-8 text-neutral text-center">{t('archive.title')}</h1>
           
           {isLoading ? (
             <div>{t('mainPage.loading')}</div>
