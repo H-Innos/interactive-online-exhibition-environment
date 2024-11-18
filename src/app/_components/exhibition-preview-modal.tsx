@@ -15,7 +15,6 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
     const handleIframeLoad = () => {
       const doc = iframeRef.current?.contentDocument;
       if (doc) {
-
         const previewBanner = doc.createElement('div');
         previewBanner.id = 'preview-banner';
         previewBanner.innerHTML = t('preview');
@@ -78,22 +77,18 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
       }
     };
 
-    if (iframeRef.current) {
-      iframeRef.current.addEventListener('load', handleIframeLoad);
-    }
+    const iframe = iframeRef.current;
+    iframe?.addEventListener('load', handleIframeLoad);
 
     return () => {
-      const iframe = iframeRef.current;
-      if (iframe) {
-        iframe.removeEventListener('load', handleIframeLoad);
-      }
+      iframe?.removeEventListener('load', handleIframeLoad);
     };
   }, [onClose, t]);
 
   useEffect(() => {
     const updatePreviewText = () => {
-      if (iframeRef.current && iframeRef.current.contentDocument) {
-        const doc = iframeRef.current.contentDocument;
+      const doc = iframeRef.current?.contentDocument;
+      if (doc) {
         const previewBanner = doc.getElementById('preview-banner');
         if (previewBanner) {
           previewBanner.innerHTML = t('preview');
