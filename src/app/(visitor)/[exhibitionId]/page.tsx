@@ -22,19 +22,18 @@ const ExhibitionViewPage: React.FC = () => {
 
     if (exhibition) {
       // Create img src with data-url; Blocknote bug
-      const parent = document.getElementById('editor-content');
+      const parent = document.getElementById("editor-content");
       if (parent) {
-        const divs = parent.querySelectorAll('div[data-file-block]'); // look at data blocks only
-        divs.forEach(div => {
-          const dataUrl = div.getAttribute('data-url');
-          if (!dataUrl) 
-            return;
+        const divs = parent.querySelectorAll("div[data-file-block]"); // look at data blocks only
+        divs.forEach((div) => {
+          const dataUrl = div.getAttribute("data-url");
+          if (!dataUrl) return;
 
-          const oldImg = div.querySelector('img');
-          const oldAudio = div.querySelector('audio');
+          const oldImg = div.querySelector("img");
+          const oldAudio = div.querySelector("audio");
 
           if (oldImg) {
-            const newImg = document.createElement('img');
+            const newImg = document.createElement("img");
             for (const attribute of oldImg.attributes) {
               newImg.setAttribute(attribute.name, attribute.value);
             }
@@ -43,8 +42,8 @@ const ExhibitionViewPage: React.FC = () => {
           }
 
           if (oldAudio) {
-            // Also replace audios, same bug            
-            const newAudio = document.createElement('audio');
+            // Also replace audios, same bug
+            const newAudio = document.createElement("audio");
             for (const attribute of oldAudio.attributes) {
               newAudio.setAttribute(attribute.name, attribute.value);
             }
@@ -65,30 +64,36 @@ const ExhibitionViewPage: React.FC = () => {
   }
 
   return (
-    <div className="text-text-dark min-h-screen p-8">
+    <div className="text-text-dark min-h-screen p-4 sm:p-8">
       <div
-        className="relative h-64 w-full bg-cover bg-center flex items-center justify-center"
+        className="relative h-48 sm:h-64 w-full bg-cover bg-center flex items-center justify-center"
         style={{
-          backgroundImage: `url(${exhibition.coverImageUrl ?? '/default-cover.jpg'})`,
+          backgroundImage: `url(${exhibition.coverImageUrl ?? "/default-cover.jpg"})`,
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
-          onClick={() => router.push('/')}
-          className="absolute left-4 text-white text-5xl z-5"
+          onClick={() => router.push("/")}
+          className="absolute left-4 text-white text-3xl sm:text-5xl z-10"
         >
           ❬
         </button>
-        <h1 className="relative text-2xl sm:text-4xl lg:text-5xl font-bold text-white z-5 text-center">
+        <h1 className="relative text-xl sm:text-3xl lg:text-5xl font-bold text-white z-10 text-center">
           {exhibition.name}
         </h1>
       </div>
-      <div className="flex mt-8">
+
+      <div className="flex flex-col sm:flex-row mt-8 gap-4">
         <div className="flex-1">
-          <div id="editor-content" dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="blocknote-content" />
+          <div
+            id="editor-content"
+            dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }}
+            className="blocknote-content break-words"
+          />
         </div>
+
         {quizzes && quizzes.length > 0 && (
-          <div className="ml-4">
+          <div className="sm:ml-4">
             <QuizDropdown
               quizzes={quizzes}
               onQuizSelect={(quizId: number) => {
@@ -98,6 +103,19 @@ const ExhibitionViewPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <style jsx global>{`
+        .blocknote-content img,
+        .blocknote-content video,
+        .blocknote-content iframe {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+        .blocknote-content {
+          word-wrap: break-word;
+        }
+      `}</style>
     </div>
   );
 };

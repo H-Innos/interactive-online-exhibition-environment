@@ -9,9 +9,9 @@ import { configurations } from "~/lib/constants/config";
 interface PageableExhibitionsProps {
   title: string;
   exhibitions: Exhibition[];
-  onExhibitionClick: (id: number) => void;
+  onExhibitionClick: (id: number, isPublished: boolean) => void;
   showFadeEffect?: boolean;
-  CardComponent: React.FC<{ exhibition: Exhibition; onClick: () => void | ((id: number) => void) }>;
+  CardComponent: React.FC<{ exhibition: Exhibition; onClick: () => void }>;
 }
 
 const PageableExhibitions = ({
@@ -40,7 +40,7 @@ const PageableExhibitions = ({
             <CardComponent
               key={exhibition.id}
               exhibition={exhibition}
-              onClick={() => onExhibitionClick(exhibition.id)}
+              onClick={() => onExhibitionClick(exhibition.id, exhibition.isPublished)}
             />
           ))}
         </div>

@@ -40,6 +40,7 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
+    console.log("Exhibition ID:", exhibition.id, "Is Published:", exhibition.isPublished);
     if (exhibition.id && !exhibition.isPublished) {
       router.push(`/dashboard/${exhibition.id}`);
       setIsMenuOpen(false);
@@ -92,10 +93,12 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
   return (
     <div
       data-testid="dashboard-exhibition-card"
-      className={`relative flex h-48 w-100 cursor-pointer overflow-hidden rounded-lg bg-gray-100 p-4 shadow transition-shadow hover:shadow-lg ${
+      className={`relative flex h-48 w-100 ${
+        !exhibition.isPublished ? "cursor-pointer" : "cursor-default"
+      } overflow-hidden rounded-lg bg-gray-100 p-4 shadow transition-shadow hover:shadow-lg ${
         isMenuOpen ? "pointer-events-none" : ""
       }`}
-      onClick={() => onClick(exhibition.id)}
+      onClick={() => !exhibition.isPublished && onClick(exhibition.id)}
     >
       <div className="flex w-full">
         <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">

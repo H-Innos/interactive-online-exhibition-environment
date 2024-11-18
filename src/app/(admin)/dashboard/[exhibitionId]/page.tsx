@@ -31,6 +31,18 @@ const ExhibitionEditorPage = () => {
     }
   }, [exhibitionData]);
 
+  useEffect(() => {
+    // Toggle body overflow when the preview modal is open/closed
+    if (isPreviewModalOpen) {
+      document.body.style.overflow = 'hidden'; // Disable scroll
+    } else {
+      document.body.style.overflow = ''; // Re-enable scroll
+    }
+    return () => {
+      document.body.style.overflow = ''; // Reset on unmount
+    };
+  }, [isPreviewModalOpen]);
+
   const publishExhibition = usePublishExhibition();
   const updateExhibition = useUpdateExhibition();
 
@@ -55,10 +67,13 @@ const ExhibitionEditorPage = () => {
   }
 
   return (
-    <div className={`${isPreviewModalOpen ? 'pointer-events-none' : ''}`}>
+    <div>
+      {isPreviewModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" aria-hidden="true" />
+      )}
       <div
         className={`flex flex-col lg:flex-row justify-between min-h-screen p-4 lg:p-8 space-y-4 lg:space-y-0 lg:space-x-4 ${
-          isPreviewModalOpen ? 'opacity-50' : ''
+          isPreviewModalOpen ? 'pointer-events-none opacity-50' : ''
         }`}
         aria-hidden={isPreviewModalOpen}
       >
@@ -101,7 +116,7 @@ const ExhibitionEditorPage = () => {
               </button>
               <button
                 type="button"
-                className="bg-purple-500 text-text-light px-3 py-2 rounded-md hover:bg-purple-600 text-sm md:text-base"
+                className="bg-blue-800 text-text-light px-3 py-2 rounded-md hover:bg-blue-400 text-sm md:text-base"
                 onClick={() => router.push(`/dashboard/${id}/quizzes`)}
               >
                 {t("createQuiz")}

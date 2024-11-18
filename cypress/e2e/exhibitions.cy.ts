@@ -2,7 +2,7 @@ describe('All Exhibitions Page', () => {
   const selectors = {
     pageHeading: 'h1:contains("Explore Exhibitions")',
     exhibitionCard: '[data-testid="exhibition-card"]',
-    exhibitionTitle: 'h2', // Assuming the title is within an <h2> element
+    exhibitionTitle: 'h2',
   };
 
   beforeEach(() => {
