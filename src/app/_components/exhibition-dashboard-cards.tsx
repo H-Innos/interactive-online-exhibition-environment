@@ -92,7 +92,9 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
   return (
     <div
       data-testid="dashboard-exhibition-card"
-      className="relative flex h-48 w-100 cursor-pointer overflow-hidden rounded-lg bg-gray-100 p-4 shadow transition-shadow hover:shadow-lg"
+      className={`relative flex h-48 w-100 cursor-pointer overflow-hidden rounded-lg bg-gray-100 p-4 shadow transition-shadow hover:shadow-lg ${
+        isMenuOpen ? "pointer-events-none" : ""
+      }`}
       onClick={() => onClick(exhibition.id)}
     >
       <div className="flex w-full">
@@ -129,10 +131,16 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
             <Settings className="h-5 w-5" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-36 bg-white">
+        <DropdownMenuContent
+          align="end"
+          className="w-36 bg-white z-50"
+          onClick={(e) => e.stopPropagation()}
+        >
           <DropdownMenuItem
             onClick={handleEdit}
-            className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+            className={`hover:font-semibold ${
+              exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""
+            }`}
             disabled={exhibition.isPublished}
           >
             {t("edit")}
@@ -140,7 +148,9 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
           <DropdownMenuItem
             onClick={handleArchive}
             disabled={exhibition.isPublished}
-            className={`hover:font-semibold ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+            className={`hover:font-semibold ${
+              exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""
+            }`}
           >
             {t("archive.now")}
           </DropdownMenuItem>
@@ -152,7 +162,9 @@ const ExhibitionCard: React.FC<ExhibitionCardProps> = ({
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleDelete}
-            className={`text-red-600 hover:font-semibold hover:text-red-600 ${exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""}`}
+            className={`text-red-600 hover:font-semibold hover:text-red-600 ${
+              exhibition.isPublished ? "cursor-not-allowed opacity-50" : ""
+            }`}
             disabled={exhibition.isPublished}
           >
             {t("delete")}

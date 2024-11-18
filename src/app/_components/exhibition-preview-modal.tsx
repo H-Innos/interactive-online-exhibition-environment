@@ -15,25 +15,21 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
     const handleIframeLoad = () => {
       const doc = iframeRef.current?.contentDocument;
       if (doc) {
-        const previewBanner = doc.createElement('div');
-        previewBanner.id = 'preview-banner';
-        previewBanner.innerHTML = t('preview');
-        previewBanner.style.cssText = `
-          position: fixed;
-          top: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          background-color: rgba(0, 0, 0, 0.7);
-          color: white;
-          padding: 10px 20px;
-          font-size: 24px;
-          font-weight: bold;
-          border-radius: 5px;
-          z-index: 1000;
-        `;
-        doc.body.appendChild(previewBanner);
+        const disableInteractions = () => {
+          const style = doc.createElement('style');
+          style.innerHTML = `
+            * {
+              pointer-events: none !important;
+            }
+            #back-button {
+              pointer-events: auto !important;
+            }
+          `;
+          doc.head.appendChild(style);
+        };
 
         const backButton = doc.createElement('button');
+        backButton.id = 'back-button';
         backButton.innerHTML = t('backToEditor');
         backButton.style.cssText = `
           position: fixed;
@@ -54,26 +50,7 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
         };
         doc.body.appendChild(backButton);
 
-        const allLinks = doc.getElementsByTagName('a');
-        const allButtons = doc.getElementsByTagName('button');
-
-        const disableElement = (el: HTMLElement) => {
-          if (el !== backButton) {
-            el.style.pointerEvents = 'none';
-            el.style.opacity = '0.5';
-            el.onclick = (e: MouseEvent) => e.preventDefault();
-          }
-        };
-
-        for (const link of allLinks) {
-          disableElement(link as HTMLElement);
-        }
-
-        for (const button of allButtons) {
-          disableElement(button as HTMLElement);
-        }
-
-        doc.addEventListener('submit', (e: Event) => e.preventDefault());
+        disableInteractions();
       }
     };
 
@@ -93,7 +70,7 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
         if (previewBanner) {
           previewBanner.innerHTML = t('preview');
         }
-        const backButton = doc.querySelector('button');
+        const backButton = doc.getElementById('back-button');
         if (backButton) {
           backButton.innerHTML = t('backToEditor');
         }

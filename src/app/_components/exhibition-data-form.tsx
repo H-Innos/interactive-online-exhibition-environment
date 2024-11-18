@@ -83,7 +83,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibiti
 
   return (
     <Card className="w-full md:w-100 overflow-auto">
-      <CardHeader className="sticky top-0 z-10 bg-background border-b">
+      <CardHeader className="sticky top-0 bg-background border-b">
         <div className="flex items-center justify-between">
           <CardTitle>{t('exhibitionDetails')}</CardTitle>
           <Button onClick={handleEditToggle} variant="outline" size="sm" className="w-32 h-10">

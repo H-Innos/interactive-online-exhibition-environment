@@ -75,24 +75,29 @@ const ExhibitionViewPage: React.FC = () => {
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
           onClick={() => router.push('/')}
-          className="absolute left-4 text-white text-5xl z-10"
+          className="absolute left-4 text-white text-5xl z-5"
         >
           ❬
         </button>
-        <h1 className="relative text-4xl font-bold text-white z-10">
+        <h1 className="relative text-2xl sm:text-4xl lg:text-5xl font-bold text-white z-5 text-center">
           {exhibition.name}
         </h1>
       </div>
-      {quizzes && quizzes.length > 0 &&
-        <QuizDropdown
-          className="mt-4"
-          quizzes={quizzes}
-          onQuizSelect={(quizId: number) => {
-            router.push(`${id}/quizzes/${quizId}`);
-          }}
-        /> 
-        }
-      <div id="editor-content" dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="blocknote-content mt-8" />
+      <div className="flex mt-8">
+        <div className="flex-1">
+          <div id="editor-content" dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }} className="blocknote-content" />
+        </div>
+        {quizzes && quizzes.length > 0 && (
+          <div className="ml-4">
+            <QuizDropdown
+              quizzes={quizzes}
+              onQuizSelect={(quizId: number) => {
+                router.push(`${id}/quizzes/${quizId}`);
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

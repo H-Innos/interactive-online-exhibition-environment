@@ -40,13 +40,13 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
   return (
     <Suspense fallback={<div>{t('mainPage.loading')}</div>}>
       <div className="bg-white min-h-screen flex flex-col items-center py-8">
-        <div className="w-full flex justify-end mb-6 mr-48">
+        <div className="w-full flex justify-center sm:justify-end mb-6 px-4">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
         <div className="w-full px-2" style={{ maxWidth: "90%" }}>
-        <h1 className="text-3xl mb-8 text-neutral text-center">{t('mainPage.exploreExhibitions')}</h1>
+          <h1 className="text-3xl mb-8 text-neutral text-center">{t('mainPage.exploreExhibitions')}</h1>
 
-        {isLoading ? (
+          {isLoading ? (
             <div>{t('mainPage.loading')}</div>
           ) : error ? (
             <div>{t('mainPage.errorLoading')}</div>
