@@ -101,6 +101,7 @@ const ExhibitionEditorPage = () => {
                 {t("exit")}
               </button>
               <button
+                data-testid="save-editor-changes"
                 type="button"
                 className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600 text-sm md:text-base"
                 disabled={updateExhibition.isPending || publishExhibition.isPending}
