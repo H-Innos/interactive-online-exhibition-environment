@@ -11,11 +11,13 @@ import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import { useTranslation } from 'react-i18next';
 import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import { Button } from '~/components/ui/button';
+import ExhibitionPreviewModal from '~/app/_components/exhibition-preview-modal';
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [editorContent, setEditorContent] = useState<string>();
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: id });
 
@@ -87,6 +89,13 @@ const ExhibitionEditorPage = () => {
             </button>
             <button
               type="button"
+              className="bg-blue-500 text-text-light mt-4 px-4 py-2 rounded-md hover:bg-blue-600"
+              onClick={() => setIsPreviewModalOpen(true)}
+            >
+              {t("preview")}
+            </button>
+            <button
+              type="button"
               className="bg-lime-600 text-text-light mt-4 px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none"
               disabled={updateExhibition.isPending || publishExhibition.isPending}
               onClick={handlePublish}
@@ -102,6 +111,12 @@ const ExhibitionEditorPage = () => {
             Create Quiz
           </Button>
         </aside>
+      )}
+      {isPreviewModalOpen && exhibition && (
+        <ExhibitionPreviewModal
+          exhibition={exhibition}
+          onClose={() => setIsPreviewModalOpen(false)}
+        />
       )}
     </div>
   );

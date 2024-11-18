@@ -109,6 +109,7 @@
   "uploadImage": "Laadi pilt üles",
   "imageUploaded": "Pilt üles laaditud",
   "saveChanges": "Salvesta muudatused",
+  "preview":"Eelvaade",
   "publishing": "Avaldamine...",
   "publish": "Avalda",
   "exhibitionDetails": "Näituse üksikasjad",
@@ -123,5 +124,6 @@
   "unpublish": "Mustandiks",
   "delete": "Kustuta",
   "confirmDelete": "Kas olete kindel, et soovite selle näituse kustutada?",
-  "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?"
+  "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?",
+  "backToEditor": "Tagasi"
 }
