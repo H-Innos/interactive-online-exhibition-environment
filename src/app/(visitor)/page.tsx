@@ -6,7 +6,7 @@ import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import VisitorExhibitionCard from "~/app/_components/exhibition-visitor-cards";
 import type { Exhibition } from "~/lib/types/entities";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import SearchBar from "~/app/_components/search-bar";
 
 interface MainPageProps {
@@ -23,7 +23,7 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
   useEffect(() => {
     if (data) {
       const publishedExhibitions = data.filter(
-        (exhibition: Exhibition) => exhibition.isPublished
+        (exhibition: Exhibition) => exhibition.isPublished,
       );
       setExhibitions(publishedExhibitions);
     }
@@ -33,33 +33,42 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
     router.push(`/${id}`);
   };
 
-  const filteredExhibitions = exhibitions.filter(exhibition =>
-    exhibition.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredExhibitions = exhibitions.filter((exhibition) =>
+    exhibition.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
-    <Suspense fallback={<div>{t('mainPage.loading')}</div>}>
-      <div className="bg-white min-h-screen flex flex-col items-center py-8">
-        <div className="w-full flex justify-center sm:justify-end mb-6 px-4">
+    <Suspense fallback={<div>{t("mainPage.loading")}</div>}>
+      <div className="flex min-h-screen flex-col items-center bg-white py-8">
+        <div className="mb-6 flex w-full justify-center px-4 sm:justify-end">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
         <div className="w-full px-2" style={{ maxWidth: "90%" }}>
-          <h1 className="text-3xl mb-8 text-neutral text-center">{t('mainPage.exploreExhibitions')}</h1>
+          <h1 className="text-neutral mb-8 text-center text-3xl">
+            {t("mainPage.exploreExhibitions")}
+          </h1>
 
           {isLoading ? (
-            <div>{t('mainPage.loading')}</div>
+            <div>{t("mainPage.loading")}</div>
           ) : error ? (
-            <div>{t('mainPage.errorLoading')}</div>
+            <div>{t("mainPage.errorLoading")}</div>
           ) : filteredExhibitions.length > 0 ? (
             <PageableExhibitions
               title=""
               exhibitions={filteredExhibitions}
               onExhibitionClick={handleExhibitionClick}
               showFadeEffect={false}
-              CardComponent={(props) => <VisitorExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />}
+              CardComponent={(props) => (
+                <VisitorExhibitionCard
+                  {...props}
+                  onClick={() => handleExhibitionClick(props.exhibition.id)}
+                />
+              )}
             />
           ) : (
-            <p className="text-gray-500 text-center">{t('mainPage.noExhibitions')}</p>
+            <p className="text-center text-gray-500">
+              {t("mainPage.noExhibitions")}
+            </p>
           )}
         </div>
       </div>

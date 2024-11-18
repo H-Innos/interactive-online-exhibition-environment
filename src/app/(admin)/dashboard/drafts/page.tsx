@@ -18,7 +18,11 @@ const DraftsPage = () => {
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished && !exhibition.isArchived));
+      setDrafts(
+        data.filter(
+          (exhibition) => !exhibition.isPublished && !exhibition.isArchived,
+        ),
+      );
     }
   }, [data]);
 
@@ -27,31 +31,38 @@ const DraftsPage = () => {
   };
 
   return (
-    <Suspense fallback={<div>{t('dashboard.loading')}</div>}>
-      <div className="text-text-dark min-h-screen px-4 sm:px-12 relative">
-        <div className="flex items-center mt-12">
+    <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
+      <div className="relative min-h-screen px-4 text-text-dark sm:px-12">
+        <div className="mt-12 flex items-center">
           <button
             onClick={() => router.push("/dashboard")}
-            className="text-4xl text-black rounded-md hover:text-gray-500 transition duration-300 mr-4 mb-10"
+            className="mb-10 mr-4 rounded-md text-4xl text-black transition duration-300 hover:text-gray-500"
           >
             ❬
           </button>
-          <h1 className="text-3xl font-bold text-dark mb-10">{t('dashboard.drafts')}</h1>
+          <h1 className="text-dark mb-10 text-3xl font-bold">
+            {t("dashboard.drafts")}
+          </h1>
         </div>
 
         <CreateExhibitionButton />
 
         {isLoading ? (
-          <div>{t('dashboard.loading')}</div>
+          <div>{t("dashboard.loading")}</div>
         ) : error ? (
-          <div>{t('dashboard.errorLoading')}</div>
+          <div>{t("dashboard.errorLoading")}</div>
         ) : (
           <PageableExhibitions
-            title={t('dashboard.allDrafts')}
+            title={t("dashboard.allDrafts")}
             exhibitions={drafts}
             onExhibitionClick={handleExhibitionClick}
             showFadeEffect={false}
-            CardComponent={(props) => <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />}
+            CardComponent={(props) => (
+              <ExhibitionCard
+                {...props}
+                onClick={() => handleExhibitionClick(props.exhibition.id)}
+              />
+            )}
           />
         )}
       </div>

@@ -2,7 +2,7 @@
   "allExhibitions": "Kõik näitused",
   "dashboardNav": "Töölaud",
   "login": "Logi sisse",
-  
+
   "createExhibition": {
     "title": "Loo uus näitus",
     "nameLabel": "Pealkiri",
@@ -19,7 +19,7 @@
     "fileSizeExceeds": "Faili suurus ületab lubatud maksimaalse suuruse {{maxSize}} MB.",
     "newExhibition": "Uus näitus"
   },
-  
+
   "dashboard": {
     "title": "Töölaud",
     "manageExhibitions": "Halda näitusi",
@@ -46,7 +46,7 @@
     "logIn": "Logi sisse",
     "language": "Keel"
   },
-  
+
   "pagination": {
     "previous": "Eelmine",
     "next": "Järgmine"
@@ -90,7 +90,7 @@
     "failedDeleteQuiz": "Viktoriini kustutamine ebaõnnestus: {{message}}",
     "exhibitionDeleted": "Näitus kustutatud.",
     "exhibitionUpdated": "Näitus uuendatud.",
-    "exhibitionPublished": "Näitus avaldatud.", 
+    "exhibitionPublished": "Näitus avaldatud.",
     "exhibitionUnpublished": "Näitus viidud tagasi mustanditesse.",
     "exhibitionArchived": "Näitus arhiveeritud.",
     "exhibitionUnarchived": "Näitus arhiivist eemaldatud.",
@@ -99,14 +99,14 @@
     "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte."
   },
 
-  "archive":{
+  "archive": {
     "title": "Arhiiv",
     "noExhibitionsFound": "Ühtegi sobivat näitust ei leitud.",
     "unarchive": "Mustandiks",
     "view": "Avalda",
-    "now":"Arhiveeri"
+    "now": "Arhiveeri"
   },
-    
+
   "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",
   "editExhibition": "Muuda näitust",
   "status": "Staatus",
@@ -116,7 +116,7 @@
   "uploadImage": "Laadi pilt üles",
   "imageUploaded": "Pilt üles laaditud",
   "saveChanges": "Salvesta",
-  "preview":"Eelvaade",
+  "preview": "Eelvaade",
   "createQuiz": "Loo Test",
   "publishing": "Avaldamine...",
   "publish": "Avalda",

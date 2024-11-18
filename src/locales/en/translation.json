@@ -2,7 +2,7 @@
   "allExhibitions": "All exhibitions",
   "dashboardNav": "Dashboard",
   "login": "Log In",
-  
+
   "createExhibition": {
     "title": "Create a New Exhibition",
     "nameLabel": "Title",
@@ -18,9 +18,7 @@
     "nameRequired": "Exhibition name is required.",
     "fileSizeExceeds": "The file size exceeds the maximum allowed size of {{maxSize}} MB.",
     "newExhibition": "New Exhibition"
-
   },
-  
 
   "dashboard": {
     "title": "Dashboard",
@@ -48,7 +46,7 @@
     "logIn": "Log in",
     "language": "Language"
   },
-  
+
   "pagination": {
     "previous": "Previous",
     "next": "Next"
@@ -101,14 +99,14 @@
     "failedInvalidateCache": "Error updating page content. Please refresh the page."
   },
 
-  "archive":{
+  "archive": {
     "title": "Archive",
     "noExhibitionsFound": "No matching exhibitions found.",
     "unarchive": "Unarchive",
     "view": "View",
-    "now":"Archive"
+    "now": "Archive"
   },
-    
+
   "confirmPublish": "Are you sure you want to publish this exhibition?",
   "editExhibition": "Edit Exhibition",
   "status": "Status",
@@ -118,7 +116,7 @@
   "uploadImage": "Upload Image",
   "imageUploaded": "Image uploaded",
   "saveChanges": "Save changes",
-  "preview":"Preview",
+  "preview": "Preview",
   "createQuiz": "Create Quiz",
   "publishing": "Publishing...",
   "publish": "Publish",
@@ -137,4 +135,3 @@
   "confirmUnpublish": "Are you sure you want to move this exhibition back to drafts?",
   "backToEditor": "Back To Editor"
 }
-

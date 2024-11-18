@@ -13,8 +13,10 @@ const ExhibitionViewPage: React.FC = () => {
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
 
   const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
-  const { data: quizzes } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: id });
-  
+  const { data: quizzes } = api.quiz.getAllByExhibitionId.useQuery({
+    exhibitionId: id,
+  });
+
   useEffect(() => {
     if (data) {
       setExhibition(data);
@@ -30,9 +32,9 @@ const ExhibitionViewPage: React.FC = () => {
   }
 
   return (
-    <div className="text-text-dark min-h-screen p-4 sm:p-8">
+    <div className="min-h-screen p-4 text-text-dark sm:p-8">
       <div
-        className="relative h-48 sm:h-64 w-full bg-cover bg-center flex items-center justify-center"
+        className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64"
         style={{
           backgroundImage: `url(${exhibition.coverImageUrl ?? "/default-cover.jpg"})`,
         }}
@@ -40,16 +42,16 @@ const ExhibitionViewPage: React.FC = () => {
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
           onClick={() => router.push("/")}
-          className="absolute left-4 text-white text-3xl sm:text-5xl z-10"
+          className="absolute left-4 z-10 text-3xl text-white sm:text-5xl"
         >
           ❬
         </button>
-        <h1 className="relative text-xl sm:text-3xl lg:text-5xl font-bold text-white z-10 text-center">
+        <h1 className="relative z-10 text-center text-xl font-bold text-white sm:text-3xl lg:text-5xl">
           {exhibition.name}
         </h1>
       </div>
 
-      <div className="flex flex-col sm:flex-row mt-8 gap-4">
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <div
             id="editor-content"

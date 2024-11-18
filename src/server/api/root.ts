@@ -10,7 +10,7 @@ import { quizRouter } from "./routers/quizzes";
 export const appRouter = createTRPCRouter({
   exhibition: exhibitionRouter,
   quiz: quizRouter,
-  });
+});
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

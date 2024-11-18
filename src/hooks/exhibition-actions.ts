@@ -12,10 +12,12 @@ export const useCreateExhibition = () => {
       await utils.exhibition.invalidate();
     },
     onError: (error: { message?: string }) => {
-      toast.error(t('toasts.failedCreateExhibition', { message: error.message }));
+      toast.error(
+        t("toasts.failedCreateExhibition", { message: error.message }),
+      );
     },
   });
-} 
+};
 
 export const useUpdateExhibition = () => {
   const { t } = useTranslation();
@@ -24,13 +26,15 @@ export const useUpdateExhibition = () => {
   return api.exhibition.update.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
-      toast.success(t('toasts.exhibitionUpdated'));
+      toast.success(t("toasts.exhibitionUpdated"));
     },
     onError: (error: { message?: string }) => {
-      toast.error(t('toasts.failedUpdateExhibition', { message: error.message }));
+      toast.error(
+        t("toasts.failedUpdateExhibition", { message: error.message }),
+      );
     },
   });
-}
+};
 
 export const usePublishExhibition = () => {
   const { t } = useTranslation();
@@ -40,14 +44,16 @@ export const usePublishExhibition = () => {
   return api.exhibition.publish.useMutation({
     onSuccess: async () => {
       await utils.exhibition.invalidate();
-      toast.success(t('toasts.exhibitionPublished'));
+      toast.success(t("toasts.exhibitionPublished"));
       router.push(`/dashboard`);
     },
     onError: (error) => {
-      toast.error(t('toasts.failedPublishExhibition', { message: error.message }));
-    }
+      toast.error(
+        t("toasts.failedPublishExhibition", { message: error.message }),
+      );
+    },
   });
-}
+};
 
 export const useUnpublishExhibition = () => {
   const { t } = useTranslation();
@@ -58,29 +64,33 @@ export const useUnpublishExhibition = () => {
       await utils.exhibition.getAll.invalidate();
       await utils.exhibition.getDrafts.invalidate();
 
-      toast.success(t('toasts.exhibitionUnpublished'));
+      toast.success(t("toasts.exhibitionUnpublished"));
     },
     onError: (error) => {
-      toast.error(t('toasts.failedUnpublishExhibition', { message: error.message }));
+      toast.error(
+        t("toasts.failedUnpublishExhibition", { message: error.message }),
+      );
     },
   });
-}
+};
 
 export const useDeleteExhibition = () => {
   const { t } = useTranslation();
   const utils = api.useUtils();
-  
+
   return api.exhibition.delete.useMutation({
     onSuccess: async () => {
       await utils.exhibition.getAll.invalidate();
       await utils.exhibition.getDrafts.invalidate();
-      toast.success(t('toasts.exhibitionDeleted'));
+      toast.success(t("toasts.exhibitionDeleted"));
     },
     onError: (error) => {
-      toast.error(t('toasts.failedDeleteExhibition', { message: error.message }));
+      toast.error(
+        t("toasts.failedDeleteExhibition", { message: error.message }),
+      );
     },
   });
-}
+};
 
 export const useArchiveExhibition = () => {
   const { t } = useTranslation();
@@ -92,14 +102,16 @@ export const useArchiveExhibition = () => {
         await utils.exhibition.getAll.invalidate();
         await utils.exhibition.getArchived.invalidate();
         await utils.exhibition.getDrafts.invalidate();
-        toast.success(t('toasts.exhibitionArchived'));
+        toast.success(t("toasts.exhibitionArchived"));
       } catch (error) {
         console.error("Error invalidating queries:", error);
-        toast.error(t('toasts.failedInvalidateCache'));
+        toast.error(t("toasts.failedInvalidateCache"));
       }
     },
     onError: (error) => {
-      toast.error(t('toasts.failedArchiveExhibition', { message: error.message }));
+      toast.error(
+        t("toasts.failedArchiveExhibition", { message: error.message }),
+      );
     },
   });
 };
@@ -113,16 +125,18 @@ export const useUnarchiveExhibition = () => {
       try {
         await utils.exhibition.getAll.invalidate();
         await utils.exhibition.getArchived.invalidate();
-        await utils.exhibition.getDrafts.invalidate(); 
+        await utils.exhibition.getDrafts.invalidate();
 
-        toast.success(t('toasts.exhibitionUnarchived'));
+        toast.success(t("toasts.exhibitionUnarchived"));
       } catch (error) {
         console.error("Error invalidating queries:", error);
-        toast.error(t('toasts.failedInvalidateCache'));
+        toast.error(t("toasts.failedInvalidateCache"));
       }
     },
     onError: (error) => {
-      toast.error(t('toasts.failedUnarchiveExhibition', { message: error.message }));
+      toast.error(
+        t("toasts.failedUnarchiveExhibition", { message: error.message }),
+      );
     },
   });
 };

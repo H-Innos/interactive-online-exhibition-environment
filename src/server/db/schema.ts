@@ -10,43 +10,40 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
-  (name) => `interactive-online-exhibition-environment_${name}`
+  (name) => `interactive-online-exhibition-environment_${name}`,
 );
 
-export const answers = createTable(
-  "answer",
-  {
-    id: serial("id").primaryKey(),
-    questionId: serial("question_id")
-      .notNull()
-      .references(() => questions.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
-    text: varchar("text", { length: 256 }).notNull(),
-    isCorrect: boolean("is_correct").notNull().default(false),
-  },
-);
+export const answers = createTable("answer", {
+  id: serial("id").primaryKey(),
+  questionId: serial("question_id")
+    .notNull()
+    .references(() => questions.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  text: varchar("text", { length: 256 }).notNull(),
+  isCorrect: boolean("is_correct").notNull().default(false),
+});
 
-export const questions = createTable(
-  "question",
-  {
-    id: serial("id").primaryKey(),
-    quizId: serial("quiz_id")
-      .notNull()
-      .references(() => quizzes.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
-    text: varchar("text", { length: 256 }).notNull(),
-    imageUrl: varchar("image", { length: 512 }).default(""),
-  },
-);
+export const questions = createTable("question", {
+  id: serial("id").primaryKey(),
+  quizId: serial("quiz_id")
+    .notNull()
+    .references(() => quizzes.id, { onDelete: "cascade", onUpdate: "cascade" }),
+  text: varchar("text", { length: 256 }).notNull(),
+  imageUrl: varchar("image", { length: 512 }).default(""),
+});
 
-export const quizzes = createTable(
-  "quiz",
-  {
-    id: serial("id").primaryKey(),
-    title: varchar("name", { length: 256 }).notNull(),
-    exhibitionId: serial("exhibition_id")
-      .notNull()
-      .references(() => exhibitions.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
-  },
-);
+export const quizzes = createTable("quiz", {
+  id: serial("id").primaryKey(),
+  title: varchar("name", { length: 256 }).notNull(),
+  exhibitionId: serial("exhibition_id")
+    .notNull()
+    .references(() => exhibitions.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+});
 
 export const exhibitions = createTable(
   "post",
@@ -62,12 +59,12 @@ export const exhibitions = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
   (example) => ({
     nameIndex: uniqueIndex("name_unique_idx").on(example.name),
-  })
+  }),
 );
 
 export const exhibitionsRelations = relations(exhibitions, ({ many }) => ({

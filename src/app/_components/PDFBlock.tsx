@@ -1,6 +1,4 @@
-import { 
-    FileBlockConfig
-} from "@blocknote/core";
+import { FileBlockConfig } from "@blocknote/core";
 
 import {
   AddFileButton,
@@ -13,78 +11,80 @@ import {
 import { RiFilePdfFill } from "react-icons/ri";
 
 // Weird type issues here, kinda unsolvable ATM without disabling lines.
-// Code lifted from official repo demo 
+// Code lifted from official repo demo
 
 export const PDFPreview = (
-    props: Omit<
-      ReactCustomBlockRenderProps<FileBlockConfig, any, any>, // eslint-disable-line
-      "contentRef"
-    >
-  ) => {
-    return (
-      <embed
-        type={"application/pdf"}
-        src={props.block.props.url}
-        contentEditable={false}
-        draggable={true}
-        onClick={() => props.editor.setTextCursorPosition(props.block)}
-      />
-    );
-  };
-  
-  export const PDF = createReactBlockSpec(
-    {
-      type: "pdf",
-      propSchema: {
-        name: {
-          default: "" as const,
-        },
-        url: {
-          default: "" as const,
-        },
-        caption: {
-          default: "" as const,
-        },
-        showPreview: {
-          default: true,
-        },
-        previewWidth: {
-          default: 512,
-        },
-      },
-      content: "none",
-      isFileBlock: true,
-    },
-    {
-      render: (props) => (
-        <div className={"bn-file-block-content-wrapper"}>
-          {props.block.props.url === "" ? (
-            <AddFileButton
-              {...props}
-              editor={props.editor as any} // eslint-disable-line
-              buttonText={"Add PDF"}
-              buttonIcon={<RiFilePdfFill size={24} />}
-            />
-          ) : !props.block.props.showPreview ? (
-            <FileAndCaptionWrapper
-              block={props.block}
-              editor={props.editor as any} // eslint-disable-line
-              > 
-              <DefaultFilePreview
-                block={props.block}
-                editor={props.editor as any} // eslint-disable-line
-              />
-            </FileAndCaptionWrapper>
-          ) : (
-            <FileAndCaptionWrapper
-              block={props.block}
-              editor={props.editor as any} // eslint-disable-line
-              >
-              <PDFPreview block={props.block} editor={props.editor as any} // eslint-disable-line
-               />
-            </FileAndCaptionWrapper>
-          )}
-        </div>
-      ),
-    }
+  props: Omit<
+    ReactCustomBlockRenderProps<FileBlockConfig, any, any>, // eslint-disable-line
+    "contentRef"
+  >,
+) => {
+  return (
+    <embed
+      type={"application/pdf"}
+      src={props.block.props.url}
+      contentEditable={false}
+      draggable={true}
+      onClick={() => props.editor.setTextCursorPosition(props.block)}
+    />
   );
+};
+
+export const PDF = createReactBlockSpec(
+  {
+    type: "pdf",
+    propSchema: {
+      name: {
+        default: "" as const,
+      },
+      url: {
+        default: "" as const,
+      },
+      caption: {
+        default: "" as const,
+      },
+      showPreview: {
+        default: true,
+      },
+      previewWidth: {
+        default: 512,
+      },
+    },
+    content: "none",
+    isFileBlock: true,
+  },
+  {
+    render: (props) => (
+      <div className={"bn-file-block-content-wrapper"}>
+        {props.block.props.url === "" ? (
+          <AddFileButton
+            {...props}
+            editor={props.editor as any} // eslint-disable-line
+            buttonText={"Add PDF"}
+            buttonIcon={<RiFilePdfFill size={24} />}
+          />
+        ) : !props.block.props.showPreview ? (
+          <FileAndCaptionWrapper
+            block={props.block}
+            editor={props.editor as any} // eslint-disable-line
+          >
+            <DefaultFilePreview
+              block={props.block}
+              editor={props.editor as any} // eslint-disable-line
+            />
+          </FileAndCaptionWrapper>
+        ) : (
+          <FileAndCaptionWrapper
+            block={props.block}
+            editor={props.editor as any} // eslint-disable-line
+          >
+            <PDFPreview
+              block={props.block}
+              editor={props.editor as any} // eslint-disable-line
+            />
+          </FileAndCaptionWrapper>
+        )}
+      </div>
+    ),
+  },
+);
