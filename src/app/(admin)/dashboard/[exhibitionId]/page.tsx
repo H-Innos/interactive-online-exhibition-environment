@@ -11,6 +11,7 @@ import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
 import { useTranslation } from 'react-i18next';
 import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
 import ExhibitionPreviewModal from '~/app/_components/exhibition-preview-modal';
+import { convertToValidHTML } from '~/lib/utils/exhibition-parser';
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
@@ -56,7 +57,7 @@ const ExhibitionEditorPage = () => {
     updateExhibition.mutate({
       id: exhibition.id,
       name: exhibition.name,
-      content: editorContent
+      content: convertToValidHTML(editorContent)
     });
     setIsDirty(false);
   }
