@@ -8,7 +8,7 @@ describe('Dashboard Page', () => {
     editOption: 'Edit',
     exhibitionTitleInput: 'input[placeholder="Enter exhibition title"]',
     exhibitionDescriptionInput: 'textarea[placeholder="Enter exhibition description"]',
-    exhibitionCard: (title: any) => `[data-testid="exhibition-card"]:contains("${title}")`,
+    exhibitionCard: (title: string) => `[data-testid="exhibition-card"]:contains("${title}")`,
   };
 
   beforeEach(() => {
