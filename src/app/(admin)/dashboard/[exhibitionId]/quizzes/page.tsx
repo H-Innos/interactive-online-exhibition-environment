@@ -50,7 +50,7 @@ const QuizzesPage = () => {
   }
 
   return (
-    <main className='flex p-4 gap-4'>
+    <main className='flex flex-col md:flex-row p-4 gap-4'>
       <div className="flex items-center mt-12">
         <button
           onClick={() => router.push(`/dashboard/${id}`)}
@@ -60,7 +60,7 @@ const QuizzesPage = () => {
         </button>
         <h1 className="text-3xl font-bold text-dark mb-10">{}</h1>
       </div>
-      <Card className="w-1/3">
+      <Card className="w-full md:w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('quizzes.quizzes')}</CardTitle> 
         </CardHeader>
@@ -93,7 +93,7 @@ const QuizzesPage = () => {
           </ul>
         </CardContent>
       </Card>
-      <Card className="w-2/3">
+      <Card className="w-full md:w-2/3">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>{t('quizzes.quizPreview')}</CardTitle>
           {selectedQuiz && (

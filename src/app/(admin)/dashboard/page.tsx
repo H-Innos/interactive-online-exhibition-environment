@@ -26,9 +26,11 @@ const Dashboard = () => {
     }
   }, [data]);
 
-  const handleExhibitionClick = (id: number) => {
-    router.push(`/dashboard/${id}`);
-  };
+  const handleExhibitionClick = (id: number, isPublished: boolean) => {
+    if (!isPublished) {
+      router.push(`/dashboard/${id}`);
+    };
+  }
 
   return (
     <Suspense fallback={<div>{t('dashboard.loading')}</div>}>
@@ -47,17 +49,17 @@ const Dashboard = () => {
             {currentPage === 1 && (
               <>
                 <h1 className="text-2xl font-bold text-neutral mb-5">{t('dashboard.drafts')}</h1>
-                <ShortenedDrafts drafts={drafts} onExhibitionClick={handleExhibitionClick} />
+                <ShortenedDrafts drafts={drafts} onExhibitionClick={(id) => handleExhibitionClick(id, false)} />
               </>
             )}
 
             <PageableExhibitions
               title={t('dashboard.publishedExhibitions')}
               exhibitions={publishedExhibitions}
-              onExhibitionClick={handleExhibitionClick}
+              onExhibitionClick={(id, isPublished) => handleExhibitionClick(id, isPublished)}
               showFadeEffect={false}
               CardComponent={(props) => (
-                <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />
+                <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id, props.exhibition.isPublished)} />
               )}
             />
           </>
