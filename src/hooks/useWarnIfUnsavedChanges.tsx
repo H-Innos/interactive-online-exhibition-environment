@@ -25,8 +25,9 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
 
   const addAnchorListeners = () => {
     const anchorElements = document.querySelectorAll("a[href]");
-    // @ts-expect-error error expected
+
     anchorElements.forEach((anchor) =>
+      // @ts-expect-error error expected
       anchor.addEventListener("click", handleAnchorClick),
     );
   };
@@ -39,8 +40,9 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
     return () => {
       mutationObserver.disconnect();
       const anchorElements = document.querySelectorAll("a[href]");
-      // @ts-expect-error error expected
+
       anchorElements.forEach((anchor) =>
+        // @ts-expect-error error expected
         anchor.removeEventListener("click", handleAnchorClick),
       );
     };
