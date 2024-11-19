@@ -4,27 +4,29 @@ import { QuizCard } from "~/components/quiz/quiz";
 import { useQuizIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { api } from "~/trpc/react";
 
-
 const QuizView = () => {
   const { t } = useTranslation();
-  const  id = useQuizIdFromParams();
+  const id = useQuizIdFromParams();
 
-  const { data: quiz, error, isLoading } = api.quiz.getOne.useQuery({ quizId: Number(id) });
+  const {
+    data: quiz,
+    error,
+    isLoading,
+  } = api.quiz.getOne.useQuery({ quizId: Number(id) });
 
   if (error || !quiz) {
-    return <div>{t('quizzes.errorLoading')}</div>;
+    return <div>{t("quizzes.errorLoading")}</div>;
   }
 
   if (isLoading) {
-    return <div>{t('mainPage.loading')}</div>;
+    return <div>{t("mainPage.loading")}</div>;
   }
 
   return (
-    <main className="flex justify-center items-center my-32">
+    <main className="my-32 flex items-center justify-center">
       <QuizCard quiz={quiz} />
     </main>
   );
-
-}
+};
 
 export default QuizView;

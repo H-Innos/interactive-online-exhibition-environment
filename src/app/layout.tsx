@@ -1,11 +1,11 @@
 import "~/styles/globals.css";
-import Header from "~/app/_components/header"; 
+import Header from "~/app/_components/header";
 import Footer from "~/app/_components/footer";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
-import { Toaster } from "sonner"
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "UTLib näitused",
@@ -21,7 +21,7 @@ export default function RootLayout({
         <Header />
 
         <TRPCReactProvider>
-            <main>{children}</main>
+          <main>{children}</main>
         </TRPCReactProvider>
         <Toaster />
         <Footer />

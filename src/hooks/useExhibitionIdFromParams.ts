@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from 'next/navigation';
+import { useParams } from "next/navigation";
 
 export function useExhibitionIdFromParams(): number {
   const { exhibitionId: id } = useParams();

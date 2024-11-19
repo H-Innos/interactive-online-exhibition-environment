@@ -1,6 +1,6 @@
 ### Bug Report
 
-#### **Title**: 
+#### **Title**:
 
 ---
 
@@ -21,16 +21,19 @@
 ---
 
 #### **Expected Behavior**:
+
 <!-- Describe what should happen when the bug is fixed. -->
 
 ---
 
 #### **Screenshots / Videos**:
+
 <!-- Optional: Provide screenshots or recordings that show the issue. -->
 
 ---
 
 #### **Environment**:
+
 <!-- Optional: Specify the environment in which the bug was encountered.-->
 
 - **OS**: <!-- e.g., Windows 10, macOS 13, Ubuntu 20.04 -->
@@ -41,4 +44,5 @@
 ---
 
 #### **Error Logs**:
+
 <!-- If applicable, include relevant error logs or console output to help debug the issue. -->

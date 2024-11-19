@@ -1,17 +1,20 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
-import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
-import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
-import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
-import type { Exhibition } from '~/lib/types/entities';
-import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
-import { useTranslation } from 'react-i18next';
-import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
-import ExhibitionPreviewModal from '~/app/_components/exhibition-preview-modal';
-import { convertToValidHTML } from '~/lib/utils/exhibition-parser';
+import { ExhibitionDataForm } from "~/app/_components/exhibition-data-form";
+import ExhibitionContentEditor from "~/app/_components/exhibition-content-editor";
+import {
+  usePublishExhibition,
+  useUpdateExhibition,
+} from "~/hooks/exhibition-actions";
+import type { Exhibition } from "~/lib/types/entities";
+import { useWarnIfUnsavedChanges } from "~/hooks/useWarnIfUnsavedChanges";
+import { useTranslation } from "react-i18next";
+import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
+import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
+import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
@@ -35,12 +38,12 @@ const ExhibitionEditorPage = () => {
   useEffect(() => {
     // Toggle body overflow when the preview modal is open/closed
     if (isPreviewModalOpen) {
-      document.body.style.overflow = 'hidden'; // Disable scroll
+      document.body.style.overflow = "hidden"; // Disable scroll
     } else {
-      document.body.style.overflow = ''; // Re-enable scroll
+      document.body.style.overflow = ""; // Re-enable scroll
     }
     return () => {
-      document.body.style.overflow = ''; // Reset on unmount
+      document.body.style.overflow = ""; // Reset on unmount
     };
   }, [isPreviewModalOpen]);
 
@@ -57,7 +60,7 @@ const ExhibitionEditorPage = () => {
     updateExhibition.mutate({
       id: exhibition.id,
       name: exhibition.name,
-      content: convertToValidHTML(editorContent)
+      content: convertToValidHTML(editorContent),
     });
     setIsDirty(false);
   }
@@ -70,17 +73,25 @@ const ExhibitionEditorPage = () => {
   return (
     <div>
       {isPreviewModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" aria-hidden="true" />
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50"
+          aria-hidden="true"
+        />
       )}
       <div
-        className={`flex flex-col lg:flex-row justify-between min-h-screen p-4 lg:p-8 space-y-4 lg:space-y-0 lg:space-x-4 ${
-          isPreviewModalOpen ? 'pointer-events-none opacity-50' : ''
+        className={`flex min-h-screen flex-col justify-between space-y-4 p-4 lg:flex-row lg:space-x-4 lg:space-y-0 lg:p-8 ${
+          isPreviewModalOpen ? "pointer-events-none opacity-50" : ""
         }`}
         aria-hidden={isPreviewModalOpen}
       >
-        <div className="flex-1 w-full lg:w-[70%] mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-4">{t("editExhibition")} {id}</h1>
-          <p>{t("status")}: {updateExhibition.isPending ? t("saving") : t("saved")}</p>
+        <div className="mx-auto w-full flex-1 lg:w-[70%]">
+          <h1 className="mb-4 text-2xl font-bold md:text-3xl">
+            {t("editExhibition")} {id}
+          </h1>
+          <p>
+            {t("status")}:{" "}
+            {updateExhibition.isPending ? t("saving") : t("saved")}
+          </p>
           {exhibition && (
             <div className="w-full">
               <ExhibitionContentEditor
@@ -91,11 +102,11 @@ const ExhibitionEditorPage = () => {
           )}
         </div>
         {exhibition && (
-          <aside className="w-full lg:w-[30%] mt-4 lg:mt-0 mx-auto">
-            <div className="flex flex-wrap justify-end m-4 gap-2">
+          <aside className="mx-auto mt-4 w-full lg:mt-0 lg:w-[30%]">
+            <div className="m-4 flex flex-wrap justify-end gap-2">
               <button
                 type="button"
-                className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600 text-sm md:text-base"
+                className="rounded-md bg-gray-500 px-4 py-2 text-sm text-text-light hover:bg-gray-600 md:text-base"
                 onClick={() => router.push(`/dashboard`)}
               >
                 {t("exit")}
@@ -103,30 +114,34 @@ const ExhibitionEditorPage = () => {
               <button
                 data-testid="save-editor-changes"
                 type="button"
-                className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600 text-sm md:text-base"
-                disabled={updateExhibition.isPending || publishExhibition.isPending}
+                className="rounded-md bg-gray-500 px-4 py-2 text-sm text-text-light hover:bg-gray-600 md:text-base"
+                disabled={
+                  updateExhibition.isPending || publishExhibition.isPending
+                }
                 onClick={handleSaveEditorChanges}
               >
                 {t("saveChanges")}
               </button>
               <button
                 type="button"
-                className="bg-blue-500 text-text-light px-4 py-2 rounded-md hover:bg-blue-600 text-sm md:text-base"
+                className="rounded-md bg-blue-500 px-4 py-2 text-sm text-text-light hover:bg-blue-600 md:text-base"
                 onClick={() => setIsPreviewModalOpen(true)}
               >
                 {t("preview")}
               </button>
               <button
                 type="button"
-                className="bg-blue-800 text-text-light px-3 py-2 rounded-md hover:bg-blue-400 text-sm md:text-base"
+                className="rounded-md bg-blue-800 px-3 py-2 text-sm text-text-light hover:bg-blue-400 md:text-base"
                 onClick={() => router.push(`/dashboard/${id}/quizzes`)}
               >
                 {t("createQuiz")}
               </button>
               <button
                 type="button"
-                className="bg-lime-600 text-text-light px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none text-sm md:text-base"
-                disabled={updateExhibition.isPending || publishExhibition.isPending}
+                className="rounded-md bg-lime-600 px-3 py-2 text-sm text-text-light hover:bg-lime-500 disabled:pointer-events-none md:text-base"
+                disabled={
+                  updateExhibition.isPending || publishExhibition.isPending
+                }
                 onClick={handlePublish}
               >
                 {publishExhibition.isPending ? t("publishing") : t("publish")}

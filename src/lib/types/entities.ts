@@ -8,14 +8,14 @@ export type Exhibition = {
   isArchived: boolean;
   createdAt: Date | string;
   updatedAt: Date | null;
-}
+};
 
 export type Answer = {
   id: number;
   questionId: number;
   text: string;
   isCorrect: boolean;
-}
+};
 
 export type Question = {
   id: number;
@@ -23,11 +23,11 @@ export type Question = {
   text: string;
   imageUrl: string | null;
   answers: Answer[];
-}
+};
 
 export type Quiz = {
   id: number;
   exhibitionId: number;
   title: string;
   questions: Question[];
-}
+};

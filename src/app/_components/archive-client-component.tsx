@@ -9,7 +9,10 @@ interface ArchiveClientComponentProps {
   isLoading: boolean;
 }
 
-const ArchiveClientComponent: React.FC<ArchiveClientComponentProps> = ({ exhibitions, isLoading }) => {
+const ArchiveClientComponent: React.FC<ArchiveClientComponentProps> = ({
+  exhibitions,
+  isLoading,
+}) => {
   const router = useRouter();
 
   const handleExhibitionClick = (id: number) => {
@@ -22,7 +25,7 @@ const ArchiveClientComponent: React.FC<ArchiveClientComponentProps> = ({ exhibit
 
   if (exhibitions.length === 0) {
     return (
-      <div className="text-center text-gray-500 mt-8">
+      <div className="mt-8 text-center text-gray-500">
         <p className="text-xl">No matching exhibitions found.</p>
       </div>
     );

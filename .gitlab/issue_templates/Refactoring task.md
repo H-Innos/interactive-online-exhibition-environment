@@ -1,4 +1,5 @@
 ### Refactoring Task
+
 ---
 
 #### Problem description
@@ -9,21 +10,22 @@ Provide a brief overview of what needs to be refactored, explaining why the refa
 
 #### Affected Components/Files:
 
- - `src/path/to/file`
- - `src/path/to/other/file`
- - ` `
+- `src/path/to/file`
+- `src/path/to/other/file`
+- ` `
 
 ---
 
 #### Tasks:
 
- - Identify redundant code in the (component/module/file).
- - Improve naming conventions for variables and functions to improve clarity.
- - Optimize algorithms or logic where needed to enhance performance.
- - 
+- Identify redundant code in the (component/module/file).
+- Improve naming conventions for variables and functions to improve clarity.
+- Optimize algorithms or logic where needed to enhance performance.
+-
 
 ---
+
 #### Acceptance Criteria:
 
- - [ ] The (component(s)/functions(s)) are moved to a separate file 
- - [ ] File is under ... lines
+- [ ] The (component(s)/functions(s)) are moved to a separate file
+- [ ] File is under ... lines

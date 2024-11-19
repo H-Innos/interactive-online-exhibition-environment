@@ -11,11 +11,14 @@ interface DraftExhibitionsProps {
   onExhibitionClick: (id: number) => void;
 }
 
-const DraftExhibitions = ({ drafts, onExhibitionClick }: DraftExhibitionsProps) => {
+const DraftExhibitions = ({
+  drafts,
+  onExhibitionClick,
+}: DraftExhibitionsProps) => {
   const router = useRouter();
   const maxVisibleItems = useResponsiveVisibleDrafts();
 
-  const activeDrafts = drafts.filter(draft => !draft.isArchived);
+  const activeDrafts = drafts.filter((draft) => !draft.isArchived);
   const visibleDrafts = activeDrafts.slice(0, maxVisibleItems);
 
   const handleViewAll = () => {
@@ -35,13 +38,13 @@ const DraftExhibitions = ({ drafts, onExhibitionClick }: DraftExhibitionsProps) 
       </div>
 
       {visibleDrafts.length === maxVisibleItems && (
-        <div className="absolute top-0 right-[-50px] h-full w-1/4 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+        <div className="pointer-events-none absolute right-[-50px] top-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent"></div>
       )}
 
-      <div className="absolute top-1/2 right-0 transform -translate-y-1/2">
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 transform">
         <button
           onClick={handleViewAll}
-          className="text-black flex items-center group"
+          className="group flex items-center text-black"
           data-testid="view-all-button"
         >
           <span className="text-4xl text-black">〉</span>

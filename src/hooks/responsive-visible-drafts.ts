@@ -7,10 +7,14 @@ const useResponsiveVisibleDrafts = () => {
 
   useEffect(() => {
     const updateVisibleDrafts = () => {
-      if (window.innerWidth < 768) setVisibleDrafts(1); // sm: 1 column
-      else if (window.innerWidth < 1024) setVisibleDrafts(2); // md: 2 columns
-      else if (window.innerWidth < 1280) setVisibleDrafts(3); // lg: 3 columns
-      else if (window.innerWidth < 1536) setVisibleDrafts(3); // xl: 3 columns
+      if (window.innerWidth < 768)
+        setVisibleDrafts(1); // sm: 1 column
+      else if (window.innerWidth < 1024)
+        setVisibleDrafts(2); // md: 2 columns
+      else if (window.innerWidth < 1280)
+        setVisibleDrafts(3); // lg: 3 columns
+      else if (window.innerWidth < 1536)
+        setVisibleDrafts(3); // xl: 3 columns
       else setVisibleDrafts(4); // 2xl: 4 columns
     };
 
@@ -35,4 +39,3 @@ const useResponsiveVisibleDrafts = () => {
 };
 
 export default useResponsiveVisibleDrafts;
-
