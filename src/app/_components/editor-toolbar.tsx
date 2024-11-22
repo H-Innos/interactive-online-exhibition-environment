@@ -68,6 +68,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
                 type="button"
                 className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100"
                 onClick={() => router.push(`/dashboard/${exhibition?.id}/quizzes`)}
+                data-testid="create-quiz"
               >
                 <FilePlus className="h-5 w-5 text-black" />
               </button>
@@ -131,6 +132,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
                 className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100 mr-8"
                 disabled={updateExhibitionPending || publishExhibitionPending}
                 onClick={handlePublish}
+                data-testid="publish-exhibition"
               >
                 <Check className="h-5 w-5 text-black" />
               </button>
