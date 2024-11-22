@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from "~/app/_components/exhibition-data-form";
@@ -15,14 +14,7 @@ import { useTranslation } from "react-i18next";
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
 import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
-import { ColorPicker } from "~/components/color-picker";
-import {
-  Save,
-  Eye,
-  FilePlus,
-  Info,
-  Check,
-} from "lucide-react";
+import ExhibitionToolbar from "~/app/_components/editor-toolbar";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
@@ -34,7 +26,6 @@ const ExhibitionEditorPage = () => {
   const [isDirty, setIsDirty] = useState(false);
   const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: id });
 
-  const router = useRouter();
   useWarnIfUnsavedChanges(isDirty);
   const { t } = useTranslation();
 
@@ -81,11 +72,6 @@ const ExhibitionEditorPage = () => {
     setIsDirty(true);
   }
 
-  function handleColorChange(color: string) {
-    setBackgroundColor(color);
-    setIsDirty(true);
-  }
-
   return (
     <div>
       {isPreviewModalOpen && (
@@ -95,78 +81,17 @@ const ExhibitionEditorPage = () => {
         />
       )}
       <div className="flex flex-col min-h-screen">
-        <div className="flex items-center justify-between p-4 bg-white-100 shadow-md">
-          <div className="flex items-center">
-            <button
-              type="button"
-              className="mr-2 text-4xl"
-              onClick={() => router.push(`/dashboard`)}
-            >
-              ❬
-            </button>
-            <h1 className="text-2xl font-bold md:text-3xl">
-            {t("editExhibition")} {exhibition?.name ?? "Exhibition"}
-            </h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <label
-              htmlFor="background-color"
-              className="text-sm font-medium text-gray-700"
-            >
-              {t("backgroundColor")}
-            </label>
-            <div className="w-[200px]">
-              <ColorPicker onColorSelect={handleColorChange} />
-            </div>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 md:text-base"
-              onClick={() => router.push(`/dashboard/${id}/quizzes`)}
-            >
-              <FilePlus className="h-4 w-4" />
-              {t("createQuiz")}
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-md bg-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-600 md:text-base"
-              onClick={() => setIsDetailsModalOpen(true)}
-            >
-              <Info className="h-4 w-4" />
-              {t("details")}
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm text-white hover:bg-gray-500 md:text-base"
-              onClick={() => setIsPreviewModalOpen(true)}
-            >
-              <Eye className="h-4 w-4" />
-              {t("preview")}
-            </button>
-            <button
-              data-testid="save-editor-changes"
-              type="button"
-              className="flex items-center gap-2 rounded-md bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400 md:text-base"
-              disabled={
-                updateExhibition.isPending || publishExhibition.isPending
-              }
-              onClick={handleSaveEditorChanges}
-            >
-              <Save className="h-4 w-4" />
-              {t("saveChanges")}
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-500 disabled:pointer-events-none md:text-base"
-              disabled={
-                updateExhibition.isPending || publishExhibition.isPending
-              }
-              onClick={handlePublish}
-            >
-              <Check className="h-4 w-4" />
-              {publishExhibition.isPending ? t("publishing") : t("publish")}
-            </button>
-          </div>
-        </div>
+        <ExhibitionToolbar
+          exhibition={exhibition}
+          backgroundColor={backgroundColor}
+          setBackgroundColor={setBackgroundColor}
+          handleSaveEditorChanges={handleSaveEditorChanges}
+          handlePublish={handlePublish}
+          setIsDetailsModalOpen={setIsDetailsModalOpen}
+          setIsPreviewModalOpen={setIsPreviewModalOpen}
+          updateExhibitionPending={updateExhibition.isPending}
+          publishExhibitionPending={publishExhibition.isPending}
+        />
 
         <div
           className={`flex flex-1 flex-col justify-between space-y-4 p-4 lg:flex-row lg:space-x-4 lg:space-y-0 lg:p-8 ${
