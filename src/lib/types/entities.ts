@@ -8,6 +8,7 @@ export type Exhibition = {
   isArchived: boolean;
   createdAt: Date | string;
   updatedAt: Date | null;
+  backgroundColor: string;
 };
 
 export type Answer = {

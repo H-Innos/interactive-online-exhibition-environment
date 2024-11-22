@@ -23,7 +23,7 @@ export const exhibitionRouter = createTRPCRouter({
       return newExhibition;
     }),
 
-  update: publicProcedure
+    update: publicProcedure
     .input(
       z.object({
         id: z.number(),
@@ -34,6 +34,7 @@ export const exhibitionRouter = createTRPCRouter({
           .optional(),
         coverImageUrl: z.string().optional(),
         content: z.string().optional(),
+        backgroundColor: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -44,6 +45,7 @@ export const exhibitionRouter = createTRPCRouter({
           description: input.description,
           coverImageUrl: input.coverImageUrl,
           content: input.content,
+          backgroundColor: input.backgroundColor,
         })
         .where(eq(exhibitions.id, input.id));
     }),

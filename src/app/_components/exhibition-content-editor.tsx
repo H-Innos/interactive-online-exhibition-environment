@@ -32,17 +32,24 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
 
   useEffect(() => {
-    const getInitBlocks = async () => {
-      const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
-      editor.replaceBlocks(editor.document, parsedBlocks);
-    };
-    void getInitBlocks();
-    setIsLayoutReady(true);
-
+    if (editor) {
+      const getInitBlocks = async () => {
+        const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
+        editor.replaceBlocks(editor.document, parsedBlocks);
+      };
+      void getInitBlocks();
+      setIsLayoutReady(true);
+    }
     return () => setIsLayoutReady(false);
   }, []);
+
+  const handleBackgroundColorChange = (color: string) => {
+    setBackgroundColor(color);
+    console.log("Background color changed to:", color);
+  };
 
   const schema = BlockNoteSchema.create({
     blockSpecs: {
@@ -59,7 +66,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   const insertPDF = (editor: typeof schema.BlockNoteEditor) => ({
     title: "PDF",
     onItemClick: () => {
-      // Block that the text cursor is currently in.
       insertOrUpdateBlock(editor, {
         type: "pdf",
       });
@@ -73,7 +79,20 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   return (
     <div>
       <div className="main-container">
-        <div className="editor-container" ref={editorContainerRef}>
+        <div>
+          <label htmlFor="background-color-picker">Background Color: </label>
+          <input
+            type="color"
+            id="background-color-picker"
+            value={backgroundColor}
+            onChange={(e) => handleBackgroundColorChange(e.target.value)}
+          />
+        </div>
+        <div
+          className="editor-container"
+          ref={editorContainerRef}
+          style={{ backgroundColor: backgroundColor }}
+        >
           <div className="editor-container__editor">
             <div ref={editorRef}>
               {isLayoutReady && (
@@ -87,7 +106,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                   slashMenu={false}
                   onChange={async () => {
                     const blocks2html = await editor.blocksToFullHTML(
-                      editor.document,
+                      editor.document
                     );
                     onChange(blocks2html);
                   }}
@@ -100,7 +119,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                           ...getDefaultReactSlashMenuItems(editor),
                           insertPDF(editor),
                         ],
-                        query,
+                        query
                       )
                     }
                   />

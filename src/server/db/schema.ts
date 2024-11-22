@@ -55,6 +55,7 @@ export const exhibitions = createTable(
     content: text("content").default(""),
     isPublished: boolean("is_published").default(false).notNull(),
     isArchived: boolean("is_archived").default(false).notNull(),
+    backgroundColor: varchar("background_color", { length: 7 }).default("#FFFFFF"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
