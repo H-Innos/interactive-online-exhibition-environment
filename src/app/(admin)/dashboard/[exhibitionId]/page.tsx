@@ -16,6 +16,13 @@ import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
 import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
 import { ColorPicker } from "~/components/color-picker";
+import {
+  Save,
+  Eye,
+  FilePlus,
+  Info,
+  Check,
+} from "lucide-react";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
@@ -88,15 +95,18 @@ const ExhibitionEditorPage = () => {
         />
       )}
       <div className="flex flex-col min-h-screen">
-        <div className="flex items-center justify-between p-4 bg-gray-100 shadow-md">
-          <div>
+        <div className="flex items-center justify-between p-4 bg-white-100 shadow-md">
+          <div className="flex items-center">
+            <button
+              type="button"
+              className="mr-2 text-4xl"
+              onClick={() => router.push(`/dashboard`)}
+            >
+              ❬
+            </button>
             <h1 className="text-2xl font-bold md:text-3xl">
-              {t("editExhibition")} {id}
+            {t("editExhibition")} {exhibition?.name ?? "Exhibition"}
             </h1>
-            <p>
-              {t("status")}:{" "}
-              {updateExhibition.isPending ? t("saving") : t("saved")}
-            </p>
           </div>
           <div className="flex items-center gap-2">
             <label
@@ -105,55 +115,55 @@ const ExhibitionEditorPage = () => {
             >
               {t("backgroundColor")}
             </label>
-            <ColorPicker onColorSelect={handleColorChange} />
+            <div className="w-[200px]">
+              <ColorPicker onColorSelect={handleColorChange} />
+            </div>
             <button
               type="button"
-              className="rounded-md bg-gray-500 px-4 py-2 text-sm text-text-light hover:bg-gray-600 md:text-base"
-              onClick={() => router.push(`/dashboard`)}
+              className="flex items-center gap-2 rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 md:text-base"
+              onClick={() => router.push(`/dashboard/${id}/quizzes`)}
             >
-              {t("exit")}
+              <FilePlus className="h-4 w-4" />
+              {t("createQuiz")}
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-md bg-gray-700 px-4 py-2 text-sm text-white hover:bg-gray-600 md:text-base"
+              onClick={() => setIsDetailsModalOpen(true)}
+            >
+              <Info className="h-4 w-4" />
+              {t("details")}
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-md bg-gray-600 px-4 py-2 text-sm text-white hover:bg-gray-500 md:text-base"
+              onClick={() => setIsPreviewModalOpen(true)}
+            >
+              <Eye className="h-4 w-4" />
+              {t("preview")}
             </button>
             <button
               data-testid="save-editor-changes"
               type="button"
-              className="rounded-md bg-gray-500 px-4 py-2 text-sm text-text-light hover:bg-gray-600 md:text-base"
+              className="flex items-center gap-2 rounded-md bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-400 md:text-base"
               disabled={
                 updateExhibition.isPending || publishExhibition.isPending
               }
               onClick={handleSaveEditorChanges}
             >
+              <Save className="h-4 w-4" />
               {t("saveChanges")}
             </button>
             <button
               type="button"
-              className="rounded-md bg-blue-500 px-4 py-2 text-sm text-text-light hover:bg-blue-600 md:text-base"
-              onClick={() => setIsPreviewModalOpen(true)}
-            >
-              {t("preview")}
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-blue-800 px-3 py-2 text-sm text-text-light hover:bg-blue-400 md:text-base"
-              onClick={() => router.push(`/dashboard/${id}/quizzes`)}
-            >
-              {t("createQuiz")}
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-lime-600 px-3 py-2 text-sm text-text-light hover:bg-lime-500 disabled:pointer-events-none md:text-base"
+              className="flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm text-white hover:bg-emerald-500 disabled:pointer-events-none md:text-base"
               disabled={
                 updateExhibition.isPending || publishExhibition.isPending
               }
               onClick={handlePublish}
             >
+              <Check className="h-4 w-4" />
               {publishExhibition.isPending ? t("publishing") : t("publish")}
-            </button>
-            <button
-              type="button"
-              className="rounded-md bg-gray-700 px-3 py-2 text-sm text-text-light hover:bg-gray-600 md:text-base"
-              onClick={() => setIsDetailsModalOpen(true)}
-            >
-              {t("details")}
             </button>
           </div>
         </div>
@@ -179,12 +189,12 @@ const ExhibitionEditorPage = () => {
 
       {isDetailsModalOpen && exhibition && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
             <h2 className="text-xl font-bold mb-4">{t("exhibitionDetails")}</h2>
             <ExhibitionDataForm exhibition={exhibition} />
             <button
               type="button"
-              className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-sm text-text-light hover:bg-gray-600 md:text-base"
+              className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-600 md:text-base"
               onClick={() => setIsDetailsModalOpen(false)}
             >
               {t("close")}
