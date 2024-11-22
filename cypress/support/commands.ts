@@ -18,7 +18,7 @@ export function createExhibition(title: string, description: string) {
 
 export function openExhibitionEditor(exhibitionTitle: string) {
   cy.visit("/dashboard/drafts");
-  cy.get(selectors.exhibitionCard(exhibitionTitle)).within(() => {
+  cy.get(selectors.exhibitionCard(exhibitionTitle)).first().within(() => {
     cy.get(selectors.optionsButton).should("be.visible").click({ force: true });
   });
 
@@ -30,7 +30,7 @@ export function openExhibitionEditor(exhibitionTitle: string) {
 export function unpublishExhibition(exhibitionTitle: string) {
   cy.intercept("POST", "/api/trpc/**").as("unpublishRequest");
   cy.visit("/dashboard");
-  cy.get(selectors.exhibitionCard(exhibitionTitle)).within(() => {
+  cy.get(selectors.exhibitionCard(exhibitionTitle)).first().within(() => {
     cy.get(selectors.optionsButton).should("be.visible").click({ force: true });
   });
 
@@ -45,7 +45,7 @@ export function deleteExhibition(title: string) {
   cy.intercept("POST", "/api/trpc/**").as("deleteRequest");
 
   cy.visit("/dashboard/drafts");
-  cy.get(selectors.exhibitionCard(title))
+  cy.get(selectors.exhibitionCard(title)).first()
     .should("be.visible")
     .within(() => {
       cy.get(selectors.optionsButton)

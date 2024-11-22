@@ -9,7 +9,7 @@ export const selectors = {
   optionsButton: 'button[aria-haspopup="menu"]',
   dropdownMenu: '[role="menu"]',
   dropdownMenuItem: `[role="menuitem"]`,
-  publishButton: 'button:contains("Publish")',
+  publishButton: '[data-testid="publish-exhibition"]',
   editorInput: '[contenteditable="true"]',
   saveEditorButton: '[data-testid="save-editor-changes"]',
   saveDataButton: 'button[type="submit"]:contains("Save changes")',

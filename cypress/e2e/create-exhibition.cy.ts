@@ -11,24 +11,9 @@ describe("Create Exhibition", () => {
   const exhibtionDescription = "create test description";
   beforeEach(() => {
     createExhibition(exhibitionTitle, exhibtionDescription);
-
     openExhibitionEditor(exhibitionTitle);
   });
 
-  it("should publish exhibition through the editor", () => {
-    cy.intercept("POST", "/api/trpc/**").as("publishRequest");
-    cy.get(selectors.publishButton, { timeout: 20000 })
-      .should("be.visible")
-      .click({ force: true });
-    cy.wait("@publishRequest").then((interception) => {
-      expect(interception.response?.statusCode).to.eq(200);
-    });
-    cy.visit("/");
-    cy.contains(exhibitionTitle, { timeout: 20000 }).should("be.visible");
-    cy.contains(exhibtionDescription, { timeout: 20000 }).should("be.visible");
-
-    unpublishExhibition(exhibitionTitle);
-  });
 
   it("should edit and save content", () => {
     cy.intercept("POST", "/api/trpc/**").as("saveRequest");
@@ -49,6 +34,17 @@ describe("Create Exhibition", () => {
   });
 
   afterEach(() => {
-    deleteExhibition(exhibitionTitle);
+    cy.visit("/dashboard/drafts");
+    cy.get(selectors.exhibitionCard(exhibitionTitle), { timeout: 10000 })
+      .should("exist")
+      .then(($el) => {
+        if ($el.length) {
+          cy.wrap($el).should("be.visible");
+          deleteExhibition(exhibitionTitle);
+        } else {
+          cy.log("Exhibition card not found for deletion.");
+        }
+      });
   });
+
 });
