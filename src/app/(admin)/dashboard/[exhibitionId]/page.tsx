@@ -20,6 +20,7 @@ const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
   const [editorContent, setEditorContent] = useState<string>();
+  const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff");
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: id });
@@ -32,18 +33,18 @@ const ExhibitionEditorPage = () => {
     if (exhibitionData) {
       setExhibition(exhibitionData);
       setEditorContent(exhibitionData.content ?? "");
+      setBackgroundColor(exhibitionData.backgroundColor ?? "#ffffff");
     }
   }, [exhibitionData]);
 
   useEffect(() => {
-    // Toggle body overflow when the preview modal is open/closed
     if (isPreviewModalOpen) {
-      document.body.style.overflow = "hidden"; // Disable scroll
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ""; // Re-enable scroll
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = ""; // Reset on unmount
+      document.body.style.overflow = "";
     };
   }, [isPreviewModalOpen]);
 
@@ -61,12 +62,18 @@ const ExhibitionEditorPage = () => {
       id: exhibition.id,
       name: exhibition.name,
       content: convertToValidHTML(editorContent),
+      backgroundColor: backgroundColor,
     });
     setIsDirty(false);
   }
 
   function handleEditorChange(updatedContent: string) {
     setEditorContent(updatedContent);
+    setIsDirty(true);
+  }
+
+  function handleBackgroundColorChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setBackgroundColor(event.target.value);
     setIsDirty(true);
   }
 
@@ -98,6 +105,18 @@ const ExhibitionEditorPage = () => {
                 initialContent={exhibition.content ?? ""}
                 onChange={handleEditorChange}
               />
+              <div className="mt-4">
+                <label htmlFor="background-color" className="block text-sm font-medium text-gray-700">
+                  {t("backgroundColor")}
+                </label>
+                <input
+                  type="color"
+                  id="background-color"
+                  value={backgroundColor}
+                  onChange={handleBackgroundColorChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
             </div>
           )}
         </div>

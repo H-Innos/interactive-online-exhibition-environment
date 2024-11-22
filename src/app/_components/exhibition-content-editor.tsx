@@ -32,7 +32,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
 
   useEffect(() => {
     if (editor) {
@@ -45,11 +44,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
     }
     return () => setIsLayoutReady(false);
   }, []);
-
-  const handleBackgroundColorChange = (color: string) => {
-    setBackgroundColor(color);
-    console.log("Background color changed to:", color);
-  };
 
   const schema = BlockNoteSchema.create({
     blockSpecs: {
@@ -79,20 +73,8 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   return (
     <div>
       <div className="main-container">
-        <div>
-          <label htmlFor="background-color-picker">Background Color: </label>
-          <input
-            type="color"
-            id="background-color-picker"
-            value={backgroundColor}
-            onChange={(e) => handleBackgroundColorChange(e.target.value)}
-          />
-        </div>
-        <div
-          className="editor-container"
-          ref={editorContainerRef}
-          style={{ backgroundColor: backgroundColor }}
-        >
+        
+  
           <div className="editor-container__editor">
             <div ref={editorRef}>
               {isLayoutReady && (
@@ -129,7 +111,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
