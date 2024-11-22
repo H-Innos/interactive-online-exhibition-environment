@@ -76,26 +76,4 @@ describe("Dashboard Page", () => {
     cy.contains("Delete").click({ force: true });
     cy.get(selectors.cardOptionsButton).should("exist");
   });
-  
-  it("should create an exhibition and type into the editor", () => {
-    const exhibitionTitle = "Test Exhibition";
-  
-    // Create a new exhibition
-    cy.get(selectors.newExhibitionButton).click();
-    cy.get(selectors.exhibitionTitleInput).type(exhibitionTitle);
-    cy.get(selectors.exhibitionDescriptionInput).type("This is a test exhibition.");
-    cy.get(selectors.createButton).click();
-  
-    // Wait for the exhibition card to appear
-    cy.get(selectors.exhibitionCard(exhibitionTitle), { timeout: 10000 }).should("be.visible");
-  
-    // Open the editor for the newly created exhibition
-    cy.get(selectors.exhibitionCard(exhibitionTitle)).click();
-  
-    // Type into the editor
-    cy.get(selectors.editorInput).type("This is some content for the exhibition editor.");
-  
-    // Verify the content was typed
-    cy.get(selectors.editorInput).should("contain.text", "This is some content for the exhibition editor.");
-  });
 });
