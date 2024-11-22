@@ -13,7 +13,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const idPathRegex = /^\/\d+$/;
+  const idPathRegex = /\d+$/;  
   const isIdPath = idPathRegex.exec(pathname) !== null;
 
   const changeLanguage = async (lng: string | undefined) => {
