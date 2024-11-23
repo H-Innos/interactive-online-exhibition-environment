@@ -4,23 +4,16 @@ import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import { ExhibitionDataForm } from "~/app/_components/exhibition-data-form";
 import ExhibitionContentEditor from "~/app/_components/exhibition-content-editor";
-import {
-  usePublishExhibition,
-  useUpdateExhibition,
-} from "~/hooks/exhibition-actions";
 import type { Exhibition } from "~/lib/types/entities";
 import { useWarnIfUnsavedChanges } from "~/hooks/useWarnIfUnsavedChanges";
 import { useTranslation } from "react-i18next";
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
-import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
 import ExhibitionToolbar from "~/app/_components/editor-toolbar";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
-  const [exhibition, setExhibition] = useState<Exhibition | null>(null);
-  const [editorContent, setEditorContent] = useState<string>();
-  const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff");
+  const [editorState, setEditorState] = useState<Exhibition | null>(null);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -29,14 +22,13 @@ const ExhibitionEditorPage = () => {
   useWarnIfUnsavedChanges(isDirty);
   const { t } = useTranslation();
 
-  const publishExhibition = usePublishExhibition();
-  const updateExhibition = useUpdateExhibition();
-
   useEffect(() => {
     if (exhibitionData) {
-      setExhibition(exhibitionData);
-      setEditorContent(exhibitionData.content ?? "");
-      setBackgroundColor(exhibitionData.backgroundColor ?? "#ffffff");
+      setEditorState({
+        ...exhibitionData,
+        content: exhibitionData.content ?? "",
+        backgroundColor: exhibitionData.backgroundColor ?? "#ffffff",
+      });
     }
   }, [exhibitionData]);
 
@@ -51,25 +43,19 @@ const ExhibitionEditorPage = () => {
     };
   }, [isPreviewModalOpen, isDetailsModalOpen]);
 
-  function handlePublish() {
-    if (!exhibition || !window.confirm(t("confirmPublish"))) return;
-    publishExhibition.mutate({ id: exhibition.id });
-  }
-
-  function handleSaveEditorChanges() {
-    if (!exhibition) return;
-    updateExhibition.mutate({
-      id: exhibition.id,
-      name: exhibition.name,
-      content: convertToValidHTML(editorContent),
-      backgroundColor: backgroundColor,
-    });
-    setIsDirty(false);
-  }
-
   function handleEditorChange(updatedContent: string) {
-    setEditorContent(updatedContent);
+    setEditorState((prevState) => {
+      if (!prevState) return null;
+      return { ...prevState, content: updatedContent };
+    });
     setIsDirty(true);
+  }
+
+  function handleBackgroundColorChange(color: string) {
+    setEditorState((prevState) => {
+      if (!prevState) return null;
+      return { ...prevState, backgroundColor: color };
+    });
   }
 
   return (
@@ -82,15 +68,11 @@ const ExhibitionEditorPage = () => {
       )}
       <div className="flex flex-col min-h-screen">
         <ExhibitionToolbar
-          exhibition={exhibition}
-          backgroundColor={backgroundColor}
-          setBackgroundColor={setBackgroundColor}
-          handleSaveEditorChanges={handleSaveEditorChanges}
-          handlePublish={handlePublish}
+          exhibition={editorState}
+          setBackgroundColor={handleBackgroundColorChange}
           setIsDetailsModalOpen={setIsDetailsModalOpen}
           setIsPreviewModalOpen={setIsPreviewModalOpen}
-          updateExhibitionPending={updateExhibition.isPending}
-          publishExhibitionPending={publishExhibition.isPending}
+          setIsDirty={setIsDirty}
         />
 
         <div
@@ -98,12 +80,14 @@ const ExhibitionEditorPage = () => {
             isPreviewModalOpen ? "pointer-events-none opacity-50" : ""
           }`}
           aria-hidden={isPreviewModalOpen}
+          style={{ backgroundColor: editorState?.backgroundColor ?? "#ffffff" }}
         >
+
           <div className="mx-auto w-full flex-1 lg:w-[70%]">
-            {exhibition && (
+            {editorState && (
               <div className="w-full">
                 <ExhibitionContentEditor
-                  initialContent={exhibition.content ?? ""}
+                  initialContent={editorState.content ?? ""}
                   onChange={handleEditorChange}
                 />
               </div>
@@ -112,11 +96,11 @@ const ExhibitionEditorPage = () => {
         </div>
       </div>
 
-      {isDetailsModalOpen && exhibition && (
+      {isDetailsModalOpen && editorState && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
             <h2 className="text-xl font-bold mb-4">{t("exhibitionDetails")}</h2>
-            <ExhibitionDataForm exhibition={exhibition} />
+            <ExhibitionDataForm exhibition={editorState} />
             <button
               type="button"
               className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-600 md:text-base"
@@ -128,9 +112,9 @@ const ExhibitionEditorPage = () => {
         </div>
       )}
 
-      {isPreviewModalOpen && exhibition && (
+      {isPreviewModalOpen && editorState && (
         <ExhibitionPreviewModal
-          exhibition={exhibition}
+          exhibition={editorState}
           onClose={() => setIsPreviewModalOpen(false)}
         />
       )}

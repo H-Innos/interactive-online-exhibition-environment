@@ -1,37 +1,60 @@
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import { ColorPicker } from "~/components/color-picker";
+import { useTranslation } from "react-i18next";
+import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { ColorPicker } from "~/components/color-picker";
+import { usePublishExhibition, useUpdateExhibition } from "~/hooks/exhibition-actions";
 import type { Exhibition } from "~/lib/types/entities";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
 interface ExhibitionToolbarProps {
   exhibition: Exhibition | null;
-  backgroundColor: string;
   setBackgroundColor: (color: string) => void;
-  handleSaveEditorChanges: () => void;
-  handlePublish: () => void;
   setIsDetailsModalOpen: (isOpen: boolean) => void;
   setIsPreviewModalOpen: (isOpen: boolean) => void;
-  updateExhibitionPending: boolean;
-  publishExhibitionPending: boolean;
+  setIsDirty: (isDirty: boolean) => void;
 }
 
 const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   exhibition,
-  backgroundColor,
   setBackgroundColor,
-  handleSaveEditorChanges,
-  handlePublish,
   setIsDetailsModalOpen,
   setIsPreviewModalOpen,
-  updateExhibitionPending,
-  publishExhibitionPending,
+  setIsDirty,
 }) => {
   const router = useRouter();
   const { t } = useTranslation();
+  const updateExhibition = useUpdateExhibition();
+  const publishExhibition = usePublishExhibition();
 
+  function handleSaveEditorChanges() {
+    if (exhibition) {
+      const exhibitionData = {
+        ...exhibition,
+        description: exhibition.description ?? undefined,
+        coverImageUrl: exhibition.coverImageUrl ?? undefined,
+        content: exhibition.content ?? undefined,
+        backgroundColor: exhibition.backgroundColor ?? undefined,
+      };
+  
+      updateExhibition.mutate(exhibitionData, {
+        onSuccess: () => {
+          setIsDirty(false);
+        },
+      });
+    }
+  }
+  
+  function handlePublish() {
+    if (exhibition) {
+      publishExhibition.mutate({ id: exhibition.id }, {
+        onSuccess: () => {
+          setIsDirty(false);
+        },
+      });
+    }
+  }
+  
   function handleColorChange(color: string) {
     setBackgroundColor(color);
   }
@@ -59,7 +82,10 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             {t("backgroundColor")}
           </label>
           <div className="w-full sm:w-[200px]">
-            <ColorPicker onColorSelect={handleColorChange} />
+            <ColorPicker
+              onColorSelect={handleColorChange}
+              initialColor={exhibition?.backgroundColor ?? "#000000"}
+            />
           </div>
 
           <Tooltip>
@@ -114,7 +140,6 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
                 data-testid="save-editor-changes"
                 type="button"
                 className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100"
-                disabled={updateExhibitionPending || publishExhibitionPending}
                 onClick={handleSaveEditorChanges}
               >
                 <Save className="h-5 w-5 text-black" />
@@ -130,7 +155,6 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               <button
                 type="button"
                 className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100 mr-8"
-                disabled={updateExhibitionPending || publishExhibitionPending}
                 onClick={handlePublish}
                 data-testid="publish-exhibition"
               >
@@ -138,7 +162,6 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               </button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{publishExhibitionPending ? t("publishing") : t("publish")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
