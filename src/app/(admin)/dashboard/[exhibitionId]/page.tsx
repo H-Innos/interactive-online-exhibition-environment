@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
 import ExhibitionToolbar from "~/app/_components/editor-toolbar";
+import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
@@ -44,9 +45,10 @@ const ExhibitionEditorPage = () => {
   }, [isPreviewModalOpen, isDetailsModalOpen]);
 
   function handleEditorChange(updatedContent: string) {
+    const validHTMLContent = convertToValidHTML(updatedContent);
     setEditorState((prevState) => {
       if (!prevState) return null;
-      return { ...prevState, content: updatedContent };
+      return { ...prevState, content: validHTMLContent };
     });
     setIsDirty(true);
   }
@@ -82,7 +84,6 @@ const ExhibitionEditorPage = () => {
           aria-hidden={isPreviewModalOpen}
           style={{ backgroundColor: editorState?.backgroundColor ?? "#ffffff" }}
         >
-
           <div className="mx-auto w-full flex-1 lg:w-[70%]">
             {editorState && (
               <div className="w-full">

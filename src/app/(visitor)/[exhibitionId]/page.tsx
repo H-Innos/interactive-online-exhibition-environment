@@ -22,56 +22,6 @@ const ExhibitionViewPage: React.FC = () => {
         setExhibition(data);
       }
 
-      if (exhibition) {
-        const parent = document.getElementById("editor-content");
-        if (parent) {
-          const divs = parent.querySelectorAll("div[data-file-block]");
-          divs.forEach((div) => {
-            const dataUrl = div.getAttribute("data-url");
-            if (!dataUrl) return;
-
-            const oldImg = div.querySelector("img");
-            const oldAudio = div.querySelector("audio");
-
-            if (oldImg) {
-              const newImg = document.createElement("img");
-              for (const attribute of oldImg.attributes) {
-                newImg.setAttribute(attribute.name, attribute.value);
-              }
-              newImg.src = dataUrl;
-              oldImg.replaceWith(newImg);
-            }
-
-            if (oldAudio) {
-              const newAudio = document.createElement("audio");
-              for (const attribute of oldAudio.attributes) {
-                newAudio.setAttribute(attribute.name, attribute.value);
-              }
-              newAudio.src = dataUrl;
-              oldAudio.replaceWith(newAudio);
-            }
-          });
-
-          const blocks = parent.querySelectorAll<HTMLElement>("[data-text-alignment]");
-          blocks.forEach((block) => {
-            const alignment = block.getAttribute("data-text-alignment");
-            if (alignment) {
-              block.style.textAlign = alignment;
-
-              const children = block.querySelectorAll<HTMLElement>("img, video, iframe");
-              children.forEach((child) => {
-                if (alignment === "center") {
-                  child.style.marginLeft = "auto";
-                  child.style.marginRight = "auto";
-                } else {
-                  child.style.marginLeft = "0";
-                  child.style.marginRight = "0";
-                }
-              });
-            }
-          });
-        }
-      }
     }, [data, exhibition]);
 
   if (isLoading) {
