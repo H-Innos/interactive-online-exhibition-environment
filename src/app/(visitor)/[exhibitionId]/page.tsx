@@ -18,10 +18,61 @@ const ExhibitionViewPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (data) {
-      setExhibition(data);
-    }
-  }, [data, exhibition]);
+      if (data) {
+        setExhibition(data);
+      }
+
+      if (exhibition) {
+        const parent = document.getElementById("editor-content");
+        if (parent) {
+          const divs = parent.querySelectorAll("div[data-file-block]");
+          divs.forEach((div) => {
+            const dataUrl = div.getAttribute("data-url");
+            if (!dataUrl) return;
+
+            const oldImg = div.querySelector("img");
+            const oldAudio = div.querySelector("audio");
+
+            if (oldImg) {
+              const newImg = document.createElement("img");
+              for (const attribute of oldImg.attributes) {
+                newImg.setAttribute(attribute.name, attribute.value);
+              }
+              newImg.src = dataUrl;
+              oldImg.replaceWith(newImg);
+            }
+
+            if (oldAudio) {
+              const newAudio = document.createElement("audio");
+              for (const attribute of oldAudio.attributes) {
+                newAudio.setAttribute(attribute.name, attribute.value);
+              }
+              newAudio.src = dataUrl;
+              oldAudio.replaceWith(newAudio);
+            }
+          });
+
+          const blocks = parent.querySelectorAll<HTMLElement>("[data-text-alignment]");
+          blocks.forEach((block) => {
+            const alignment = block.getAttribute("data-text-alignment");
+            if (alignment) {
+              block.style.textAlign = alignment;
+
+              const children = block.querySelectorAll<HTMLElement>("img, video, iframe");
+              children.forEach((child) => {
+                if (alignment === "center") {
+                  child.style.marginLeft = "auto";
+                  child.style.marginRight = "auto";
+                } else {
+                  child.style.marginLeft = "0";
+                  child.style.marginRight = "0";
+                }
+              });
+            }
+          });
+        }
+      }
+    }, [data, exhibition]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -32,10 +83,9 @@ const ExhibitionViewPage: React.FC = () => {
   }
 
   return (
-    <div
+    <div 
       className="min-h-screen p-4 text-text-dark sm:p-8"
-      style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}
-    >
+      style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}>
       <div
         className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64"
         style={{
@@ -83,8 +133,39 @@ const ExhibitionViewPage: React.FC = () => {
           height: auto;
           display: block;
         }
-        .blocknote-content {
-          word-wrap: break-word;
+
+        .blocknote-content [data-text-alignment="right"] {
+          text-align: right;
+        }
+
+        .blocknote-content [data-text-alignment="center"] {
+          text-align: center;
+        }
+
+        .blocknote-content [data-text-alignment="left"] {
+          text-align: left;
+        }
+
+        .blocknote-content [data-content-type="heading"] h1 {
+          font-size: 2rem;
+          font-weight: bold;
+          margin: 1rem 0;
+        }
+
+        .blocknote-content [data-content-type="paragraph"] {
+          font-size: 1rem;
+          line-height: 1.5;
+          margin: 0.5rem 0;
+        }
+
+        .blocknote-content > * {
+          display: block;
+        }
+
+        .blocknote-content img,
+        .blocknote-content video {
+          margin-left: auto;
+          margin-right: auto;
         }
       `}</style>
     </div>
