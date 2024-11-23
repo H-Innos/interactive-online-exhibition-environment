@@ -133,5 +133,9 @@
   "delete": "Kustuta",
   "confirmDelete": "Kas olete kindel, et soovite selle näituse kustutada?",
   "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?",
-  "backToEditor": "Tagasi"
+  "backToEditor": "Tagasi",
+  "details": "Detailid",
+  "backgroundColor": "Taustavärv: ",
+  "close": "Sulge",
+  "searchExhibitionsPlaceholder": "Otsi näitusi..."
 }

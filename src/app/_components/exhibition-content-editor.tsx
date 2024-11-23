@@ -34,13 +34,14 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
   useEffect(() => {
-    const getInitBlocks = async () => {
-      const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
-      editor.replaceBlocks(editor.document, parsedBlocks);
-    };
-    void getInitBlocks();
-    setIsLayoutReady(true);
-
+    if (editor) {
+      const getInitBlocks = async () => {
+        const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
+        editor.replaceBlocks(editor.document, parsedBlocks);
+      };
+      void getInitBlocks();
+      setIsLayoutReady(true);
+    }
     return () => setIsLayoutReady(false);
   }, []);
 
@@ -59,7 +60,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   const insertPDF = (editor: typeof schema.BlockNoteEditor) => ({
     title: "PDF",
     onItemClick: () => {
-      // Block that the text cursor is currently in.
       insertOrUpdateBlock(editor, {
         type: "pdf",
       });
@@ -73,7 +73,8 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   return (
     <div>
       <div className="main-container">
-        <div className="editor-container" ref={editorContainerRef}>
+        
+  
           <div className="editor-container__editor">
             <div ref={editorRef}>
               {isLayoutReady && (
@@ -87,7 +88,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                   slashMenu={false}
                   onChange={async () => {
                     const blocks2html = await editor.blocksToFullHTML(
-                      editor.document,
+                      editor.document
                     );
                     onChange(blocks2html);
                   }}
@@ -100,7 +101,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                           ...getDefaultReactSlashMenuItems(editor),
                           insertPDF(editor),
                         ],
-                        query,
+                        query
                       )
                     }
                   />
@@ -110,7 +111,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -32,7 +32,10 @@ const ExhibitionViewPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 text-text-dark sm:p-8">
+    <div
+      className="min-h-screen p-4 text-text-dark sm:p-8"
+      style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}
+    >
       <div
         className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64"
         style={{

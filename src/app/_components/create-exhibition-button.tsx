@@ -22,6 +22,7 @@ const CreateExhibitionButton: React.FC<CreateExhibitionButtonProps> = ({
       <button
         onClick={openModal}
         className="mb-4 rounded-md bg-primary-dark px-4 py-2 text-text-light transition duration-300 hover:bg-primary-dark_hover"
+        data-testid="new-exhibition-button"
       >
         {buttonText ?? t("createExhibition.newExhibition")}
       </button>

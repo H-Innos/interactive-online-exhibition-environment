@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
-import { PenSquare, Save, X } from "lucide-react";
+import { Save } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   exhibitionFormSchema,
@@ -29,7 +29,6 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   exhibition,
 }) => {
   const { t } = useTranslation();
-  const [isEditing, setIsEditing] = useState(false);
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState(
     exhibition.coverImageUrl ?? "",
   );
@@ -51,12 +50,6 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
 
   const updateExhibition = useUpdateExhibition();
 
-  const handleEditToggle = () => {
-    setIsEditing((isEditing) => !isEditing);
-    setThumbnailDataUrl(exhibition.coverImageUrl ?? "");
-    reset();
-  };
-
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
     const thumbnailUrl = await uploadImage(thumbnailDataUrl);
     if (!thumbnailUrl) return;
@@ -67,7 +60,6 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
       description: data.description,
       coverImageUrl: thumbnailUrl,
     });
-    setIsEditing(false);
   };
 
   const handleThumbnailChange = (file: File) => {
@@ -93,31 +85,13 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
       <CardHeader className="sticky top-0 border-b bg-background">
         <div className="flex items-center justify-between">
           <CardTitle>{t("exhibitionDetails")}</CardTitle>
-          <Button
-            onClick={handleEditToggle}
-            variant="outline"
-            size="sm"
-            className="h-10 w-32"
-          >
-            {isEditing ? (
-              <>
-                <X className="mr-2 h-4 w-4" />
-                {t("cancel")}
-              </>
-            ) : (
-              <>
-                <PenSquare className="mr-2 h-4 w-4" />
-                {t("edit")}
-              </>
-            )}
-          </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <Label htmlFor="title">{t("title")}</Label>
-            <Input id="title" {...register("title")} readOnly={!isEditing} />
+            <Input id="title" {...register("title")} />
             <p className="h-5 text-sm">
               {errors.title ? (
                 <span className="text-red-500">{errors.title.message}</span>
@@ -131,7 +105,6 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
             <Textarea
               id="description"
               {...register("description")}
-              readOnly={!isEditing}
               rows={4}
               maxLength={configurations.MAX_DESCRIPTION_LENGTH}
               placeholder={t("descriptionPlaceholder")}
@@ -157,12 +130,12 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
                 src={thumbnailDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
                 alt={t("thumbnail")}
                 className="h-48 w-48"
-                onDelete={isEditing ? handleThumbnailDelete : undefined}
+                onDelete={handleThumbnailDelete}
               />
               <FileUploadButton
                 onFileSelect={handleThumbnailChange}
                 accept="image/*"
-                disabled={isSubmitting || !isEditing}
+                disabled={isSubmitting}
               />
             </div>
             <p className="h-5 text-sm">
@@ -176,7 +149,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
           <Button
             type="submit"
             variant="outline"
-            disabled={isSubmitting || !isEditing}
+            disabled={isSubmitting}
             className="mt-4 w-full"
           >
             <Save className="mr-2 h-4 w-4" />

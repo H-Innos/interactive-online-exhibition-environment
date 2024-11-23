@@ -6,11 +6,12 @@ describe("Dashboard Page", () => {
     viewAllButton: '[data-testid="view-all-button"]',
     cardOptionsButton: 'button[aria-label="Card options"]',
     editOption: "Edit",
+    editorInput: '.editor-container__editor div[contenteditable="true"]',
     exhibitionTitleInput: 'input[placeholder="Enter exhibition title"]',
     exhibitionDescriptionInput:
       'textarea[placeholder="Enter exhibition description"]',
     exhibitionCard: (title: string) =>
-      `[data-testid="exhibition-card"]:contains("${title}")`,
+      `[data-testid="dashboard-exhibition-card"]:contains("${title}")`,
   };
 
   beforeEach(() => {

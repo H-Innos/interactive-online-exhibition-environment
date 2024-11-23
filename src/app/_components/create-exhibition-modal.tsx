@@ -166,6 +166,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
             </button>
             <button
               type="submit"
+              data-testid="create-exhibition-button"
               className="rounded-md bg-primary px-4 py-2 text-text-light hover:bg-primary-dark_hover"
               disabled={createExhibition.isPending}
             >

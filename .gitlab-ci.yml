@@ -9,19 +9,8 @@ default:
   image: node:22
 
 stages:
-  - build
   - test
   - deploy
-
-build:
-  stage: build
-  script:
-    - npm install -g pnpm
-    - pnpm install
-    - pnpm build
-  except:
-    - main
-  interruptible: true
 
 test:
   stage: test
@@ -31,6 +20,7 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
+    - pnpm db:push
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
