@@ -9,19 +9,8 @@ default:
   image: node:22
 
 stages:
-  - build
   - test
   - deploy
-
-build:
-  stage: build
-  script:
-    - npm install -g pnpm
-    - pnpm install
-    - pnpm build
-  except:
-    - main
-  interruptible: true
 
 test:
   stage: test
@@ -36,8 +25,8 @@ test:
     - apt-get update && apt-get install -y postgresql-client
     - npm install -g pnpm
     - pnpm install
-    - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS local-db;"
-    - psql -h postgres -U postgres -c "CREATE DATABASE local-db;"
+    - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
+    - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
