@@ -20,7 +20,6 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
-    - pnpm exec drizzle-kit drop-schema --url=$DATABASE_URL
     - pnpm db:push
     - pnpm build
     - pnpm start &
@@ -31,7 +30,6 @@ test:
   variables:
     CYPRESS_baseUrl: http://localhost:3000
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
-  needs: []
   only:
     - merge_requests
     - branches
