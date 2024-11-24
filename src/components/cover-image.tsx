@@ -1,13 +1,16 @@
 import React, { useState, useRef } from "react";
+import { configurations } from "~/lib/constants/config";
 
 interface CoverImageProps {
   coverImageUrl: string | null;
+  thumbnailUrl?: string | null;
   initialPosition: { x: number; y: number };
   onPositionChange: (position: { x: number; y: number }) => void;
 }
 
 const CoverImage: React.FC<CoverImageProps> = ({
   coverImageUrl,
+  thumbnailUrl,
   initialPosition,
   onPositionChange,
 }) => {
@@ -34,11 +37,23 @@ const CoverImage: React.FC<CoverImageProps> = ({
     }
   }
 
+  console.log("Cover Image URL:", coverImageUrl);
+  console.log("Thumbnail URL:", thumbnailUrl);
+
+  const backgroundImage =
+    coverImageUrl && coverImageUrl.trim() !== ""
+      ? coverImageUrl
+      : thumbnailUrl && thumbnailUrl.trim() !== ""
+      ? thumbnailUrl
+      : configurations.DEFAULT_COVER_IMAGE_URL;
+
+  console.log("Background Image URL:", backgroundImage);
+
   return (
     <div
       className="relative h-48 w-full sm:h-64 bg-cover bg-center mb-4"
       style={{
-        backgroundImage: `url(${coverImageUrl ?? "/default-cover.jpg"})`,
+        backgroundImage: `url(${backgroundImage})`,
         backgroundPosition: `${position.x}% ${position.y}%`,
       }}
       onMouseDown={handleDragStart}

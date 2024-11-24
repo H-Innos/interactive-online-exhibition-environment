@@ -30,7 +30,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState(
-    exhibition.coverImageUrl ?? "",
+    exhibition.thumbnailUrl ?? "",
   );
   const {
     register,
@@ -58,7 +58,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
       id: exhibition.id,
       name: data.title,
       description: data.description,
-      coverImageUrl: thumbnailUrl,
+      thumbnailUrl: thumbnailUrl,
     });
   };
 

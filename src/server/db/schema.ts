@@ -52,7 +52,7 @@ export const exhibitions = createTable(
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
     description: text("description").default(""),
-    coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
+    thumbnailUrl: varchar("thumbnail_url", { length: 512 }).default(""),
     exhibitionCoverUrl: varchar("exhibition_cover_url", { length: 512 }).default(""),
     coverImagePositionX: integer("cover_image_position_x").default(50).notNull(),
     coverImagePositionY: integer("cover_image_position_y").default(50).notNull(),
