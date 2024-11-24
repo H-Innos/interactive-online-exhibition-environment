@@ -4,4 +4,5 @@ export const configurations = {
   DEFAULT_COVER_IMAGE_URL: "/logos/museum.jpg",
   EXHIBITIONS_PER_PAGE: 12,
   MAX_DESCRIPTION_LENGTH: 130,
+  DEFAULT_EXHIBITION_COVER_PLACEMENT: 50
 };

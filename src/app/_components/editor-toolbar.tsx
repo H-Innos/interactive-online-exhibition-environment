@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { ColorPicker } from "~/components/color-picker";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,9 @@ import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { usePublishExhibition, useUpdateExhibition } from "~/hooks/exhibition-actions";
 import CoverImage from "~/components/cover-image";
+import FileUploadButton from "~/components/file-upload-button";
 import type { Exhibition } from "~/lib/types/entities";
+import { configurations } from "~/lib/constants/config";
 
 interface ExhibitionToolbarProps {
   exhibition: Exhibition | null;
@@ -28,6 +30,8 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const updateExhibition = useUpdateExhibition();
   const publishExhibition = usePublishExhibition();
 
+  const [localCoverUrl, setLocalCoverUrl] = useState<string | null>(exhibition?.exhibitionCoverUrl ?? null);
+
   const handlePositionChange = (newPosition: { x: number; y: number }) => {
     if (exhibition) {
       exhibition.coverImagePositionX = newPosition.x;
@@ -36,6 +40,36 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
     }
   };
 
+  const handleFileSelect = async (file: File) => {
+    try {
+      const uploadedImageUrl = await uploadImage(file);
+      setLocalCoverUrl(uploadedImageUrl);
+      if (exhibition) {
+        exhibition.exhibitionCoverUrl = uploadedImageUrl;
+        setIsDirty(true);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+
+  async function uploadImage(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload image");
+    }
+
+    const data = await response.json();
+    return data.url;
+  }
+
   function handleSaveEditorChanges() {
     if (exhibition) {
       const exhibitionData = {
@@ -43,6 +77,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
         coverImagePositionX: Math.round(exhibition.coverImagePositionX),
         coverImagePositionY: Math.round(exhibition.coverImagePositionY),
         description: exhibition.description ?? undefined,
+        exhibitionCoverUrl: exhibition.exhibitionCoverUrl ?? undefined,
         coverImageUrl: exhibition.coverImageUrl ?? undefined,
         content: exhibition.content ?? undefined,
         backgroundColor: exhibition.backgroundColor ?? undefined,
@@ -99,6 +134,11 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               initialColor={exhibition?.backgroundColor ?? "#000000"}
             />
           </div>
+
+          <FileUploadButton
+            onFileSelect={handleFileSelect}
+            accept="image/*"
+          />
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -181,10 +221,10 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
         {exhibition && (
           <CoverImage
-            coverImageUrl={exhibition.coverImageUrl}
+            coverImageUrl={localCoverUrl || exhibition.exhibitionCoverUrl}
             initialPosition={{
-              x: exhibition.coverImagePositionX ?? 50,
-              y: exhibition.coverImagePositionY ?? 50,
+              x: exhibition.coverImagePositionX ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
+              y: exhibition.coverImagePositionY ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
             }}
             onPositionChange={handlePositionChange}
           />

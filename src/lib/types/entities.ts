@@ -11,6 +11,7 @@ export type Exhibition = {
   createdAt: Date | string;
   updatedAt: Date | null;
   backgroundColor: string | null;
+  exhibitionCoverUrl: string | null; 
 };
 
 export type Answer = {

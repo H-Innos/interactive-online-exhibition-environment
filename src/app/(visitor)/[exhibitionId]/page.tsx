@@ -8,6 +8,7 @@ import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { QuizDropdown } from "~/components/quiz-dropdown";
 import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
+import {configurations} from "~/lib/constants/config";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -41,8 +42,8 @@ const ExhibitionViewPage: React.FC = () => {
       <div
         className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64"
         style={{
-          backgroundImage: `url(${exhibition.coverImageUrl ?? "/default-cover.jpg"})`,
-          backgroundPosition: `${exhibition.coverImagePositionX ?? 50}% ${exhibition.coverImagePositionY ?? 50}%`, // Use saved position
+          backgroundImage: `url(${exhibition.exhibitionCoverUrl ?? "/default-cover.jpg"})`,
+          backgroundPosition: `${exhibition.coverImagePositionX ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT}% ${exhibition.coverImagePositionY ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT}%`, 
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
