@@ -20,7 +20,7 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
-    - yes | pnpm db:push
+    - echo "+" | pnpm db:push
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
