@@ -9,23 +9,8 @@ default:
   image: node:22
 
 stages:
-  - reset
   - test
   - deploy
-
-reset_database:
-  stage: reset
-  image: postgres:16-alpine
-  services:
-    - postgres:16-alpine
-  script:
-    - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS local_db;"
-    - psql -h postgres -U postgres -c "CREATE DATABASE local_db;"
-  variables:
-    POSTGRES_PASSWORD: postgres
-  only:
-    - merge_requests
-    - branches
 
 test:
   stage: test
@@ -35,6 +20,7 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
+    - pnpm exec drizzle-kit drop-schema --url=$DATABASE_URL
     - pnpm db:push
     - pnpm build
     - pnpm start &
@@ -45,7 +31,7 @@ test:
   variables:
     CYPRESS_baseUrl: http://localhost:3000
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
-  needs: ["reset_database"]
+  needs: []
   only:
     - merge_requests
     - branches
@@ -55,15 +41,17 @@ deploy:
   script:
     - npm install -g pnpm
     - pnpm install
+    - pnpm exec drizzle-kit drop-schema --url=$DATABASE_URL
     - pnpm db:push
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - vercel build --prod --token=$VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
   environment: production
-  needs: ["reset_database"]
+  needs: []
   only:
     - main
+
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
