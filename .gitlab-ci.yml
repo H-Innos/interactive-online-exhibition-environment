@@ -9,8 +9,24 @@ default:
   image: node:22
 
 stages:
+  - migrate
   - test
   - deploy
+
+migrate:
+  stage: migrate
+  image: node:22
+  services:
+    - postgres:16-alpine
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm db:push
+  variables:
+    DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
+  only:
+    - merge_requests
+    - branches
 
 test:
   stage: test
@@ -20,7 +36,6 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
-    - pnpm drizzle-kit push --force
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
@@ -30,14 +45,13 @@ test:
   variables:
     CYPRESS_baseUrl: http://localhost:3000
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
+  needs: ["migrate"]
   only:
     - merge_requests
     - branches
 
 deploy:
   stage: deploy
-  only:
-    - main
   script:
     - npm install -g pnpm
     - pnpm install
@@ -47,6 +61,9 @@ deploy:
     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
     - pnpm db:push
   environment: production
+  needs: ["migrate"]
+  only:
+    - main
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
