@@ -66,9 +66,13 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
       throw new Error("Failed to upload image");
     }
 
-    const data = await response.json();
+    interface UploadResponse {
+      url: string;
+    }
+
+    const data: UploadResponse = await response.json() as UploadResponse;
     return data.url;
-  }
+}
 
   function handleSaveEditorChanges() {
     if (exhibition) {
@@ -221,7 +225,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
         {exhibition && (
           <CoverImage
-            coverImageUrl={localCoverUrl || exhibition.thumbnailUrl || exhibition.exhibitionCoverUrl}
+            coverImageUrl={localCoverUrl ?? exhibition.thumbnailUrl ?? exhibition.exhibitionCoverUrl}
             initialPosition={{
               x: exhibition.coverImagePositionX ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
               y: exhibition.coverImagePositionY ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
