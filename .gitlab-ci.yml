@@ -20,8 +20,8 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
-    - pnpm db:push --dry-run
-    - pnpm build
+    - pnpm db:push
+    - pnpm build --force
     - pnpm start &
     - npx wait-on http://localhost:3000
     - pnpm exec cypress run --browser chrome
