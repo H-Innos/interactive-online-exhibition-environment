@@ -3,6 +3,8 @@ export type Exhibition = {
   name: string;
   description: string | null;
   coverImageUrl: string | null;
+  coverImagePositionX: number;
+  coverImagePositionY: number; 
   content: string | null;
   isPublished: boolean;
   isArchived: boolean;

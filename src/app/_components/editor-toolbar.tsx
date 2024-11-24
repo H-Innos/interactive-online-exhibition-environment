@@ -1,10 +1,11 @@
+import React from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { ColorPicker } from "~/components/color-picker";
 import { useTranslation } from "react-i18next";
 import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
-import React from "react";
 import { useRouter } from "next/navigation";
 import { usePublishExhibition, useUpdateExhibition } from "~/hooks/exhibition-actions";
+import CoverImage from "~/components/cover-image";
 import type { Exhibition } from "~/lib/types/entities";
 
 interface ExhibitionToolbarProps {
@@ -27,16 +28,26 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const updateExhibition = useUpdateExhibition();
   const publishExhibition = usePublishExhibition();
 
+  const handlePositionChange = (newPosition: { x: number; y: number }) => {
+    if (exhibition) {
+      exhibition.coverImagePositionX = newPosition.x;
+      exhibition.coverImagePositionY = newPosition.y;
+      setIsDirty(true);
+    }
+  };
+
   function handleSaveEditorChanges() {
     if (exhibition) {
       const exhibitionData = {
         ...exhibition,
+        coverImagePositionX: Math.round(exhibition.coverImagePositionX),
+        coverImagePositionY: Math.round(exhibition.coverImagePositionY),
         description: exhibition.description ?? undefined,
         coverImageUrl: exhibition.coverImageUrl ?? undefined,
         content: exhibition.content ?? undefined,
         backgroundColor: exhibition.backgroundColor ?? undefined,
       };
-  
+
       updateExhibition.mutate(exhibitionData, {
         onSuccess: () => {
           setIsDirty(false);
@@ -44,17 +55,20 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
       });
     }
   }
-  
+
   function handlePublish() {
     if (exhibition) {
-      publishExhibition.mutate({ id: exhibition.id }, {
-        onSuccess: () => {
-          setIsDirty(false);
-        },
-      });
+      const isConfirmed = window.confirm(t("confirmPublish"));
+      if (isConfirmed) {
+        publishExhibition.mutate({ id: exhibition.id }, {
+          onSuccess: () => {
+            setIsDirty(false);
+          },
+        });
+      }
     }
   }
-  
+
   function handleColorChange(color: string) {
     setBackgroundColor(color);
   }
@@ -74,11 +88,9 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             {t("editExhibition")} {exhibition?.name ?? "Exhibition"}
           </h1>
         </div>
+
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          <label
-            htmlFor="background-color"
-            className="text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="background-color" className="text-sm font-medium text-gray-700">
             {t("backgroundColor")}
           </label>
           <div className="w-full sm:w-[200px]">
@@ -162,9 +174,21 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               </button>
             </TooltipTrigger>
             <TooltipContent>
+              <p>{t("publish")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
+
+        {exhibition && (
+          <CoverImage
+            coverImageUrl={exhibition.coverImageUrl}
+            initialPosition={{
+              x: exhibition.coverImagePositionX ?? 50,
+              y: exhibition.coverImagePositionY ?? 50,
+            }}
+            onPositionChange={handlePositionChange}
+          />
+        )}
       </div>
     </TooltipProvider>
   );

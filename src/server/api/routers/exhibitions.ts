@@ -33,6 +33,8 @@ export const exhibitionRouter = createTRPCRouter({
           .max(configurations.MAX_DESCRIPTION_LENGTH)
           .optional(),
         coverImageUrl: z.string().optional(),
+        coverImagePositionX: z.number().optional(),
+        coverImagePositionY: z.number().optional(),
         content: z.string().optional(),
         backgroundColor: z.string().optional(),
       }),
@@ -44,11 +46,14 @@ export const exhibitionRouter = createTRPCRouter({
           name: input.name,
           description: input.description,
           coverImageUrl: input.coverImageUrl,
+          coverImagePositionX: input.coverImagePositionX,
+          coverImagePositionY: input.coverImagePositionY,
           content: input.content,
           backgroundColor: input.backgroundColor,
         })
         .where(eq(exhibitions.id, input.id));
     }),
+  
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({

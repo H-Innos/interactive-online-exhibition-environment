@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { type Exhibition } from "~/lib/types/entities";
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { QuizDropdown } from "~/components/quiz-dropdown";
+import "@blocknote/mantine/style.css";
+import "@blocknote/core/fonts/inter.css";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -40,6 +42,7 @@ const ExhibitionViewPage: React.FC = () => {
         className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64"
         style={{
           backgroundImage: `url(${exhibition.coverImageUrl ?? "/default-cover.jpg"})`,
+          backgroundPosition: `${exhibition.coverImagePositionX ?? 50}% ${exhibition.coverImagePositionY ?? 50}%`, // Use saved position
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -53,7 +56,6 @@ const ExhibitionViewPage: React.FC = () => {
           {exhibition.name}
         </h1>
       </div>
-
       <div className="mt-8 flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
           <div
@@ -75,49 +77,6 @@ const ExhibitionViewPage: React.FC = () => {
         )}
       </div>
 
-      <style jsx global>{`
-        .blocknote-content img,
-        .blocknote-content video,
-        .blocknote-content iframe {
-          max-width: 100%;
-          height: auto;
-          display: block;
-        }
-
-        .blocknote-content [data-text-alignment="right"] {
-          text-align: right;
-        }
-
-        .blocknote-content [data-text-alignment="center"] {
-          text-align: center;
-        }
-
-        .blocknote-content [data-text-alignment="left"] {
-          text-align: left;
-        }
-
-        .blocknote-content [data-content-type="heading"] h1 {
-          font-size: 2rem;
-          font-weight: bold;
-          margin: 1rem 0;
-        }
-
-        .blocknote-content [data-content-type="paragraph"] {
-          font-size: 1rem;
-          line-height: 1.5;
-          margin: 0.5rem 0;
-        }
-
-        .blocknote-content > * {
-          display: block;
-        }
-
-        .blocknote-content img,
-        .blocknote-content video {
-          margin-left: auto;
-          margin-right: auto;
-        }
-      `}</style>
     </div>
   );
 };
