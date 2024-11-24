@@ -9,21 +9,20 @@ default:
   image: node:22
 
 stages:
-  - migrate
+  - reset
   - test
   - deploy
 
-migrate:
-  stage: migrate
-  image: node:22
+reset_database:
+  stage: reset
+  image: postgres:16-alpine
   services:
     - postgres:16-alpine
   script:
-    - npm install -g pnpm
-    - pnpm install
-    - pnpm db:push
+    - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS local_db;"
+    - psql -h postgres -U postgres -c "CREATE DATABASE local_db;"
   variables:
-    DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
+    POSTGRES_PASSWORD: postgres
   only:
     - merge_requests
     - branches
@@ -36,6 +35,7 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
+    - pnpm db:push
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
@@ -45,7 +45,7 @@ test:
   variables:
     CYPRESS_baseUrl: http://localhost:3000
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
-  needs: ["migrate"]
+  needs: ["reset_database"]
   only:
     - merge_requests
     - branches
@@ -55,15 +55,16 @@ deploy:
   script:
     - npm install -g pnpm
     - pnpm install
+    - pnpm db:push
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - vercel build --prod --token=$VERCEL_TOKEN
     - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
-    - pnpm db:push
   environment: production
-  needs: ["migrate"]
+  needs: ["reset_database"]
   only:
     - main
 
 include:
   - template: Jobs/SAST.gitlab-ci.yml
+
