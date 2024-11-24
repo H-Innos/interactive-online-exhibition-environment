@@ -20,8 +20,7 @@ test:
   script:
     - npm install -g pnpm
     - pnpm install
-    - yes | pnpm db:push
-    - pnpm build
+    - yes | pnpm db:push || echo "Database push failed" && exit 1    - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
     - pnpm exec cypress run --browser chrome
