@@ -18,7 +18,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
   const { t } = useTranslation();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [thumbnail, setCoverImage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,18 +32,18 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
       return;
     }
 
-    let coverImageUrl = configurations.DEFAULT_COVER_IMAGE_URL;
+    let thumbnailUrl = configurations.DEFAULT_COVER_IMAGE_URL;
 
-    if (coverImage) {
-      coverImageUrl =
-        (await uploadImage(coverImage)) ??
+    if (thumbnail) {
+      thumbnailUrl =
+        (await uploadImage(thumbnail)) ??
         configurations.DEFAULT_COVER_IMAGE_URL;
     }
 
     await createExhibition.mutateAsync({
       name,
       description,
-      coverImageUrl,
+      thumbnailUrl,
     });
 
     onClose();
@@ -140,13 +140,13 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
               className="mb-6 block w-full rounded-md border-gray-500 bg-white text-sm font-medium shadow-sm focus:border-blue-600 focus:ring-blue-600"
             />
           </div>
-          {coverImage && (
+          {thumbnail && (
             <div className="mt-4">
               <p className="text-sm text-gray-500">
                 {t("createExhibition.imagePreview")}
               </p>
               <RemovableImage
-                src={coverImage}
+                src={thumbnail}
                 alt="Cover preview"
                 className="h-32 w-32"
                 onDelete={handleRemoveImage}

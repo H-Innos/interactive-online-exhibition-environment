@@ -7,6 +7,7 @@ import {
   text,
   uniqueIndex,
   boolean,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -46,12 +47,15 @@ export const quizzes = createTable("quiz", {
 });
 
 export const exhibitions = createTable(
-  "post",
+  "exhibition",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
     description: text("description").default(""),
-    coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
+    thumbnailUrl: varchar("thumbnail_url", { length: 512 }).default(""),
+    exhibitionCoverUrl: varchar("exhibition_cover_url", { length: 512 }).default(""),
+    coverImagePositionX: integer("cover_image_position_x").default(50).notNull(),
+    coverImagePositionY: integer("cover_image_position_y").default(50).notNull(),
     content: text("content").default(""),
     isPublished: boolean("is_published").default(false).notNull(),
     isArchived: boolean("is_archived").default(false).notNull(),
@@ -63,10 +67,8 @@ export const exhibitions = createTable(
       () => new Date(),
     ),
   },
-  (example) => ({
-    nameIndex: uniqueIndex("name_unique_idx").on(example.name),
-  }),
 );
+
 
 export const exhibitionsRelations = relations(exhibitions, ({ many }) => ({
   quizzes: many(quizzes),

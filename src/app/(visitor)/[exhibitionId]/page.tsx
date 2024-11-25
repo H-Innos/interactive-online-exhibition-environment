@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 import { type Exhibition } from "~/lib/types/entities";
 import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { QuizDropdown } from "~/components/quiz-dropdown";
+import "@blocknote/mantine/style.css";
+import "@blocknote/core/fonts/inter.css";
+import { configurations } from "~/lib/constants/config";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -18,53 +21,71 @@ const ExhibitionViewPage: React.FC = () => {
   });
 
   useEffect(() => {
-      if (data) {
-        setExhibition(data);
-      }
-
-    }, [data, exhibition]);
+    if (data) {
+      setExhibition(data);
+    }
+  }, [data]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
   if (error || !exhibition) {
-    return <div>Error loading exhibition.</div>;
+    return (
+      <div className="flex items-center justify-center h-screen text-red-600">
+        Error loading exhibition.
+      </div>
+    );
   }
 
+  const backgroundImage =
+    exhibition.exhibitionCoverUrl && exhibition.exhibitionCoverUrl.trim() !== ""
+      ? exhibition.exhibitionCoverUrl
+      : exhibition.thumbnailUrl
+      ? exhibition.thumbnailUrl
+      : configurations.DEFAULT_COVER_IMAGE_URL;
+
   return (
-    <div 
-      className="min-h-screen p-4 text-text-dark sm:p-8"
-      style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}>
+    <div
+      className="min-h-screen overflow-hidden p-4 text-text-dark sm:p-8"
+      style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}
+    >
       <div
-        className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64"
+        className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64 overflow-hidden"
         style={{
-          backgroundImage: `url(${exhibition.coverImageUrl ?? "/default-cover.jpg"})`,
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundPosition: `${
+            exhibition.coverImagePositionX ??
+            configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT
+          }% ${
+            exhibition.coverImagePositionY ??
+            configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT
+          }%`,
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
           onClick={() => router.push("/")}
-          className="absolute left-4 z-10 text-3xl text-white sm:text-5xl"
+          className="absolute left-4 top-4 z-10 text-3xl text-white sm:text-4xl"
         >
           ❬
         </button>
-        <h1 className="relative z-10 text-center text-xl font-bold text-white sm:text-3xl lg:text-5xl">
+        <h1 className="relative z-10 text-center text-lg font-bold text-white sm:text-2xl lg:text-3xl px-4">
           {exhibition.name}
         </h1>
       </div>
 
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:gap-8">
         <div className="flex-1">
           <div
             id="editor-content"
             dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }}
-            className="blocknote-content break-words"
+            className="blocknote-content break-words text-sm sm:text-base lg:text-lg max-w-full"
           />
         </div>
 
         {quizzes && quizzes.length > 0 && (
-          <div className="sm:ml-4">
+          <div className="sm:ml-4 max-w-full">
             <QuizDropdown
               quizzes={quizzes}
               onQuizSelect={(quizId: number) => {
@@ -74,50 +95,6 @@ const ExhibitionViewPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      <style jsx global>{`
-        .blocknote-content img,
-        .blocknote-content video,
-        .blocknote-content iframe {
-          max-width: 100%;
-          height: auto;
-          display: block;
-        }
-
-        .blocknote-content [data-text-alignment="right"] {
-          text-align: right;
-        }
-
-        .blocknote-content [data-text-alignment="center"] {
-          text-align: center;
-        }
-
-        .blocknote-content [data-text-alignment="left"] {
-          text-align: left;
-        }
-
-        .blocknote-content [data-content-type="heading"] h1 {
-          font-size: 2rem;
-          font-weight: bold;
-          margin: 1rem 0;
-        }
-
-        .blocknote-content [data-content-type="paragraph"] {
-          font-size: 1rem;
-          line-height: 1.5;
-          margin: 0.5rem 0;
-        }
-
-        .blocknote-content > * {
-          display: block;
-        }
-
-        .blocknote-content img,
-        .blocknote-content video {
-          margin-left: auto;
-          margin-right: auto;
-        }
-      `}</style>
     </div>
   );
 };

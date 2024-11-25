@@ -1,11 +1,14 @@
+import React, { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { ColorPicker } from "~/components/color-picker";
 import { useTranslation } from "react-i18next";
 import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
-import React from "react";
 import { useRouter } from "next/navigation";
 import { usePublishExhibition, useUpdateExhibition } from "~/hooks/exhibition-actions";
+import CoverImage from "~/components/cover-image";
+import FileUploadButton from "~/components/file-upload-button";
 import type { Exhibition } from "~/lib/types/entities";
+import { configurations } from "~/lib/constants/config";
 
 interface ExhibitionToolbarProps {
   exhibition: Exhibition | null;
@@ -27,16 +30,63 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const updateExhibition = useUpdateExhibition();
   const publishExhibition = usePublishExhibition();
 
+  const [localCoverUrl, setLocalCoverUrl] = useState<string | null>(exhibition?.exhibitionCoverUrl ?? null);
+
+  const handlePositionChange = (newPosition: { x: number; y: number }) => {
+    if (exhibition) {
+      exhibition.coverImagePositionX = newPosition.x;
+      exhibition.coverImagePositionY = newPosition.y;
+      setIsDirty(true);
+    }
+  };
+
+  const handleFileSelect = async (file: File) => {
+    try {
+      const uploadedImageUrl = await uploadImage(file);
+      setLocalCoverUrl(uploadedImageUrl);
+      if (exhibition) {
+        exhibition.exhibitionCoverUrl = uploadedImageUrl;
+        setIsDirty(true);
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+
+  async function uploadImage(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload image");
+    }
+
+    interface UploadResponse {
+      url: string;
+    }
+
+    const data: UploadResponse = await response.json() as UploadResponse;
+    return data.url;
+}
+
   function handleSaveEditorChanges() {
     if (exhibition) {
       const exhibitionData = {
         ...exhibition,
+        coverImagePositionX: Math.round(exhibition.coverImagePositionX),
+        coverImagePositionY: Math.round(exhibition.coverImagePositionY),
         description: exhibition.description ?? undefined,
-        coverImageUrl: exhibition.coverImageUrl ?? undefined,
+        exhibitionCoverUrl: exhibition.exhibitionCoverUrl ?? undefined,
+        thumbnailUrl: exhibition.thumbnailUrl ?? undefined,
         content: exhibition.content ?? undefined,
         backgroundColor: exhibition.backgroundColor ?? undefined,
       };
-  
+
       updateExhibition.mutate(exhibitionData, {
         onSuccess: () => {
           setIsDirty(false);
@@ -44,17 +94,20 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
       });
     }
   }
-  
+
   function handlePublish() {
     if (exhibition) {
-      publishExhibition.mutate({ id: exhibition.id }, {
-        onSuccess: () => {
-          setIsDirty(false);
-        },
-      });
+      const isConfirmed = window.confirm(t("confirmPublish"));
+      if (isConfirmed) {
+        publishExhibition.mutate({ id: exhibition.id }, {
+          onSuccess: () => {
+            setIsDirty(false);
+          },
+        });
+      }
     }
   }
-  
+
   function handleColorChange(color: string) {
     setBackgroundColor(color);
   }
@@ -74,11 +127,9 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             {t("editExhibition")} {exhibition?.name ?? "Exhibition"}
           </h1>
         </div>
+
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          <label
-            htmlFor="background-color"
-            className="text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="background-color" className="text-sm font-medium text-gray-700">
             {t("backgroundColor")}
           </label>
           <div className="w-full sm:w-[200px]">
@@ -87,6 +138,11 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               initialColor={exhibition?.backgroundColor ?? "#000000"}
             />
           </div>
+
+          <FileUploadButton
+            onFileSelect={handleFileSelect}
+            accept="image/*"
+          />
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -162,9 +218,21 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               </button>
             </TooltipTrigger>
             <TooltipContent>
+              <p>{t("publish")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
+
+        {exhibition && (
+          <CoverImage
+            coverImageUrl={localCoverUrl ?? exhibition.thumbnailUrl ?? exhibition.exhibitionCoverUrl}
+            initialPosition={{
+              x: exhibition.coverImagePositionX ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
+              y: exhibition.coverImagePositionY ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
+            }}
+            onPositionChange={handlePositionChange}
+          />
+        )}
       </div>
     </TooltipProvider>
   );

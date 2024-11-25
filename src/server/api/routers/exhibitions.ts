@@ -6,49 +6,56 @@ import { configurations } from "~/lib/constants/config";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
-    .input(
-      z.object({
-        name: z.string().min(1, "Exhibition name is required."),
-        description: z.string().optional(),
-        coverImageUrl: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const newExhibition = await ctx.db.insert(exhibitions).values({
+  .input(
+    z.object({
+      name: z.string().min(1, "Exhibition name is required."),
+      description: z.string().optional(),
+      thumbnailUrl: z.string().optional(),
+      exhibitionCoverUrl: z.string().optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    const newExhibition = await ctx.db.insert(exhibitions).values({
+      name: input.name,
+      description: input.description ?? "",
+      thumbnailUrl: input.thumbnailUrl ?? "",
+      exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
+    });
+
+    return newExhibition;
+  }),
+
+
+  update: publicProcedure
+  .input(
+    z.object({
+      id: z.number(),
+      name: z.string().min(1, { message: "Exhibition name is required." }),
+      description: z.string().optional(),
+      thumbnailUrl: z.string().optional(),
+      exhibitionCoverUrl: z.string().optional(),
+      coverImagePositionX: z.number().optional(),
+      coverImagePositionY: z.number().optional(),
+      content: z.string().optional(),
+      backgroundColor: z.string().optional(),
+    }),
+  )
+  .mutation(async ({ ctx, input }) => {
+    await ctx.db
+      .update(exhibitions)
+      .set({
         name: input.name,
-        description: input.description ?? "",
-        coverImageUrl: input.coverImageUrl ?? "",
-      });
+        description: input.description,
+        thumbnailUrl: input.thumbnailUrl,
+        exhibitionCoverUrl: input.exhibitionCoverUrl,
+        coverImagePositionX: input.coverImagePositionX,
+        coverImagePositionY: input.coverImagePositionY,
+        content: input.content,
+        backgroundColor: input.backgroundColor,
+      })
+      .where(eq(exhibitions.id, input.id));
+  }),
 
-      return newExhibition;
-    }),
-
-    update: publicProcedure
-    .input(
-      z.object({
-        id: z.number(),
-        name: z.string().min(1, { message: "Exhibition name is required." }),
-        description: z
-          .string()
-          .max(configurations.MAX_DESCRIPTION_LENGTH)
-          .optional(),
-        coverImageUrl: z.string().optional(),
-        content: z.string().optional(),
-        backgroundColor: z.string().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      await ctx.db
-        .update(exhibitions)
-        .set({
-          name: input.name,
-          description: input.description,
-          coverImageUrl: input.coverImageUrl,
-          content: input.content,
-          backgroundColor: input.backgroundColor,
-        })
-        .where(eq(exhibitions.id, input.id));
-    }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({
