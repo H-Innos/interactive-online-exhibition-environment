@@ -26,8 +26,8 @@ test:
     - npm install -g pnpm
     - pnpm install
     - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
-    - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
     - psql -h postgres -U postgres -d "local-db" -c "DROP TABLE IF EXISTS \"interactive-online-exhibition-environment_post\" CASCADE;"
+    - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
     - pnpm db:push --force
     - pnpm build
     - pnpm start &
