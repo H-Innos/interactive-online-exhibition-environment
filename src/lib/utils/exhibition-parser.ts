@@ -13,7 +13,6 @@ export function convertToValidHTML(htmlString: string | undefined): string {
 
     const oldImg = div.querySelector("img");
     const oldAudio = div.querySelector("audio");
-    const oldFile = div.querySelector("p:not(.bn-file-caption)");
 
     if (oldImg) {
       const newImg = document.createElement("img");
@@ -31,20 +30,6 @@ export function convertToValidHTML(htmlString: string | undefined): string {
       }
       newAudio.src = dataUrl;
       oldAudio.replaceWith(newAudio);
-    }
-
-    if (oldFile) {
-      const dataName = div.getAttribute("data-name") ?? "File attachment";
-
-      const newFile = document.createElement("a");
-      for (const attribute of oldFile.attributes) {
-        newFile.setAttribute(attribute.name, attribute.value);
-      }
-      newFile.href = dataUrl;
-      newFile.textContent = dataName;
-      newFile.download = dataName;
-      newFile.target = "_blank";
-      oldFile.replaceWith(newFile);
     }
   });
 
