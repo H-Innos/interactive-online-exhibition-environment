@@ -9,6 +9,8 @@ cloudinary.config({
 });
 
 const options: UploadApiOptions = {
+  use_filename: true,
+  use_filename_as_display_name: true,
   resource_type: "auto",
 };
 
@@ -27,6 +29,12 @@ export async function POST(request: Request) {
         { error: "No file uploaded" },
         { status: 400, headers },
       );
+    }
+
+    const fileName = formData.get("fileName") as string;
+    if (fileName) {
+      options.display_name = fileName;
+      options.filename_override = fileName;
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
