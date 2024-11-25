@@ -22,17 +22,18 @@ test:
         POSTGRES_PASSWORD: postgres
         POSTGRES_USER: postgres
   script:
-  - apt-get update && apt-get install -y postgresql-client
-  - npm install -g pnpm
-  - pnpm install
-  - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
-  - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
-  - psql -h postgres -U postgres -d "local-db" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-  - psql -h postgres -U postgres -d "local-db" -c "DROP TABLE IF EXISTS \"interactive-online-exhibition-environment_post\" CASCADE;"
-    - pnpm db:push --force --verbose
-    - pnpm build
+    - apt-get update && apt-get install -y postgresql-client
+    - npm install -g pnpm
+    - pnpm install
+    - until pg_isready -h postgres -U postgres; do echo "Waiting for PostgreSQL..."; sleep 2; done
+    - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
+    - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
+    - psql -h postgres -U postgres -d "local-db" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    - pnpm db:push
+    - pnpm build --verbose
     - pnpm start &
     - npx wait-on http://localhost:3000
+    - sleep 5
     - pnpm exec cypress run --browser chrome
     - pnpm exec cypress run --browser firefox
     - pnpm exec cypress run --browser edge
