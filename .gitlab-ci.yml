@@ -28,24 +28,8 @@ test:
   - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
   - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
   - psql -h postgres -U postgres -d "local-db" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-  - psql -h postgres -U postgres -d "local-db" -c "
-      CREATE TABLE \"interactive-online-exhibition-environment_exhibition\" (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(256) NOT NULL,
-        description TEXT DEFAULT '',
-        thumbnail_url VARCHAR(512) DEFAULT '',
-        exhibition_cover_url VARCHAR(512) DEFAULT '',
-        cover_image_position_x INTEGER DEFAULT 50 NOT NULL,
-        cover_image_position_y INTEGER DEFAULT 50 NOT NULL,
-        content TEXT DEFAULT '',
-        is_published BOOLEAN DEFAULT FALSE NOT NULL,
-        is_archived BOOLEAN DEFAULT FALSE NOT NULL,
-        background_color VARCHAR(7) DEFAULT '#FFFFFF',
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
-      );"
-  - pnpm db:push --force
-
+  - psql -h postgres -U postgres -d "local-db" -c "DROP TABLE IF EXISTS \"interactive-online-exhibition-environment_post\" CASCADE;"
+    - pnpm db:push --force --verbose
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
