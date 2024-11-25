@@ -8,4 +8,5 @@ export default {
     url: env.POSTGRES_URL,
   },
   tablesFilter: ["interactive-online-exhibition-environment_*"],
+  strict: false,
 } satisfies Config;
