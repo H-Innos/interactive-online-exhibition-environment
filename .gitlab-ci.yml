@@ -25,11 +25,19 @@ test:
     - apt-get update && apt-get install -y postgresql-client
     - npm install -g pnpm
     - pnpm install
-    - until pg_isready -h postgres -U postgres; do echo "Waiting for PostgreSQL..."; sleep 2; done
-    - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
-    - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
-    - psql -h postgres -U postgres -d "local-db" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-    - pnpm db:push
+    - |
+      echo '#!/usr/bin/expect
+      set timeout -1
+      spawn pnpm db:push
+      expect {
+          "Is interactive-online-exhibition-environment_exhibition table created or renamed from another table?" {
+              send "2\n"
+              exp_continue
+          }
+          eof
+      }' > db-push-automation.sh
+    - chmod +x db-push-automation.sh
+    - ./db-push-automation.sh
     - pnpm build --verbose
     - pnpm start &
     - npx wait-on http://localhost:3000
