@@ -27,7 +27,7 @@ test:
     - pnpm install
     - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
     - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
-    - pnpm db:push --force
+    - pnpm db:push --force --yes
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
