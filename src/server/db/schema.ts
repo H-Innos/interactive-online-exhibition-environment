@@ -47,12 +47,12 @@ export const quizzes = createTable("quiz", {
 });
 
 export const exhibitions = createTable(
-  "exhibition",
+  "post",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
     description: text("description").default(""),
-    thumbnailUrl: varchar("thumbnail_url", { length: 512 }).default(""),
+    coverImageUrl: varchar("thumbnail_url", { length: 512 }).default(""),
     exhibitionCoverUrl: varchar("exhibition_cover_url", { length: 512 }).default(""),
     coverImagePositionX: integer("cover_image_position_x").default(50).notNull(),
     coverImagePositionY: integer("cover_image_position_y").default(50).notNull(),

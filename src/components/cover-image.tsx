@@ -3,14 +3,14 @@ import { configurations } from "~/lib/constants/config";
 
 interface CoverImageProps {
   coverImageUrl: string | null;
-  thumbnailUrl?: string | null;
+  coverImageUrl2?: string | null;
   initialPosition: { x: number; y: number };
   onPositionChange: (position: { x: number; y: number }) => void;
 }
 
 const CoverImage: React.FC<CoverImageProps> = ({
   coverImageUrl,
-  thumbnailUrl,
+  coverImageUrl2,
   initialPosition,
   onPositionChange,
 }) => {
@@ -38,13 +38,13 @@ const CoverImage: React.FC<CoverImageProps> = ({
   }
 
   console.log("Cover Image URL:", coverImageUrl);
-  console.log("Thumbnail URL:", thumbnailUrl);
+  console.log("Thumbnail URL:", coverImageUrl2);
 
   const backgroundImage =
     coverImageUrl && coverImageUrl.trim() !== ""
       ? coverImageUrl
-      : thumbnailUrl && thumbnailUrl.trim() !== ""
-      ? thumbnailUrl
+      : coverImageUrl2 && coverImageUrl2.trim() !== ""
+      ? coverImageUrl2
       : configurations.DEFAULT_COVER_IMAGE_URL;
 
   console.log("Background Image URL:", backgroundImage);

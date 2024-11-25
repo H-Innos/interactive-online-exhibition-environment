@@ -65,7 +65,7 @@ export default function ArchivedExhibitionCard({
           <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-200">
             <Image
               src={
-                exhibition.thumbnailUrl ??
+                exhibition.coverImageUrl ??
                 configurations.DEFAULT_COVER_IMAGE_URL
               }
               alt={exhibition.name ?? "Exhibition"}

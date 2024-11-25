@@ -2,7 +2,7 @@ export type Exhibition = {
   id: number;
   name: string;
   description: string | null;
-  thumbnailUrl: string | null;
+  coverImageUrl: string | null;
   coverImagePositionX: number;
   coverImagePositionY: number; 
   content: string | null;
