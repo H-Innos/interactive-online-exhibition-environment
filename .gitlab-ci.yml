@@ -27,7 +27,7 @@ test:
     - pnpm install
     - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
     - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
-    - pnpm db:push --force  # Overwrites the database schema
+    - pnpm db:push --force --yes
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
@@ -39,8 +39,6 @@ test:
     DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
   only:
     - merge_requests
-    - branches
-uests
     - branches
 
 deploy:
