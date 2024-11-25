@@ -47,7 +47,7 @@ export const quizzes = createTable("quiz", {
 });
 
 export const exhibitions = createTable(
-  "post",
+  "exhibition",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),

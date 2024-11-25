@@ -27,7 +27,8 @@ test:
     - pnpm install
     - psql -h postgres -U postgres -c "DROP DATABASE IF EXISTS \"local-db\";"
     - psql -h postgres -U postgres -c "CREATE DATABASE \"local-db\";"
-    - pnpm db:push --force --yes
+    - psql -h postgres -U postgres -d "local-db" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+    - pnpm db:push --force
     - pnpm build
     - pnpm start &
     - npx wait-on http://localhost:3000
