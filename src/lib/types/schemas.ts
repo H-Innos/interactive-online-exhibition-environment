@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { configurations } from "~/lib/constants/config";
 
-const thumbnailSchema = z
+const coverImageSchema = z
   .instanceof(File)
   .refine((file) => file.size <= configurations.MAX_FILE_SIZE_BYTES, {
     message: `The file size exceeds the maximum allowed size of ${configurations.MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB.`,
@@ -15,7 +15,7 @@ export const exhibitionFormSchema = z.object({
   description: z.string().max(configurations.MAX_DESCRIPTION_LENGTH, {
     message: `Description must not exceed ${configurations.MAX_DESCRIPTION_LENGTH} characters.`,
   }),
-  thumbnail: thumbnailSchema.optional(),
+  coverImage: coverImageSchema.optional(),
 });
 
 export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>;

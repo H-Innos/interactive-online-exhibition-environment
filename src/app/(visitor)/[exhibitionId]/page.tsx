@@ -41,8 +41,8 @@ const ExhibitionViewPage: React.FC = () => {
   const backgroundImage =
     exhibition.exhibitionCoverUrl && exhibition.exhibitionCoverUrl.trim() !== ""
       ? exhibition.exhibitionCoverUrl
-      : exhibition.thumbnailUrl
-      ? exhibition.thumbnailUrl
+      : exhibition.coverImageUrl
+      ? exhibition.coverImageUrl
       : configurations.DEFAULT_COVER_IMAGE_URL;
 
   return (

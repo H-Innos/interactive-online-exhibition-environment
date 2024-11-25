@@ -25,7 +25,7 @@ const VisitorExhibitionCard: React.FC<VisitorExhibitionCardProps> = ({
       <div className="relative h-52 overflow-hidden bg-gray-200">
         <Image
           src={
-            exhibition.thumbnailUrl ?? configurations.DEFAULT_COVER_IMAGE_URL
+            exhibition.coverImageUrl ?? configurations.DEFAULT_COVER_IMAGE_URL
           }
           alt={exhibition.name}
           layout="fill"

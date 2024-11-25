@@ -29,8 +29,8 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   exhibition,
 }) => {
   const { t } = useTranslation();
-  const [thumbnailDataUrl, setThumbnailDataUrl] = useState(
-    exhibition.thumbnailUrl ?? "",
+  const [coverImageDataUrl, setcoverImageDataUrl] = useState(
+    exhibition.coverImageUrl ?? "",
   );
   const {
     register,
@@ -43,7 +43,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
     defaultValues: {
       title: exhibition.name,
       description: exhibition.description ?? "",
-      thumbnail: undefined,
+      coverImage: undefined,
     },
     resolver: zodResolver(exhibitionFormSchema),
   });
@@ -51,14 +51,14 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   const updateExhibition = useUpdateExhibition();
 
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
-    const thumbnailUrl = await uploadImage(thumbnailDataUrl);
-    if (!thumbnailUrl) return;
+    const coverImageUrl = await uploadImage(coverImageDataUrl);
+    if (!coverImageUrl) return;
 
     updateExhibition.mutate({
       id: exhibition.id,
       name: data.title,
       description: data.description,
-      thumbnailUrl: thumbnailUrl,
+      coverImageUrl: coverImageUrl,
     });
   };
 
@@ -67,15 +67,15 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
 
     reader.onloadend = () => {
       const previewUrl = reader.result as string;
-      setThumbnailDataUrl(previewUrl);
-      setValue("thumbnail", file);
+      setcoverImageDataUrl(previewUrl);
+      setValue("coverImage", file);
     };
     reader.readAsDataURL(file);
   };
 
   const handleThumbnailDelete = () => {
-    setThumbnailDataUrl("");
-    setValue("thumbnail", undefined);
+    setcoverImageDataUrl("");
+    setValue("coverImage", undefined);
   };
 
   const watchedFields = watch();
@@ -127,7 +127,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
             <Label htmlFor="thumbnail">{t("thumbnail")}</Label>
             <div className="flex flex-col items-start space-y-2">
               <RemovableImage
-                src={thumbnailDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
+                src={coverImageDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
                 alt={t("thumbnail")}
                 className="h-48 w-48"
                 onDelete={handleThumbnailDelete}
@@ -139,8 +139,8 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
               />
             </div>
             <p className="h-5 text-sm">
-              {errors.thumbnail ? (
-                <span className="text-red-500">{errors.thumbnail.message}</span>
+              {errors.coverImage ? (
+                <span className="text-red-500">{errors.coverImage.message}</span>
               ) : (
                 <span>&nbsp;</span>
               )}

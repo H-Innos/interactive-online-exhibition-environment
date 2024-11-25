@@ -9,11 +9,41 @@ default:
   image: node:22
 
 stages:
+  - build
   - test
   - deploy
 
-sast: 
+build:
+  stage: build
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm build
+  except:
+    - main
+  interruptible: true
+
+test:
   stage: test
+  image: cypress/browsers:node-22.11.0-chrome-130.0.6723.69-1-ff-132.0-edge-130.0.2849.56-1
+  services:
+    - postgres:16-alpine
+  script:
+    - npm install -g pnpm
+    - pnpm install
+    - pnpm db:push
+    - pnpm build
+    - pnpm start &
+    - npx wait-on http://localhost:3000
+    - pnpm exec cypress run --browser chrome
+    - pnpm exec cypress run --browser firefox
+    - pnpm exec cypress run --browser edge
+  variables:
+    CYPRESS_baseUrl: http://localhost:3000
+    DATABASE_URL: postgres://postgres:postgres@postgres:5432/local-db
+  only:
+    - merge_requests
+    - branches
 
 deploy:
   stage: deploy
