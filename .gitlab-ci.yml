@@ -44,8 +44,6 @@ test:
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
         );
-    "
-    # Push the updated schema
     - pnpm db:push --force
     - pnpm build
     - pnpm start &
