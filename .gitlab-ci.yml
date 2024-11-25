@@ -43,7 +43,7 @@ test:
           background_color VARCHAR(7) DEFAULT '#FFFFFF',
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
           updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
-        );
+        );"
     - pnpm db:push --force
     - pnpm build
     - pnpm start &
