@@ -32,10 +32,10 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
       return;
     }
 
-    let coverImageUrl = configurations.DEFAULT_COVER_IMAGE_URL;
+    let thumbnailUrl = configurations.DEFAULT_COVER_IMAGE_URL;
 
     if (thumbnail) {
-      coverImageUrl =
+      thumbnailUrl =
         (await uploadImage(thumbnail)) ??
         configurations.DEFAULT_COVER_IMAGE_URL;
     }
@@ -43,7 +43,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
     await createExhibition.mutateAsync({
       name,
       description,
-      coverImageUrl,
+      thumbnailUrl,
     });
 
     onClose();

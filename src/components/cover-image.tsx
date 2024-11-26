@@ -2,15 +2,15 @@ import React, { useState, useRef } from "react";
 import { configurations } from "~/lib/constants/config";
 
 interface CoverImageProps {
-  coverImageUrl: string | null;
-  coverImageUrl2?: string | null;
+  thumbnailUrl?: string | null ;
+  exhibitionCoverUrl?: string | null;
   initialPosition: { x: number; y: number };
   onPositionChange: (position: { x: number; y: number }) => void;
 }
 
 const CoverImage: React.FC<CoverImageProps> = ({
-  coverImageUrl,
-  coverImageUrl2,
+  thumbnailUrl,
+  exhibitionCoverUrl,
   initialPosition,
   onPositionChange,
 }) => {
@@ -37,14 +37,14 @@ const CoverImage: React.FC<CoverImageProps> = ({
     }
   }
 
-  console.log("Cover Image URL:", coverImageUrl);
-  console.log("Thumbnail URL:", coverImageUrl2);
+  console.log("Cover Image URL:", thumbnailUrl);
+  console.log("Thumbnail URL:", exhibitionCoverUrl);
 
   const backgroundImage =
-    coverImageUrl && coverImageUrl.trim() !== ""
-      ? coverImageUrl
-      : coverImageUrl2 && coverImageUrl2.trim() !== ""
-      ? coverImageUrl2
+  exhibitionCoverUrl && exhibitionCoverUrl.trim() !== ""
+      ? exhibitionCoverUrl
+      : thumbnailUrl && thumbnailUrl.trim() !== ""
+      ? thumbnailUrl
       : configurations.DEFAULT_COVER_IMAGE_URL;
 
   console.log("Background Image URL:", backgroundImage);

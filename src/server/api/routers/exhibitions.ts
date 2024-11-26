@@ -10,7 +10,7 @@ export const exhibitionRouter = createTRPCRouter({
     z.object({
       name: z.string().min(1, "Exhibition name is required."),
       description: z.string().optional(),
-      coverImageUrl: z.string().optional(),
+      thumbnailUrl: z.string().optional(),
       exhibitionCoverUrl: z.string().optional(),
     }),
   )
@@ -18,7 +18,7 @@ export const exhibitionRouter = createTRPCRouter({
     const newExhibition = await ctx.db.insert(exhibitions).values({
       name: input.name,
       description: input.description ?? "",
-      coverImageUrl: input.coverImageUrl ?? "",
+      thumbnailUrl: input.thumbnailUrl ?? "",
       exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
     });
 
@@ -32,7 +32,7 @@ export const exhibitionRouter = createTRPCRouter({
       id: z.number(),
       name: z.string().min(1, { message: "Exhibition name is required." }),
       description: z.string().optional(),
-      coverImageUrl: z.string().optional(),
+      thumbnailUrl: z.string().optional(),
       exhibitionCoverUrl: z.string().optional(),
       coverImagePositionX: z.number().optional(),
       coverImagePositionY: z.number().optional(),
@@ -46,7 +46,7 @@ export const exhibitionRouter = createTRPCRouter({
       .set({
         name: input.name,
         description: input.description,
-        coverImageUrl: input.coverImageUrl,
+        thumbnailUrl: input.thumbnailUrl,
         exhibitionCoverUrl: input.exhibitionCoverUrl,
         coverImagePositionX: input.coverImagePositionX,
         coverImagePositionY: input.coverImagePositionY,
