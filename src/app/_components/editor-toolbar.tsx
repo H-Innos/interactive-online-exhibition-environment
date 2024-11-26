@@ -82,7 +82,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
         coverImagePositionY: Math.round(exhibition.coverImagePositionY),
         description: exhibition.description ?? undefined,
         exhibitionCoverUrl: exhibition.exhibitionCoverUrl ?? undefined,
-        coverImageUrl: exhibition.coverImageUrl ?? undefined,
+        thumbnailUrl: exhibition.thumbnailUrl ?? undefined,
         content: exhibition.content ?? undefined,
         backgroundColor: exhibition.backgroundColor ?? undefined,
       };
@@ -225,7 +225,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
         {exhibition && (
           <CoverImage
-            coverImageUrl={localCoverUrl ?? exhibition.coverImageUrl ?? exhibition.exhibitionCoverUrl}
+          exhibitionCoverUrl={localCoverUrl ?? exhibition.exhibitionCoverUrl ?? exhibition.thumbnailUrl}
             initialPosition={{
               x: exhibition.coverImagePositionX ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
               y: exhibition.coverImagePositionY ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,

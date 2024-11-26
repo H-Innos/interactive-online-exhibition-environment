@@ -41,8 +41,8 @@ const ExhibitionViewPage: React.FC = () => {
   const backgroundImage =
     exhibition.exhibitionCoverUrl && exhibition.exhibitionCoverUrl.trim() !== ""
       ? exhibition.exhibitionCoverUrl
-      : exhibition.coverImageUrl
-      ? exhibition.coverImageUrl
+      : exhibition.thumbnailUrl
+      ? exhibition.thumbnailUrl
       : configurations.DEFAULT_COVER_IMAGE_URL;
 
   return (
@@ -66,7 +66,7 @@ const ExhibitionViewPage: React.FC = () => {
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
           onClick={() => router.push("/")}
-          className="absolute left-4 top-4 z-10 text-3xl text-white sm:text-4xl"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 text-3xl text-white sm:text-4xl"
         >
           ❬
         </button>

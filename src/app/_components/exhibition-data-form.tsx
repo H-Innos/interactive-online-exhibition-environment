@@ -30,7 +30,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const [coverImageDataUrl, setcoverImageDataUrl] = useState(
-    exhibition.coverImageUrl ?? "",
+    exhibition.thumbnailUrl ?? "",
   );
   const {
     register,
@@ -51,14 +51,14 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   const updateExhibition = useUpdateExhibition();
 
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
-    const coverImageUrl = await uploadImage(coverImageDataUrl);
-    if (!coverImageUrl) return;
+    const thumbnailUrl = await uploadImage(coverImageDataUrl);
+    if (!thumbnailUrl) return;
 
     updateExhibition.mutate({
       id: exhibition.id,
       name: data.title,
       description: data.description,
-      coverImageUrl: coverImageUrl,
+      thumbnailUrl: thumbnailUrl,
     });
   };
 
