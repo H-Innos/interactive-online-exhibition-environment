@@ -51,6 +51,8 @@ test:
     paths:
       - cypress/screenshots/**/*.png
       - cypress/videos/**/*.mp4
+  except:
+    - main
 
 deploy:
   stage: deploy
