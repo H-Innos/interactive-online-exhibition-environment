@@ -1,9 +1,23 @@
+import {
+  createExhibition,
+  deleteExhibition,
+  publishExhibition,
+  unpublishExhibition,
+} from "cypress/support/commands";
+
 describe("All Exhibitions Page", () => {
   const selectors = {
     pageHeading: 'h1:contains("Explore Exhibitions")',
     exhibitionCard: '[data-testid="exhibition-card"]',
     exhibitionTitle: "h2",
   };
+
+  const exhibitionTitle = `Test exhibition ${Date.now()}`;
+
+  before(() => {
+    createExhibition(exhibitionTitle, "Test Exhibition Description");
+    publishExhibition(exhibitionTitle);
+  });
 
   beforeEach(() => {
     cy.visit("/");
@@ -30,10 +44,7 @@ describe("All Exhibitions Page", () => {
       .invoke("text")
       .then((firstExhibitionTitle) => {
         cy.get('input[type="text"]').type(firstExhibitionTitle.trim());
-        cy.get("div.flex.flex-col.bg-white.border").should(
-          "have.length.at.least",
-          1,
-        );
+        cy.get(selectors.exhibitionCard).should("have.length.at.least", 1);
         cy.contains(firstExhibitionTitle.trim()).should("be.visible");
       });
   });
@@ -48,9 +59,11 @@ describe("All Exhibitions Page", () => {
     cy.contains("Loading...").should("not.exist");
     cy.get('input[type="text"]').type("Test");
     cy.get('input[type="text"]').clear();
-    cy.get("div.flex.flex-col.bg-white.border").should(
-      "have.length.at.least",
-      1,
-    );
+    cy.get(selectors.exhibitionCard).should("have.length.at.least", 1);
+  });
+
+  after(() => {
+    unpublishExhibition(exhibitionTitle);
+    deleteExhibition(exhibitionTitle);
   });
 });

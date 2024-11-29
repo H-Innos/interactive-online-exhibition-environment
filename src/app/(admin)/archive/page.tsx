@@ -2,9 +2,10 @@
 
 import { useState, Suspense } from "react";
 import { api } from "~/trpc/react";
-import ArchiveClientComponent from "../../_components/archive-client-component";
 import SearchBar from "~/app/_components/search-bar";
 import { useTranslation } from "react-i18next";
+import PageableExhibitions from "~/app/_components/pageable-cards";
+import { ArchiveCard } from "~/components/ExhibitionCard/cards";
 
 export default function ArchivePage() {
   const { t } = useTranslation();
@@ -35,11 +36,16 @@ export default function ArchivePage() {
             <div>{t("mainPage.loading")}</div>
           ) : error ? (
             <div>{t("mainPage.errorLoading")}</div>
-          ) : (
-            <ArchiveClientComponent
+          ) : filteredExhibitions.length > 0 ? (
+            <PageableExhibitions
+              title={t("archive.title")}
               exhibitions={filteredExhibitions}
-              isLoading={isLoading}
+              CardComponent={(props) => <ArchiveCard {...props} />}
             />
+          ) : (
+            <div className="mt-8 text-center text-gray-500">
+              <p className="text-xl">No matching exhibitions found.</p>
+            </div>
           )}
         </div>
       </div>

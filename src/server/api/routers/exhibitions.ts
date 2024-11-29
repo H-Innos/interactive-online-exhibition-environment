@@ -2,83 +2,57 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { exhibitions } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
-import { configurations } from "~/lib/constants/config";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
-  .input(
-    z.object({
-      name: z.string().min(1, "Exhibition name is required."),
-      description: z.string().optional(),
-      thumbnailUrl: z.string().optional(),
-      exhibitionCoverUrl: z.string().optional(),
+    .input(
+      z.object({
+        name: z.string().min(1, "Exhibition name is required."),
+        description: z.string().optional(),
+        thumbnailUrl: z.string().optional(),
+        exhibitionCoverUrl: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const newExhibition = await ctx.db.insert(exhibitions).values({
+        name: input.name,
+        description: input.description ?? "",
+        thumbnailUrl: input.thumbnailUrl ?? "",
+        exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
+      });
+
+      return newExhibition;
     }),
-  )
-  .mutation(async ({ ctx, input }) => {
-    const newExhibition = await ctx.db.insert(exhibitions).values({
-      name: input.name,
-      description: input.description ?? "",
-      thumbnailUrl: input.thumbnailUrl ?? "",
-      exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
-    });
-
-    return newExhibition;
-  }),
-
 
   update: publicProcedure
-  .input(
-    z.object({
-      id: z.number(),
-      name: z.string().min(1, { message: "Exhibition name is required." }),
-      description: z.string().optional(),
-      thumbnailUrl: z.string().optional(),
-      exhibitionCoverUrl: z.string().optional(),
-      coverImagePositionX: z.number().optional(),
-      coverImagePositionY: z.number().optional(),
-      content: z.string().optional(),
-      backgroundColor: z.string().optional(),
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1, { message: "Exhibition name is required." }),
+        description: z.string().optional(),
+        thumbnailUrl: z.string().optional(),
+        exhibitionCoverUrl: z.string().optional(),
+        coverImagePositionX: z.number().optional(),
+        coverImagePositionY: z.number().optional(),
+        content: z.string().optional(),
+        backgroundColor: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(exhibitions)
+        .set({
+          name: input.name,
+          description: input.description,
+          thumbnailUrl: input.thumbnailUrl,
+          exhibitionCoverUrl: input.exhibitionCoverUrl,
+          coverImagePositionX: input.coverImagePositionX,
+          coverImagePositionY: input.coverImagePositionY,
+          content: input.content,
+          backgroundColor: input.backgroundColor,
+        })
+        .where(eq(exhibitions.id, input.id));
     }),
-  )
-  .mutation(async ({ ctx, input }) => {
-    await ctx.db
-      .update(exhibitions)
-      .set({
-        name: input.name,
-        description: input.description,
-        thumbnailUrl: input.thumbnailUrl,
-        exhibitionCoverUrl: input.exhibitionCoverUrl,
-        coverImagePositionX: input.coverImagePositionX,
-        coverImagePositionY: input.coverImagePositionY,
-        content: input.content,
-        backgroundColor: input.backgroundColor,
-      })
-      .where(eq(exhibitions.id, input.id));
-  }),
-
-
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    const allExhibitions = await ctx.db.query.exhibitions.findMany({
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-    });
-    return allExhibitions ?? [];
-  }),
-
-  getOne: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .query(async ({ ctx, input }) => {
-      const exhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
-      });
-      return exhibition ?? null;
-    }),
-
-  getLatest: publicProcedure.query(async ({ ctx }) => {
-    const exhibition = await ctx.db.query.exhibitions.findFirst({
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-    });
-    return exhibition ?? null;
-  }),
 
   delete: publicProcedure
     .input(z.object({ id: z.number() }))
@@ -95,106 +69,49 @@ export const exhibitionRouter = createTRPCRouter({
       return deletedExhibition[0];
     }),
 
-  getDrafts: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.exhibitions.findMany({
-      where: (exhibitions, { eq, and }) =>
-        and(
-          eq(exhibitions.isPublished, false),
-          eq(exhibitions.isArchived, false),
-        ),
-    });
-  }),
-
   publish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const publishedExhibition = await ctx.db.query.exhibitions.findFirst({
+      const exhibitionToPublish = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
       });
 
-      if (!publishedExhibition) {
+      if (!exhibitionToPublish) {
         throw new Error("Exhibition not found");
       }
 
-      publishedExhibition.isPublished = true;
-
-      await ctx.db
+      const publishedExhibition = await ctx.db
         .update(exhibitions)
         .set({
-          isPublished: true,
+          status: "published",
         })
-        .where(eq(exhibitions.id, input.id));
+        .where(eq(exhibitions.id, input.id))
+        .returning();
 
-      return publishedExhibition;
+      return publishedExhibition[0];
     }),
 
   unpublish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      const unpublishedExhibition = await ctx.db.query.exhibitions.findFirst({
+      const exhibitionToUnpublish = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
       });
 
-      if (!unpublishedExhibition) {
+      if (!exhibitionToUnpublish) {
         throw new Error("Exhibition not found");
       }
 
-      await ctx.db
+      const unpublishedExhibition = await ctx.db
         .update(exhibitions)
         .set({
-          isPublished: false,
+          status: "draft",
         })
-        .where(eq(exhibitions.id, input.id));
-
-      return { ...unpublishedExhibition, isPublished: false };
-    }),
-
-  /*
-    checkTitleUnique: publicProcedure
-    .input(z
-      .object(
-        { id: z.number(),
-          name: z.string(),
-        }))
-    .query(async ({ ctx, input }) => {
-      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq, and }) =>
-          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
-      });
-
-      return existingExhibition !== null;
-    }),
-*/
-  unarchiveExhibition: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const exhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
-      });
-
-      if (!exhibition) {
-        throw new Error("Exhibition not found");
-      }
-
-      if (!exhibition.isArchived) {
-        throw new Error("Exhibition is not archived");
-      }
-
-      const updatedExhibition = await ctx.db
-        .update(exhibitions)
-        .set({ isArchived: false })
         .where(eq(exhibitions.id, input.id))
         .returning();
 
-      return updatedExhibition[0];
+      return unpublishedExhibition;
     }),
-
-  getArchived: publicProcedure.query(async ({ ctx }) => {
-    const archivedExhibitions = await ctx.db.query.exhibitions.findMany({
-      where: (exhibitions, { eq }) => eq(exhibitions.isArchived, true),
-    });
-    return archivedExhibitions;
-  }),
 
   archiveExhibition: publicProcedure
     .input(z.object({ id: z.number() }))
@@ -207,16 +124,122 @@ export const exhibitionRouter = createTRPCRouter({
         throw new Error("Exhibition not found");
       }
 
-      if (exhibition.isPublished) {
+      if (exhibition.status === "published") {
         throw new Error("Cannot archive a published exhibition");
       }
 
-      const updatedExhibition = await ctx.db
+      const archivedExhibition = await ctx.db
         .update(exhibitions)
-        .set({ isArchived: true })
+        .set({ status: "archived" })
         .where(eq(exhibitions.id, input.id))
         .returning();
 
-      return updatedExhibition[0];
+      return archivedExhibition[0];
     }),
+
+  unarchiveExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibitionToUnarchive = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!exhibitionToUnarchive) {
+        throw new Error("Exhibition not found");
+      }
+
+      if (exhibitionToUnarchive.status !== "archived") {
+        throw new Error("Exhibition is not archived");
+      }
+
+      const unarchivedExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ status: "draft" })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      return unarchivedExhibition[0];
+    }),
+
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    const allExhibitions = await ctx.db.query.exhibitions.findMany({
+      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+    });
+
+    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+    return (allExhibitions ?? []).map((exhibition) => ({
+      ...exhibition,
+      status: assertExhibitionStatus(exhibition.status),
+    }));
+  }),
+
+  getOne: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+      return exhibition
+        ? { ...exhibition, status: assertExhibitionStatus(exhibition.status) }
+        : null;
+    }),
+
+  getLatest: publicProcedure.query(async ({ ctx }) => {
+    const exhibition = await ctx.db.query.exhibitions.findFirst({
+      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+    });
+
+    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+    return exhibition
+      ? { ...exhibition, status: assertExhibitionStatus(exhibition.status) }
+      : null;
+  }),
+
+  getDrafts: publicProcedure.query(async ({ ctx }) => {
+    const exhibitions = await ctx.db.query.exhibitions.findMany({
+      where: (exhibitions, { eq }) => eq(exhibitions.status, "draft"),
+    });
+
+    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+    return exhibitions.map((exhibition) => ({
+      ...exhibition,
+      status: assertExhibitionStatus(exhibition.status),
+    }));
+  }),
+
+  getPublished: publicProcedure.query(async ({ ctx }) => {
+    const exhibitions = await ctx.db.query.exhibitions.findMany({
+      where: (exhibitions, { eq }) => eq(exhibitions.status, "published"),
+    });
+
+    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+    return exhibitions.map((exhibition) => ({
+      ...exhibition,
+      status: assertExhibitionStatus(exhibition.status),
+    }));
+  }),
+
+  getArchived: publicProcedure.query(async ({ ctx }) => {
+    const exhibitions = await ctx.db.query.exhibitions.findMany({
+      where: (exhibitions, { eq }) => eq(exhibitions.status, "archived"),
+    });
+
+    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+    return exhibitions.map((exhibition) => ({
+      ...exhibition,
+      status: assertExhibitionStatus(exhibition.status),
+    }));
+  }),
 });
+
+// TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
+type ExhibitionStatus = "draft" | "published" | "archived";
+
+function assertExhibitionStatus(status: string): ExhibitionStatus {
+  if (status === "draft" || status === "published" || status === "archived") {
+    return status as ExhibitionStatus;
+  }
+  throw new Error("Invalid exhibition status");
+}

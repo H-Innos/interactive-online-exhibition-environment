@@ -103,11 +103,13 @@
     "title": "Arhiiv",
     "noExhibitionsFound": "Ühtegi sobivat näitust ei leitud.",
     "unarchive": "Mustandiks",
-    "view": "Avalda",
-    "now": "Arhiveeri"
+    "view": "Vaata",
+    "now": "Arhiveeri",
+    "confirmArchive": "Kas oled kindel, et soovid selle näituse arhiveerida?",
+    "confirmUnarchive": "Kas oled kindel, et soovid selle näituse arhiivist eemaldada?"
   },
 
-  "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",
+  "confirmPublish": "Kas oled kindel, et soovid selle näituse avalikuks teha?",
   "editExhibition": "Muuda näitust",
   "status": "Staatus",
   "saving": "Salvestamine...",
@@ -131,8 +133,8 @@
   "characters": "tähemärki",
   "unpublish": "Mustandiks",
   "delete": "Kustuta",
-  "confirmDelete": "Kas olete kindel, et soovite selle näituse kustutada?",
-  "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?",
+  "confirmDelete": "Kas oled kindel, et soovid selle näituse kustutada?",
+  "confirmUnpublish": "Kas oled kindel, et soovid selle näituse mustanditesse tagasi viia?",
   "backToEditor": "Tagasi",
   "details": "Detailid",
   "backgroundColor": "Taustavärv: ",

@@ -3,13 +3,14 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { invalidateExhibitionQueries } from "~/lib/utils/invalidate-queries";
 
 export const useCreateExhibition = () => {
   const { t } = useTranslation();
   const utils = api.useUtils();
   return api.exhibition.create.useMutation({
     onSuccess: async () => {
-      await utils.exhibition.invalidate();
+      await invalidateExhibitionQueries(utils);
     },
     onError: (error: { message?: string }) => {
       toast.error(
@@ -25,7 +26,7 @@ export const useUpdateExhibition = () => {
 
   return api.exhibition.update.useMutation({
     onSuccess: async () => {
-      await utils.exhibition.invalidate();
+      await invalidateExhibitionQueries(utils);
       toast.success(t("toasts.exhibitionUpdated"));
     },
     onError: (error: { message?: string }) => {
@@ -43,7 +44,7 @@ export const usePublishExhibition = () => {
 
   return api.exhibition.publish.useMutation({
     onSuccess: async () => {
-      await utils.exhibition.invalidate();
+      await invalidateExhibitionQueries(utils);
       toast.success(t("toasts.exhibitionPublished"));
       router.push(`/dashboard`);
     },
@@ -61,9 +62,7 @@ export const useUnpublishExhibition = () => {
 
   return api.exhibition.unpublish.useMutation({
     onSuccess: async () => {
-      await utils.exhibition.getAll.invalidate();
-      await utils.exhibition.getDrafts.invalidate();
-
+      await invalidateExhibitionQueries(utils);
       toast.success(t("toasts.exhibitionUnpublished"));
     },
     onError: (error) => {
@@ -80,8 +79,7 @@ export const useDeleteExhibition = () => {
 
   return api.exhibition.delete.useMutation({
     onSuccess: async () => {
-      await utils.exhibition.getAll.invalidate();
-      await utils.exhibition.getDrafts.invalidate();
+      await invalidateExhibitionQueries(utils);
       toast.success(t("toasts.exhibitionDeleted"));
     },
     onError: (error) => {
@@ -99,9 +97,7 @@ export const useArchiveExhibition = () => {
   return api.exhibition.archiveExhibition.useMutation({
     onSuccess: async () => {
       try {
-        await utils.exhibition.getAll.invalidate();
-        await utils.exhibition.getArchived.invalidate();
-        await utils.exhibition.getDrafts.invalidate();
+        await invalidateExhibitionQueries(utils);
         toast.success(t("toasts.exhibitionArchived"));
       } catch (error) {
         console.error("Error invalidating queries:", error);
@@ -123,10 +119,7 @@ export const useUnarchiveExhibition = () => {
   return api.exhibition.unarchiveExhibition.useMutation({
     onSuccess: async () => {
       try {
-        await utils.exhibition.getAll.invalidate();
-        await utils.exhibition.getArchived.invalidate();
-        await utils.exhibition.getDrafts.invalidate();
-
+        await invalidateExhibitionQueries(utils);
         toast.success(t("toasts.exhibitionUnarchived"));
       } catch (error) {
         console.error("Error invalidating queries:", error);

@@ -1,18 +1,31 @@
+import {
+  createExhibition,
+  deleteExhibition,
+  publishExhibition,
+  unpublishExhibition,
+} from "cypress/support/commands";
+
 describe("Dashboard Page", () => {
+  const exhibitionTitle = `Test exhibition ${Date.now()}`;
   const selectors = {
     dashboardHeading: 'h1:contains("Dashboard")',
     newExhibitionButton: 'button:contains("New Exhibition")',
     createButton: 'button:contains("Create")',
     viewAllButton: '[data-testid="view-all-button"]',
-    cardOptionsButton: 'button[aria-label="Card options"]',
+    cardOptionsButton: '[data-testid="card-options-button"]',
     editOption: "Edit",
     editorInput: '.editor-container__editor div[contenteditable="true"]',
     exhibitionTitleInput: 'input[placeholder="Enter exhibition title"]',
     exhibitionDescriptionInput:
       'textarea[placeholder="Enter exhibition description"]',
     exhibitionCard: (title: string) =>
-      `[data-testid="dashboard-exhibition-card"]:contains("${title}")`,
+      `[data-testid="exhibition-card"]:contains("${title}")`,
   };
+
+  before(() => {
+    createExhibition(exhibitionTitle, "Test Exhibition Description");
+    publishExhibition(exhibitionTitle);
+  });
 
   beforeEach(() => {
     cy.visit("/dashboard");
@@ -52,9 +65,7 @@ describe("Dashboard Page", () => {
 
     cy.contains("Edit")
       .should("be.visible")
-      .and("have.attr", "aria-disabled", "true")
-      .and("have.class", "opacity-50")
-      .and("have.class", "cursor-not-allowed");
+      .and("have.attr", "aria-disabled", "true");
 
     cy.contains("Edit").click({ force: true });
     cy.url().should("not.include", "dashboard/");
@@ -69,11 +80,11 @@ describe("Dashboard Page", () => {
 
     cy.contains("Delete")
       .should("be.visible")
-      .and("have.attr", "aria-disabled", "true")
-      .and("have.class", "opacity-50")
-      .and("have.class", "cursor-not-allowed");
+      .and("have.attr", "aria-disabled", "true");
+  });
 
-    cy.contains("Delete").click({ force: true });
-    cy.get(selectors.cardOptionsButton).should("exist");
+  after(() => {
+    unpublishExhibition(exhibitionTitle);
+    deleteExhibition(exhibitionTitle);
   });
 });

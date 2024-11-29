@@ -104,7 +104,9 @@
     "noExhibitionsFound": "No matching exhibitions found.",
     "unarchive": "Unarchive",
     "view": "View",
-    "now": "Archive"
+    "now": "Archive",
+    "confirmArchive": "Are you sure you want to archive this exhibition?",
+    "confirmUnarchive": "Are you sure you want to unarchive this exhibition?"
   },
 
   "confirmPublish": "Are you sure you want to publish this exhibition?",
@@ -138,5 +140,4 @@
   "backgroundColor": "Background Color: ",
   "close": "Close",
   "searchExhibitionsPlaceholder": "Search exhibitions..."
-
 }

@@ -1,34 +1,22 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
-import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
-import type { Exhibition } from "../../../../lib/types/entities";
 import { useTranslation } from "react-i18next";
+import { DraftCard } from "~/components/ExhibitionCard/cards";
 
 const DraftsPage = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const [drafts, setDrafts] = useState<Exhibition[]>([]);
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
-
-  useEffect(() => {
-    if (data) {
-      setDrafts(
-        data.filter(
-          (exhibition) => !exhibition.isPublished && !exhibition.isArchived,
-        ),
-      );
-    }
-  }, [data]);
-
-  const handleExhibitionClick = (id: number) => {
-    router.push(`/dashboard/${id}`);
-  };
+  const {
+    data: drafts,
+    error,
+    isLoading,
+  } = api.exhibition.getDrafts.useQuery();
 
   return (
     <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
@@ -52,18 +40,13 @@ const DraftsPage = () => {
         ) : error ? (
           <div>{t("dashboard.errorLoading")}</div>
         ) : (
-          <PageableExhibitions
-            title={t("dashboard.allDrafts")}
-            exhibitions={drafts}
-            onExhibitionClick={handleExhibitionClick}
-            showFadeEffect={false}
-            CardComponent={(props) => (
-              <ExhibitionCard
-                {...props}
-                onClick={() => handleExhibitionClick(props.exhibition.id)}
-              />
-            )}
-          />
+          drafts && (
+            <PageableExhibitions
+              title={t("dashboard.allDrafts")}
+              exhibitions={drafts}
+              CardComponent={(props) => <DraftCard {...props} />}
+            />
+          )
         )}
       </div>
     </Suspense>
