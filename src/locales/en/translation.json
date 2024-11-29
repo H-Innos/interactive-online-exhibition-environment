@@ -27,7 +27,11 @@
     "errorLoading": "Error loading exhibitions.",
     "drafts": "Drafts",
     "publishedExhibitions": "Published Exhibitions",
-    "allDrafts": "All Drafts"
+    "allDrafts": "All Drafts",
+    "recentExhibitions": "Recently Published Exhibitions",
+    "errorLoadingDrafts": "Error loading drafts.",
+    "errorLoadingRecent": "Error loading recently exhibitions.",
+    "loadingRecent": "Loading recently published exhibitions."
   },
 
   "mainPage": {
@@ -117,7 +121,7 @@
   "exit": "Exit",
   "uploadImage": "Upload Image",
   "imageUploaded": "Image uploaded",
-  "saveChanges": "Save changes",
+  "saveChanges": "Save Changes",
   "preview": "Preview",
   "createQuiz": "Create Quiz",
   "publishing": "Publishing...",

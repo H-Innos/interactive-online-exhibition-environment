@@ -22,12 +22,6 @@ const DraftsPage = () => {
     <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
       <div className="relative min-h-screen px-4 text-text-dark sm:px-12">
         <div className="mt-12 flex items-center">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="mb-10 mr-4 rounded-md text-4xl text-black transition duration-300 hover:text-gray-500"
-          >
-            ❬
-          </button>
           <h1 className="text-dark mb-10 text-3xl font-bold">
             {t("dashboard.drafts")}
           </h1>
@@ -42,7 +36,7 @@ const DraftsPage = () => {
         ) : (
           drafts && (
             <PageableExhibitions
-              title={t("dashboard.allDrafts")}
+              title=""
               exhibitions={drafts}
               CardComponent={(props) => <DraftCard {...props} />}
             />

@@ -13,8 +13,11 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const idPathRegex = /\d+$/;  
-  const isIdPath = idPathRegex.exec(pathname) !== null;
+  const idPathRegex = /\d+$/;
+  const dashboardPathRegex = /\/dashboard(\/|$)/;
+  const isNoHeaderPath =
+    idPathRegex.exec(pathname) !== null ||
+    dashboardPathRegex.exec(pathname) !== null;
 
   const changeLanguage = async (lng: string | undefined) => {
     try {
@@ -73,7 +76,7 @@ const Header = () => {
         </div>
       </header>
 
-      {!isMenuOpen && !isIdPath && (
+      {!isMenuOpen && !isNoHeaderPath && (
         <nav className="mt-4 hidden w-full items-center justify-center space-x-0 overflow-hidden bg-background text-text-dark sm:flex sm:space-x-32">
           <Link href="/">
             <span className="group relative block cursor-pointer text-lg text-text-dark sm:inline-block">
