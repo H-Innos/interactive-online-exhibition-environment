@@ -6,56 +6,54 @@ import { configurations } from "~/lib/constants/config";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
-  .input(
-    z.object({
-      name: z.string().min(1, "Exhibition name is required."),
-      description: z.string().optional(),
-      thumbnailUrl: z.string().optional(),
-      exhibitionCoverUrl: z.string().optional(),
+    .input(
+      z.object({
+        name: z.string().min(1, "Exhibition name is required."),
+        description: z.string().optional(),
+        thumbnailUrl: z.string().optional(),
+        exhibitionCoverUrl: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const newExhibition = await ctx.db.insert(exhibitions).values({
+        name: input.name,
+        description: input.description ?? "",
+        thumbnailUrl: input.thumbnailUrl ?? "",
+        exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
+      });
+
+      return newExhibition;
     }),
-  )
-  .mutation(async ({ ctx, input }) => {
-    const newExhibition = await ctx.db.insert(exhibitions).values({
-      name: input.name,
-      description: input.description ?? "",
-      thumbnailUrl: input.thumbnailUrl ?? "",
-      exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
-    });
-
-    return newExhibition;
-  }),
-
 
   update: publicProcedure
-  .input(
-    z.object({
-      id: z.number(),
-      name: z.string().min(1, { message: "Exhibition name is required." }),
-      description: z.string().optional(),
-      thumbnailUrl: z.string().optional(),
-      exhibitionCoverUrl: z.string().optional(),
-      coverImagePositionX: z.number().optional(),
-      coverImagePositionY: z.number().optional(),
-      content: z.string().optional(),
-      backgroundColor: z.string().optional(),
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1, { message: "Exhibition name is required." }),
+        description: z.string().optional(),
+        thumbnailUrl: z.string().optional(),
+        exhibitionCoverUrl: z.string().optional(),
+        coverImagePositionX: z.number().optional(),
+        coverImagePositionY: z.number().optional(),
+        content: z.string().optional(),
+        backgroundColor: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(exhibitions)
+        .set({
+          name: input.name,
+          description: input.description,
+          thumbnailUrl: input.thumbnailUrl,
+          exhibitionCoverUrl: input.exhibitionCoverUrl,
+          coverImagePositionX: input.coverImagePositionX,
+          coverImagePositionY: input.coverImagePositionY,
+          content: input.content,
+          backgroundColor: input.backgroundColor,
+        })
+        .where(eq(exhibitions.id, input.id));
     }),
-  )
-  .mutation(async ({ ctx, input }) => {
-    await ctx.db
-      .update(exhibitions)
-      .set({
-        name: input.name,
-        description: input.description,
-        thumbnailUrl: input.thumbnailUrl,
-        exhibitionCoverUrl: input.exhibitionCoverUrl,
-        coverImagePositionX: input.coverImagePositionX,
-        coverImagePositionY: input.coverImagePositionY,
-        content: input.content,
-        backgroundColor: input.backgroundColor,
-      })
-      .where(eq(exhibitions.id, input.id));
-  }),
-
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({
@@ -63,6 +61,17 @@ export const exhibitionRouter = createTRPCRouter({
     });
     return allExhibitions ?? [];
   }),
+
+  getRecent: publicProcedure
+    .input(z.object({ limit: z.number().optional() }))
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 5;
+      const recentExhibitions = await ctx.db.query.exhibitions.findMany({
+        orderBy: (exhibitions, { desc }) => [desc(exhibitions.updatedAt)],
+        limit,
+      });
+      return recentExhibitions ?? [];
+    }),
 
   getOne: publicProcedure
     .input(z.object({ id: z.number() }))
@@ -149,22 +158,6 @@ export const exhibitionRouter = createTRPCRouter({
       return { ...unpublishedExhibition, isPublished: false };
     }),
 
-  /*
-    checkTitleUnique: publicProcedure
-    .input(z
-      .object(
-        { id: z.number(),
-          name: z.string(),
-        }))
-    .query(async ({ ctx, input }) => {
-      const existingExhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq, and }) =>
-          and(eq(exhibitions.name, input.name), sql`id != ${input.id}`),
-      });
-
-      return existingExhibition !== null;
-    }),
-*/
   unarchiveExhibition: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {

@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen">
       {!isDetailPage && <ExhibitionManagerSidebar />}
-      <main className="m-0 flex-grow p-4">{children}</main>
+      <main className="m-0 flex p-4">{children}</main>
     </div>
   );
 }

@@ -14,26 +14,32 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
-  const [publishedExhibitions, setPublishedExhibitions] = useState<
-    Exhibition[]
-  >([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [recentExhibitions, setRecentExhibitions] = useState<Exhibition[]>([]);
+  const {
+    data: draftsData,
+    error: draftsError,
+    isLoading: isDraftsLoading,
+  } = api.exhibition.getDrafts.useQuery();
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
+  const {
+    data: recentData,
+    error: recentError,
+    isLoading: isRecentLoading,
+  } = api.exhibition.getRecent.useQuery({
+    limit: 5,
+  });
 
   useEffect(() => {
-    if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished));
-      setPublishedExhibitions(
-        data.filter((exhibition) => exhibition.isPublished),
-      );
+    if (draftsData) {
+      setDrafts(draftsData);
     }
-  }, [data]);
+    if (recentData) {
+      setRecentExhibitions(recentData);
+    }
+  }, [draftsData, recentData]);
 
-  const handleExhibitionClick = (id: number, isPublished: boolean) => {
-    if (!isPublished) {
-      router.push(`/dashboard/${id}`);
-    }
+  const handleExhibitionClick = (id: number) => {
+    router.push(`/dashboard/${id}`);
   };
 
   return (
@@ -46,44 +52,46 @@ const Dashboard = () => {
 
         <CreateExhibitionButton />
 
-        {isLoading ? (
-          <div className="p-4">{t("dashboard.loading")}</div>
-        ) : error ? (
-          <div className="p-4 text-red-500">{t("dashboard.errorLoading")}</div>
+        {isDraftsLoading ? (
+          <div className="p-4">{t("dashboard.loadingDrafts")}</div>
+        ) : draftsError ? (
+          <div className="p-4 text-red-500">
+            {t("dashboard.errorLoadingDrafts")}
+          </div>
         ) : (
-          <>
-            {currentPage === 1 && (
-              <>
-                <h2 className="mb-5 text-2xl font-bold">
-                  {t("dashboard.drafts")}
-                </h2>
-                <ShortenedDrafts
-                  drafts={drafts}
-                  onExhibitionClick={(id) => handleExhibitionClick(id, false)}
-                />
-              </>
-            )}
+          <div>
+            <h2 className="mb-5 text-2xl font-bold">{t("dashboard.drafts")}</h2>
+            <ShortenedDrafts
+              drafts={drafts}
+              onExhibitionClick={(id) => handleExhibitionClick(id)}
+            />
+          </div>
+        )}
 
+        {isRecentLoading ? (
+          <div className="p-4">{t("dashboard.loadingRecent")}</div>
+        ) : recentError ? (
+          <div className="p-4 text-red-500">
+            {t("dashboard.errorLoadingRecent")}
+          </div>
+        ) : (
+          <div>
+            <h2 className="mb-5 text-2xl font-bold">
+              {t("dashboard.recentExhibitions")}
+            </h2>
             <PageableExhibitions
-              title={t("dashboard.publishedExhibitions")}
-              exhibitions={publishedExhibitions}
-              onExhibitionClick={(id, isPublished) =>
-                handleExhibitionClick(id, isPublished)
-              }
+              title=""
+              exhibitions={recentExhibitions}
+              onExhibitionClick={handleExhibitionClick}
               showFadeEffect={false}
               CardComponent={(props) => (
                 <ExhibitionCard
                   {...props}
-                  onClick={() =>
-                    handleExhibitionClick(
-                      props.exhibition.id,
-                      props.exhibition.isPublished,
-                    )
-                  }
+                  onClick={() => handleExhibitionClick(props.exhibition.id)}
                 />
               )}
             />
-          </>
+          </div>
         )}
       </div>
     </Suspense>

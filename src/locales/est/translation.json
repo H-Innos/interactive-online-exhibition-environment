@@ -27,7 +27,11 @@
     "errorLoading": "Viga näituste laadimisel.",
     "drafts": "Mustandid",
     "publishedExhibitions": "Avaldatud näitused",
-    "allDrafts": "Kõik mustandid"
+    "allDrafts": "Kõik mustandid",
+    "recentExhibitions": "Hiljuti avaldatud näitused",
+    "errorLoadingDrafts": "Viga mustandite laadimisel.",
+    "errorLoadingRecent": "Viga viimati avaldatud näituste laadimisel.",
+    "loadingRecent": "Viimati avaldatud näituste laadimine..."
   },
 
   "mainPage": {

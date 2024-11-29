@@ -27,7 +27,11 @@
     "errorLoading": "Error loading exhibitions.",
     "drafts": "Drafts",
     "publishedExhibitions": "Published Exhibitions",
-    "allDrafts": "All Drafts"
+    "allDrafts": "All Drafts",
+    "recentExhibitions": "Recently Published Exhibitions",
+    "errorLoadingDrafts": "Error loading drafts.",
+    "errorLoadingRecent": "Error loading recently exhibitions.",
+    "loadingRecent": "Loading recently published exhibitions."
   },
 
   "mainPage": {
@@ -138,5 +142,4 @@
   "backgroundColor": "Background Color: ",
   "close": "Close",
   "searchExhibitionsPlaceholder": "Search exhibitions..."
-
 }
