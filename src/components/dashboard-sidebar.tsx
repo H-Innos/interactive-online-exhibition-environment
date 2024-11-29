@@ -12,6 +12,7 @@ import {
   List,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 import {
   Sidebar,
@@ -24,20 +25,34 @@ import {
   SidebarTrigger,
 } from "~/components/ui/sidebar";
 
-const mainNavItems = [
-  { name: "All Exhibitions", icon: List, href: "/" },
-  { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { name: "Archive", icon: Archive, href: "/archive" },
-  { name: "Trash", icon: Trash2, href: "/dashboard/trash" },
-];
-
-const subNavItems = [
-  { name: "Published Exhibitions", icon: Image, href: "/dashboard/published" },
-  { name: "Drafts", icon: FileText, href: "/dashboard/drafts" },
-];
-
 export function ExhibitionManagerSidebar() {
-  const [open, setOpen] = React.useState(true);
+  const { t } = useTranslation();
+
+  const mainNavItems = [
+    { name: t("allExhibitions"), icon: List, href: "/" },
+    { name: t("dashboard2"), icon: LayoutDashboard, href: "/dashboard" },
+    { name: t("trash2"), icon: Trash2, href: "/dashboard/trash" },
+  ];
+
+  const subNavItems = [
+    {
+      name: t("publishedExhibitions"),
+      icon: Image,
+      href: "/dashboard/published",
+    },
+    { name: t("drafts"), icon: FileText, href: "/dashboard/drafts" },
+    { name: t("archive2"), icon: Archive, href: "/dashboard/archive" },
+  ];
+
+  const [open, setOpen] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    setOpen(true);
+  }, []);
+
+  if (open === null) {
+    return null;
+  }
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -48,7 +63,7 @@ export function ExhibitionManagerSidebar() {
         <SidebarHeader className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
             <h2 className="mr-2 text-lg font-semibold group-data-[collapsible=icon]:hidden">
-              Exhibition Manager
+              {t("exhibitionManager")}
             </h2>
             <SidebarTrigger onClick={() => setOpen(!open)} className="p-2">
               {open ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
@@ -65,7 +80,7 @@ export function ExhibitionManagerSidebar() {
                     <span>{item.name}</span>
                   </Link>
                 </SidebarMenuButton>
-                {item.name === "Dashboard" && (
+                {item.name === t("dashboard2") && (
                   <div className="ml-6">
                     {subNavItems.map((subItem) => (
                       <SidebarMenuItem key={subItem.name} className="mb-2">

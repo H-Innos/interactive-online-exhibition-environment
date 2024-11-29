@@ -31,7 +31,8 @@
     "recentExhibitions": "Recently Published Exhibitions",
     "errorLoadingDrafts": "Error loading drafts.",
     "errorLoadingRecent": "Error loading recently exhibitions.",
-    "loadingRecent": "Loading recently published exhibitions."
+    "loadingRecent": "Loading recently published exhibitions.",
+    "published": "Published Exhibitions"
   },
 
   "mainPage": {
@@ -54,6 +55,15 @@
   "pagination": {
     "previous": "Previous",
     "next": "Next"
+  },
+
+  "trash": {
+    "permanentDelete": "Delete permanently",
+    "restore": "Restore",
+    "title": "Trash",
+    "manageTrashedExhibitions": "Manage Trashed Exhibitions",
+    "loading": "Loading...",
+    "noTrashedExhibitions": "No trashed exhibitions available."
   },
 
   "quizzes": {
@@ -143,5 +153,11 @@
   "details": "Details",
   "backgroundColor": "Background Color: ",
   "close": "Close",
-  "searchExhibitionsPlaceholder": "Search exhibitions..."
+  "searchExhibitionsPlaceholder": "Search exhibitions...",
+  "dashboard2": "Dashboard",
+  "trash2": "Trash",
+  "archive2": "Archive",
+  "drafts": "Drafts",
+  "publishedExhibitions": "Published Exhibitions",
+  "exhibitionManager": "Exhibition Manager"
 }

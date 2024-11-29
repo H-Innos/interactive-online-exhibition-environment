@@ -31,7 +31,8 @@
     "recentExhibitions": "Hiljuti avaldatud näitused",
     "errorLoadingDrafts": "Viga mustandite laadimisel.",
     "errorLoadingRecent": "Viga viimati avaldatud näituste laadimisel.",
-    "loadingRecent": "Viimati avaldatud näituste laadimine..."
+    "loadingRecent": "Viimati avaldatud näituste laadimine...",
+    "published": "Avalikud näitused"
   },
 
   "mainPage": {
@@ -54,6 +55,15 @@
   "pagination": {
     "previous": "Eelmine",
     "next": "Järgmine"
+  },
+
+  "trash": {
+    "permanentDelete": "Kustuta jäädavalt",
+    "restore": "Taasta",
+    "title": "Prügikast",
+    "manageTrashedExhibitions": "Kustutatud näitused",
+    "loading": "Laadimine...",
+    "noTrashedExhibitions": "Kustutatud näitusi pole saadaval."
   },
 
   "quizzes": {
@@ -143,5 +153,11 @@
   "details": "Detailid",
   "backgroundColor": "Taustavärv: ",
   "close": "Sulge",
-  "searchExhibitionsPlaceholder": "Otsi näitusi..."
+  "searchExhibitionsPlaceholder": "Otsi näitusi...",
+  "dashboard2": "Töölaud",
+  "trash2": "Prügikast",
+  "archive2": "Arhiiv",
+  "drafts": "Mustandid",
+  "publishedExhibitions": "Avaldatud näitused",
+  "exhibitionManager": "Näituste haldamine"
 }

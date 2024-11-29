@@ -69,6 +69,62 @@ export const exhibitionRouter = createTRPCRouter({
       return deletedExhibition[0];
     }),
 
+  trash: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!exhibition) {
+        throw new Error("Exhibition not found");
+      }
+
+      if (exhibition.status === "trashed") {
+        throw new Error("Exhibition is already trashed");
+      }
+
+      const trashedExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ status: "trashed" })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      if (!trashedExhibition || trashedExhibition.length === 0) {
+        throw new Error("Failed to trash exhibition");
+      }
+
+      return trashedExhibition[0];
+    }),
+
+  restore: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!exhibition) {
+        throw new Error("Exhibition not found");
+      }
+
+      if (exhibition.status !== "trashed") {
+        throw new Error("Only trashed exhibitions can be restored");
+      }
+
+      const restoredExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ status: "draft" })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      if (!restoredExhibition || restoredExhibition.length === 0) {
+        throw new Error("Failed to restore exhibition");
+      }
+
+      return restoredExhibition[0];
+    }),
+
   publish: publicProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
@@ -232,13 +288,30 @@ export const exhibitionRouter = createTRPCRouter({
       status: assertExhibitionStatus(exhibition.status),
     }));
   }),
+
+  getTrashed: publicProcedure.query(async ({ ctx }) => {
+    const exhibitions = await ctx.db.query.exhibitions.findMany({
+      where: (exhibitions, { eq }) => eq(exhibitions.status, "trashed"),
+      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+    });
+
+    return exhibitions.map((exhibition) => ({
+      ...exhibition,
+      status: assertExhibitionStatus(exhibition.status),
+    }));
+  }),
 });
 
 // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-type ExhibitionStatus = "draft" | "published" | "archived";
+type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
 
 function assertExhibitionStatus(status: string): ExhibitionStatus {
-  if (status === "draft" || status === "published" || status === "archived") {
+  if (
+    status === "draft" ||
+    status === "published" ||
+    status === "archived" ||
+    status === "trashed"
+  ) {
     return status as ExhibitionStatus;
   }
   throw new Error("Invalid exhibition status");

@@ -1,0 +1,110 @@
+"use client";
+
+import { Suspense } from "react";
+import { useTranslation } from "react-i18next";
+import { api } from "~/trpc/react";
+import { Button } from "~/components/ui/button";
+import { TrashIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { toast } from "sonner";
+
+const TrashedExhibitionsPage = () => {
+  const { t } = useTranslation();
+
+  const {
+    data: trashedExhibitions,
+    error: errorLoading,
+    isLoading,
+    refetch,
+  } = api.exhibition.getTrashed.useQuery();
+
+  const restoreExhibition = api.exhibition.restore.useMutation({
+    onSuccess: () => {
+      toast.success(t("toasts.exhibitionRestored"));
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(
+        t("toasts.failedRestoreExhibition", { message: error.message }),
+      );
+    },
+  });
+
+  const deleteExhibition = api.exhibition.delete.useMutation({
+    onSuccess: () => {
+      toast.success(t("toasts.exhibitionDeleted"));
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(
+        t("toasts.failedDeleteExhibition", { message: error.message }),
+      );
+    },
+  });
+
+  const handleRestore = (id: number) => {
+    if (window.confirm(t("trash.confirmRestore"))) {
+      restoreExhibition.mutate({ id });
+    }
+  };
+
+  const handlePermanentDelete = (id: number) => {
+    if (window.confirm(t("trash.confirmPermanentDelete"))) {
+      deleteExhibition.mutate({ id });
+    }
+  };
+
+  return (
+    <Suspense fallback={<div className="p-4">{t("trash.loading")}</div>}>
+      <div className="min-h-screen max-w-full overflow-x-hidden p-8">
+        <h1 className="mb-2 text-3xl font-bold">{t("trash.title")}</h1>
+        <h2 className="mb-6 text-xl text-gray-500">
+          {t("trash.manageTrashedExhibitions")}
+        </h2>
+
+        {isLoading ? (
+          <div>{t("trash.loading")}</div>
+        ) : errorLoading ? (
+          <div>{t("trash.errorLoading")}</div>
+        ) : trashedExhibitions && trashedExhibitions.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {trashedExhibitions.map((exhibition) => (
+              <div
+                key={exhibition.id}
+                className="rounded-lg border bg-white p-4 shadow-md"
+              >
+                <h3 className="text-lg font-bold">{exhibition.name}</h3>
+                <p className="text-sm text-gray-600">
+                  {exhibition.description || t("trash.noDescription")}
+                </p>
+
+                <div className="mt-4 flex justify-between">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleRestore(exhibition.id)}
+                    className="flex items-center gap-2"
+                  >
+                    <ArrowPathIcon className="h-5 w-5" />
+                    {t("trash.restore")}
+                  </Button>
+
+                  <Button
+                    variant="destructive"
+                    onClick={() => handlePermanentDelete(exhibition.id)}
+                    className="flex items-center gap-2"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                    {t("trash.permanentDelete")}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>{t("trash.noTrashedExhibitions")}</div>
+        )}
+      </div>
+    </Suspense>
+  );
+};
+
+export default TrashedExhibitionsPage;

@@ -33,12 +33,12 @@ describe("Archive Functionality", () => {
   });
 
   it("should view the archived exhibition", () => {
-    cy.visit("/archive");
+    cy.visit("/dashboard/archive");
     cy.contains(exhibitionTitle, { timeout: 10000 }).should("be.visible");
   });
 
   it("should unarchive the exhibition", () => {
-    cy.visit("/archive");
+    cy.visit("/dashboard/archive");
     cy.get(selectors.exhibitionCard(exhibitionTitle), {
       timeout: 10000,
     }).within(() => {

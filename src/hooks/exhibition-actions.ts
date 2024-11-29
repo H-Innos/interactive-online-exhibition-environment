@@ -133,3 +133,45 @@ export const useUnarchiveExhibition = () => {
     },
   });
 };
+
+export const useTrashExhibition = () => {
+  const { t } = useTranslation();
+  const utils = api.useUtils();
+
+  return api.exhibition.trash.useMutation({
+    onSuccess: async () => {
+      try {
+        await invalidateExhibitionQueries(utils);
+        toast.success(t("toasts.exhibitionDeleted"));
+      } catch (error) {
+        console.error("Error invalidating queries:", error);
+        toast.error(t("toasts.failedInvalidateCache"));
+      }
+    },
+    onError: (error) => {
+      toast.error(t("toasts.exhibitionDeleted", { message: error.message }));
+    },
+  });
+};
+
+export const useRestoreExhibition = () => {
+  const { t } = useTranslation();
+  const utils = api.useUtils();
+
+  return api.exhibition.restore.useMutation({
+    onSuccess: async () => {
+      try {
+        await invalidateExhibitionQueries(utils);
+        toast.success(t("toasts.exhibitionRestored"));
+      } catch (error) {
+        console.error("Error invalidating queries:", error);
+        toast.error(t("toasts.failedInvalidateCache"));
+      }
+    },
+    onError: (error) => {
+      toast.error(
+        t("toasts.failedRestoreExhibition", { message: error.message }),
+      );
+    },
+  });
+};

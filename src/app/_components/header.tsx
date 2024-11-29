@@ -90,7 +90,7 @@ const Header = () => {
               <span className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[#2C5696] transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
             </span>
           </Link>
-          <Link href="/archive">
+          <Link href="/dashboard/archive">
             <span className="group relative block cursor-pointer text-lg text-text-dark sm:inline-block">
               {t("archive.title")}
               <span className="absolute bottom-0 left-0 h-[2px] w-full scale-x-0 bg-[#2C5696] transition-transform duration-300 ease-in-out group-hover:scale-x-100"></span>
