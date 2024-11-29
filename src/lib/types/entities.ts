@@ -4,14 +4,13 @@ export type Exhibition = {
   description: string | null;
   thumbnailUrl: string | null;
   coverImagePositionX: number;
-  coverImagePositionY: number; 
+  coverImagePositionY: number;
   content: string | null;
-  isPublished: boolean;
-  isArchived: boolean;
+  status: "draft" | "published" | "archived";
   createdAt: Date | string;
   updatedAt: Date | null;
   backgroundColor: string | null;
-  exhibitionCoverUrl: string | null; 
+  exhibitionCoverUrl: string | null;
 };
 
 export type Answer = {

@@ -5,9 +5,9 @@ import {
   timestamp,
   varchar,
   text,
-  uniqueIndex,
   boolean,
   integer,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -46,29 +46,32 @@ export const quizzes = createTable("quiz", {
     }),
 });
 
-export const exhibitions = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }).notNull(),
-    description: text("description").default(""),
-    thumbnailUrl: varchar("cover_image_url", { length: 512 }).default(""),
-    exhibitionCoverUrl: varchar("exhibition_cover_url", { length: 512 }).default(""),
-    coverImagePositionX: integer("cover_image_position_x").default(50).notNull(),
-    coverImagePositionY: integer("cover_image_position_y").default(50).notNull(),
-    content: text("content").default(""),
-    isPublished: boolean("is_published").default(false).notNull(),
-    isArchived: boolean("is_archived").default(false).notNull(),
-    backgroundColor: varchar("background_color", { length: 7 }).default("#FFFFFF"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
-);
+const exhibitionStatus = pgEnum("status", ["draft", "published", "archived"]);
 
+export const exhibitions = createTable("post", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
+  description: text("description").default(""),
+  thumbnailUrl: varchar("cover_image_url", { length: 512 }).default(""),
+  exhibitionCoverUrl: varchar("exhibition_cover_url", { length: 512 }).default(
+    "",
+  ),
+  coverImagePositionX: integer("cover_image_position_x").default(50).notNull(),
+  coverImagePositionY: integer("cover_image_position_y").default(50).notNull(),
+  isPublished: boolean("is_published").default(false).notNull(), // DO NOT USE THIS FIELD, USE "status" INSTEAD, (remove when database is fixed)
+  isArchived: boolean("is_archived").default(false).notNull(), // DO NOT USE THIS FIELD, USE "status" INSTEAD, (remove when database is fixed)
+  content: text("content").default(""),
+  status: varchar("status", { length: 20 }).default("draft").notNull(),
+  backgroundColor: varchar("background_color", { length: 7 }).default(
+    "#FFFFFF",
+  ),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
 
 export const exhibitionsRelations = relations(exhibitions, ({ many }) => ({
   quizzes: many(quizzes),

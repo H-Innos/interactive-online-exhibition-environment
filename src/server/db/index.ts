@@ -16,7 +16,10 @@ import { type ExtractTablesWithRelations } from "drizzle-orm";
 
 let db: VercelPgDatabase<typeof schema> | PostgresJsDatabase<typeof schema>;
 
-if (process.env.NODE_ENV === "production") {
+if (
+  process.env.NODE_ENV === "production" &&
+  !process.env.POSTGRES_URL?.includes("local-db") // only way I found to correctly set database in pipeline tests
+) {
   db = VercelDrizzle(sql, { schema });
 } else {
   const migrationClient = postgres(process.env.POSTGRES_URL!);

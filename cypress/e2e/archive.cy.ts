@@ -1,5 +1,7 @@
+import { selectors } from "cypress/support/selectors";
+
 describe("Archive Functionality", () => {
-  const exhibitionTitle = "Test Exhibition for Archiving";
+  const exhibitionTitle = "Test Exhibition for Archiving" + Date.now();
 
   beforeEach(() => {});
 
@@ -16,14 +18,12 @@ describe("Archive Functionality", () => {
 
   it("should archive a newly created exhibition", () => {
     cy.visit("/dashboard/drafts");
-    cy.contains("h2", exhibitionTitle, { timeout: 10000 })
-      .should("be.visible")
-      .as("exhibitionTitle");
-    cy.get("@exhibitionTitle").closest(".relative").as("exhibitionCard");
-
-    cy.get("@exhibitionCard").within(() => {
-      cy.get('button[aria-haspopup="menu"]').as("optionsButton");
-      cy.get("@optionsButton").should("be.visible").click({ force: true });
+    cy.get(selectors.exhibitionCard(exhibitionTitle), {
+      timeout: 10000,
+    }).within(() => {
+      cy.get('button[aria-haspopup="menu"]')
+        .should("be.visible")
+        .click({ force: true });
     });
 
     cy.get('[role="menu"]').should("be.visible");
@@ -39,14 +39,12 @@ describe("Archive Functionality", () => {
 
   it("should unarchive the exhibition", () => {
     cy.visit("/archive");
-    cy.contains("h2", exhibitionTitle, { timeout: 10000 })
-      .should("be.visible")
-      .as("exhibitionTitle");
-    cy.get("@exhibitionTitle").closest(".relative").as("exhibitionCard");
-
-    cy.get("@exhibitionCard").within(() => {
-      cy.get('button[aria-haspopup="menu"]').as("optionsButton");
-      cy.get("@optionsButton").should("be.visible").click({ force: true });
+    cy.get(selectors.exhibitionCard(exhibitionTitle), {
+      timeout: 10000,
+    }).within(() => {
+      cy.get('[data-testid="card-options-button"]')
+        .should("be.visible")
+        .click();
     });
 
     cy.get('[role="menu"]').should("be.visible");
@@ -63,12 +61,13 @@ describe("Archive Functionality", () => {
     cy.get("@exhibitionTitle").closest(".relative").as("exhibitionCard");
 
     cy.get("@exhibitionCard").within(() => {
-      cy.get('button[aria-haspopup="menu"]').as("optionsButton");
-      cy.get("@optionsButton").should("be.visible").click({ force: true });
+      cy.get('[data-testid="card-options-button"]')
+        .should("be.visible")
+        .click();
     });
 
     cy.get('[role="menu"]').should("be.visible");
-    cy.contains('[role="menuitem"]', "Delete").click({ force: true });
+    cy.contains('[role="menuitem"]', "Delete").click();
 
     cy.on("window:confirm", () => true);
     cy.contains(exhibitionTitle).should("not.exist");

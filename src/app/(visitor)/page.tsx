@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
-import VisitorExhibitionCard from "~/app/_components/exhibition-visitor-cards";
-import type { Exhibition } from "~/lib/types/entities";
 import { useTranslation } from "react-i18next";
 import SearchBar from "~/app/_components/search-bar";
+import { VisitorCard } from "~/components/ExhibitionCard/cards";
 
 interface MainPageProps {
   searchParams: Record<string, string | string[] | undefined>;
@@ -15,27 +13,18 @@ interface MainPageProps {
 
 const MainPage: React.FC<MainPageProps> = ({}) => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
+  const {
+    data: exhibitions,
+    error,
+    isLoading,
+  } = api.exhibition.getPublished.useQuery();
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    if (data) {
-      const publishedExhibitions = data.filter(
-        (exhibition: Exhibition) => exhibition.isPublished,
-      );
-      setExhibitions(publishedExhibitions);
-    }
-  }, [data]);
-
-  const handleExhibitionClick = (id: number) => {
-    router.push(`/${id}`);
-  };
-
-  const filteredExhibitions = exhibitions.filter((exhibition) =>
-    exhibition.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredExhibitions = exhibitions
+    ? exhibitions.filter((exhibition) =>
+        exhibition.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    : [];
 
   return (
     <Suspense fallback={<div>{t("mainPage.loading")}</div>}>
@@ -56,14 +45,7 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
             <PageableExhibitions
               title=""
               exhibitions={filteredExhibitions}
-              onExhibitionClick={handleExhibitionClick}
-              showFadeEffect={false}
-              CardComponent={(props) => (
-                <VisitorExhibitionCard
-                  {...props}
-                  onClick={() => handleExhibitionClick(props.exhibition.id)}
-                />
-              )}
+              CardComponent={(props) => <VisitorCard {...props} />}
             />
           ) : (
             <p className="text-center text-gray-500">

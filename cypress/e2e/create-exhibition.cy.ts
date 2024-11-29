@@ -2,7 +2,6 @@ import {
   createExhibition,
   deleteExhibition,
   openExhibitionEditor,
-  unpublishExhibition,
 } from "cypress/support/commands";
 import { selectors } from "cypress/support/selectors";
 
@@ -13,7 +12,6 @@ describe("Create Exhibition", () => {
     createExhibition(exhibitionTitle, exhibtionDescription);
     openExhibitionEditor(exhibitionTitle);
   });
-
 
   it("should edit and save content", () => {
     cy.intercept("POST", "/api/trpc/**").as("saveRequest");
@@ -46,5 +44,4 @@ describe("Create Exhibition", () => {
         }
       });
   });
-
 });

@@ -9,16 +9,12 @@ import { configurations } from "~/lib/constants/config";
 interface PageableExhibitionsProps {
   title: string;
   exhibitions: Exhibition[];
-  onExhibitionClick: (id: number, isPublished: boolean) => void;
-  showFadeEffect?: boolean;
-  CardComponent: React.FC<{ exhibition: Exhibition; onClick: () => void }>;
+  CardComponent: React.FC<{ exhibition: Exhibition }>;
 }
 
 const PageableExhibitions = ({
   title,
   exhibitions,
-  onExhibitionClick,
-  showFadeEffect = false,
   CardComponent,
 }: PageableExhibitionsProps) => {
   const searchParams = useSearchParams();
@@ -40,19 +36,9 @@ const PageableExhibitions = ({
       <div className="relative">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {currentExhibitions.map((exhibition) => (
-            <CardComponent
-              key={exhibition.id}
-              exhibition={exhibition}
-              onClick={() =>
-                onExhibitionClick(exhibition.id, exhibition.isPublished)
-              }
-            />
+            <CardComponent key={exhibition.id} exhibition={exhibition} />
           ))}
         </div>
-
-        {showFadeEffect && currentExhibitions.length === exhibitionsPerPage && (
-          <div className="pointer-events-none absolute right-[-50px] top-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent"></div>
-        )}
       </div>
 
       <PaginationControls currentPage={currentPage} totalPages={totalPages} />

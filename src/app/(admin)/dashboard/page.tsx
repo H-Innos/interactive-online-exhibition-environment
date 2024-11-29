@@ -1,40 +1,22 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
-import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
 import ShortenedDrafts from "~/app/_components/shortened-drafts";
-import type { Exhibition } from "~/lib/types/entities";
+import { PublishedCard } from "~/components/ExhibitionCard/cards";
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [drafts, setDrafts] = useState<Exhibition[]>([]);
-  const [publishedExhibitions, setPublishedExhibitions] = useState<
-    Exhibition[]
-  >([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
-
-  useEffect(() => {
-    if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished));
-      setPublishedExhibitions(
-        data.filter((exhibition) => exhibition.isPublished),
-      );
-    }
-  }, [data]);
-
-  const handleExhibitionClick = (id: number, isPublished: boolean) => {
-    if (!isPublished) {
-      router.push(`/dashboard/${id}`);
-    }
-  };
+  const {
+    data: publishedExhibitions,
+    error: errorPublished,
+    isLoading: publishedLoading,
+  } = api.exhibition.getPublished.useQuery();
 
   return (
     <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
@@ -48,43 +30,28 @@ const Dashboard = () => {
 
         <CreateExhibitionButton />
 
-        {isLoading ? (
+        {currentPage === 1 && (
+          <>
+            <h1 className="text-neutral mb-5 text-2xl font-bold">
+              {t("dashboard.drafts")}
+            </h1>
+            <ShortenedDrafts />
+          </>
+        )}
+
+        {publishedLoading ? (
           <div>{t("dashboard.loading")}</div>
-        ) : error ? (
+        ) : errorPublished ? (
           <div>{t("dashboard.errorLoading")}</div>
         ) : (
           <>
-            {currentPage === 1 && (
-              <>
-                <h1 className="text-neutral mb-5 text-2xl font-bold">
-                  {t("dashboard.drafts")}
-                </h1>
-                <ShortenedDrafts
-                  drafts={drafts}
-                  onExhibitionClick={(id) => handleExhibitionClick(id, false)}
-                />
-              </>
+            {publishedExhibitions && (
+              <PageableExhibitions
+                title={t("dashboard.publishedExhibitions")}
+                exhibitions={publishedExhibitions}
+                CardComponent={(props) => <PublishedCard {...props} />}
+              />
             )}
-
-            <PageableExhibitions
-              title={t("dashboard.publishedExhibitions")}
-              exhibitions={publishedExhibitions}
-              onExhibitionClick={(id, isPublished) =>
-                handleExhibitionClick(id, isPublished)
-              }
-              showFadeEffect={false}
-              CardComponent={(props) => (
-                <ExhibitionCard
-                  {...props}
-                  onClick={() =>
-                    handleExhibitionClick(
-                      props.exhibition.id,
-                      props.exhibition.isPublished,
-                    )
-                  }
-                />
-              )}
-            />
           </>
         )}
       </div>
