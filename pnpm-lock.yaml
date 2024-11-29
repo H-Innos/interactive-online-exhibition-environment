@@ -91,7 +91,7 @@ importers:
         version: 0.10.0
       axios:
         specifier: ^1.7.7
-        version: 1.7.7
+        version: 1.7.7(debug@4.3.7)
       ckeditor5:
         specifier: ^43.2.0
         version: 43.3.1
@@ -107,6 +107,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      debug:
+        specifier: ^4.3.7
+        version: 4.3.7(supports-color@8.1.1)
       drizzle-orm:
         specifier: ^0.36.4
         version: 0.36.4(@types/pg@8.11.6)(@types/react@18.3.12)(@vercel/postgres@0.10.0)(postgres@3.4.5)(react@18.3.1)
@@ -119,6 +122,9 @@ importers:
       i18next:
         specifier: ^23.16.4
         version: 23.16.5
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       lucide-react:
         specifier: ^0.454.0
         version: 0.454.0(react@18.3.1)
@@ -174,12 +180,45 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
     devDependencies:
+      '@types/debug':
+        specifier: ^4.1.12
+        version: 4.1.12
       '@types/eslint':
         specifier: ^8.56.10
         version: 8.56.12
+      '@types/estree':
+        specifier: ^1.0.6
+        version: 1.0.6
+      '@types/hast':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/hoist-non-react-statics':
+        specifier: ^3.3.5
+        version: 3.3.5
+      '@types/json-schema':
+        specifier: ^7.0.15
+        version: 7.0.15
+      '@types/json5':
+        specifier: ^2.2.0
+        version: 2.2.0
+      '@types/linkify-it':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/mdast':
+        specifier: ^4.0.4
+        version: 4.0.4
+      '@types/mdurl':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/node':
         specifier: ^20.14.10
         version: 20.17.6
+      '@types/parse5':
+        specifier: ^7.0.0
+        version: 7.0.0
+      '@types/prop-types':
+        specifier: ^15.7.13
+        version: 15.7.13
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
@@ -189,12 +228,24 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.1
         version: 18.3.1
+      '@types/sinonjs__fake-timers':
+        specifier: ^8.1.5
+        version: 8.1.5
+      '@types/unist':
+        specifier: ^3.0.3
+        version: 3.0.3
+      '@types/use-sync-external-store':
+        specifier: ^0.0.6
+        version: 0.0.6
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.1.0
         version: 8.14.0(@typescript-eslint/parser@8.14.0(eslint@8.57.1)(typescript@5.6.3))(eslint@8.57.1)(typescript@5.6.3)
       '@typescript-eslint/parser':
         specifier: ^8.1.0
         version: 8.14.0(eslint@8.57.1)(typescript@5.6.3)
+      css-loader:
+        specifier: ^7.1.2
+        version: 7.1.2(webpack@5.96.1(esbuild@0.16.3))
       cypress:
         specifier: ^13.15.1
         version: 13.15.2
@@ -2567,6 +2618,10 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
+  '@types/json5@2.2.0':
+    resolution: {integrity: sha512-NrVug5woqbvNZ0WX+Gv4R+L4TGddtmFek2u8RtccAgFZWtS9QXF2xCXY22/M4nzkaKF0q9Fc6M/5rxLDhfwc/A==}
+    deprecated: This is a stub types definition. json5 provides its own type definitions, so you do not need this installed.
+
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
 
@@ -2615,6 +2670,10 @@ packages:
   '@types/parse5@6.0.3':
     resolution: {integrity: sha512-SuT16Q1K51EAVPz1K29DJ/sXjhSQ0zjvsypYJ6tlwVsRV9jwW5Adq2ch8Dq8kDBCkYnELS7N7VNCSB5nC56t/g==}
 
+  '@types/parse5@7.0.0':
+    resolution: {integrity: sha512-f2SeAxumolBmhuR62vNGTsSAvdz/Oj0k682xNrcKJ4dmRnTPODB74j6CPoNPzBPTHsu7Y7W7u93Mgp8Ovo8vWw==}
+    deprecated: This is a stub types definition. parse5 provides its own type definitions, so you do not need this installed.
+
   '@types/pg@8.11.6':
     resolution: {integrity: sha512-/2WmmBXHLsfRqzfHW7BNZ8SbYzE8OSk7i3WjFYvfgRHj7S1xj+16Je5fUKv3lVdVzk/zn9TXOqf+avFCFIE0yQ==}
 
@@ -2638,6 +2697,9 @@ packages:
 
   '@types/sinonjs__fake-timers@8.1.1':
     resolution: {integrity: sha512-0kSuKjAS0TrGLJ0M/+8MaFkGsQhZpB6pxOmvS3K8FYI72K//YmdfoW9X2qPsAKh1mkwxGD5zib9s1FIFed6E8g==}
+
+  '@types/sinonjs__fake-timers@8.1.5':
+    resolution: {integrity: sha512-mQkU2jY8jJEF7YHjHvsQO8+3ughTL1mcnn96igfhONmR+fUPSKIkefQYpSe8bsly2Ep7oQbn/6VG5/9/0qcArQ==}
 
   '@types/sizzle@2.3.9':
     resolution: {integrity: sha512-xzLEyKB50yqCUPUJkIsrVvoWNfFUbIZI+RspLWt8u+tIW/BetMBZtgV2LY/2o+tYH8dRvQ+eoPf3NdhQCcLE2w==}
@@ -3445,6 +3507,18 @@ packages:
 
   css-box-model@1.2.1:
     resolution: {integrity: sha512-a7Vr4Q/kd/aw96bnJG332W9V9LkJO69JRcaCYDUqjp6/z0w6VcZjgAcTbgFxEPfBgdnAwlh3iwu+hLopa+flJw==}
+
+  css-loader@7.1.2:
+    resolution: {integrity: sha512-6WvYYn7l/XEGN8Xu2vWFt9nVzrCn39vKyTEFf/ExEyoksJjjSZV/0/35XPlMbpnr6VGhZIUg5yJrL8tGfes/FA==}
+    engines: {node: '>= 18.12.0'}
+    peerDependencies:
+      '@rspack/core': 0.x || 1.x
+      webpack: ^5.27.0
+    peerDependenciesMeta:
+      '@rspack/core':
+        optional: true
+      webpack:
+        optional: true
 
   css-what@6.1.0:
     resolution: {integrity: sha512-HTUrgRJ7r4dsZKU6GjmpfRK1O76h97Z8MfS1G0FozR+oF2kG6Vfe8JE6zwrkbxigziPHinCJ+gCPjA9EaBDtRw==}
@@ -10180,6 +10254,10 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
+  '@types/json5@2.2.0':
+    dependencies:
+      json5: 2.2.3
+
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 20.17.6
@@ -10227,6 +10305,10 @@ snapshots:
 
   '@types/parse5@6.0.3': {}
 
+  '@types/parse5@7.0.0':
+    dependencies:
+      parse5: 6.0.1
+
   '@types/pg@8.11.6':
     dependencies:
       '@types/node': 20.17.6
@@ -10260,6 +10342,8 @@ snapshots:
       '@types/node': 20.17.6
 
   '@types/sinonjs__fake-timers@8.1.1': {}
+
+  '@types/sinonjs__fake-timers@8.1.5': {}
 
   '@types/sizzle@2.3.9': {}
 
@@ -10942,9 +11026,9 @@ snapshots:
 
   axe-core@4.10.2: {}
 
-  axios@1.7.7:
+  axios@1.7.7(debug@4.3.7):
     dependencies:
-      follow-redirects: 1.15.9
+      follow-redirects: 1.15.9(debug@4.3.7)
       form-data: 4.0.1
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -11357,6 +11441,19 @@ snapshots:
   css-box-model@1.2.1:
     dependencies:
       tiny-invariant: 1.3.3
+
+  css-loader@7.1.2(webpack@5.96.1(esbuild@0.16.3)):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.49)
+      postcss: 8.4.49
+      postcss-modules-extract-imports: 3.1.0(postcss@8.4.49)
+      postcss-modules-local-by-default: 4.1.0(postcss@8.4.49)
+      postcss-modules-scope: 3.2.1(postcss@8.4.49)
+      postcss-modules-values: 4.0.0(postcss@8.4.49)
+      postcss-value-parser: 4.2.0
+      semver: 7.6.3
+    optionalDependencies:
+      webpack: 5.96.1(esbuild@0.16.3)
 
   css-what@6.1.0: {}
 
@@ -12424,7 +12521,9 @@ snapshots:
 
   flatted@3.3.1: {}
 
-  follow-redirects@1.15.9: {}
+  follow-redirects@1.15.9(debug@4.3.7):
+    optionalDependencies:
+      debug: 4.3.7(supports-color@8.1.1)
 
   for-each@0.3.3:
     dependencies:
