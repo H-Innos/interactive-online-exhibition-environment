@@ -47,7 +47,7 @@ export default function FileUploadButton({
         className="flex items-center space-x-2"
       >
         <Upload className="h-4 w-4" />
-        <p>Upload File</p>
+        <p>Upload Cover</p>
       </Button>
     </div>
   );

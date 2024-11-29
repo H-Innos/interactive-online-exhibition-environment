@@ -32,7 +32,7 @@ const mainNavItems = [
 ];
 
 const subNavItems = [
-  { name: "Published exhibitions", icon: Image, href: "/dashboard/published" },
+  { name: "Published Exhibitions", icon: Image, href: "/dashboard/published" },
   { name: "Drafts", icon: FileText, href: "/dashboard/drafts" },
 ];
 
@@ -47,7 +47,7 @@ export function ExhibitionManagerSidebar() {
       >
         <SidebarHeader className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold group-data-[collapsible=icon]:hidden">
+            <h2 className="mr-2 text-lg font-semibold group-data-[collapsible=icon]:hidden">
               Exhibition Manager
             </h2>
             <SidebarTrigger onClick={() => setOpen(!open)} className="p-2">
@@ -55,10 +55,10 @@ export function ExhibitionManagerSidebar() {
             </SidebarTrigger>
           </div>
         </SidebarHeader>
-        <SidebarContent className="group-data-[collapsible=icon]:hidden">
+        <SidebarContent className="ml-6 group-data-[collapsible=icon]:hidden">
           <SidebarMenu>
             {mainNavItems.map((item) => (
-              <SidebarMenuItem key={item.name}>
+              <SidebarMenuItem key={item.name} className="mb-2">
                 <SidebarMenuButton asChild className="flex items-center gap-2">
                   <Link href={item.href}>
                     <item.icon className="h-5 w-5" />
@@ -68,7 +68,7 @@ export function ExhibitionManagerSidebar() {
                 {item.name === "Dashboard" && (
                   <div className="ml-6">
                     {subNavItems.map((subItem) => (
-                      <SidebarMenuItem key={subItem.name}>
+                      <SidebarMenuItem key={subItem.name} className="mb-2">
                         <SidebarMenuButton
                           asChild
                           className="flex items-center gap-2"

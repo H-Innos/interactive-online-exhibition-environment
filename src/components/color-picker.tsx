@@ -17,7 +17,11 @@ interface ColorPickerProps {
   initialColor?: string;
 }
 
-function ColorScale({ onColorSelect }: { onColorSelect: (color: string) => void }) {
+function ColorScale({
+  onColorSelect,
+}: {
+  onColorSelect: (color: string) => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -56,7 +60,9 @@ function ColorScale({ onColorSelect }: { onColorSelect: (color: string) => void 
 
   const handleColorPick = useCallback(
     (
-      event: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+      event:
+        | React.MouseEvent<HTMLCanvasElement>
+        | React.TouchEvent<HTMLCanvasElement>,
     ) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -86,7 +92,7 @@ function ColorScale({ onColorSelect }: { onColorSelect: (color: string) => void 
 
       onColorSelect(color);
     },
-    [onColorSelect]
+    [onColorSelect],
   );
 
   const handleMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -125,7 +131,10 @@ function ColorScale({ onColorSelect }: { onColorSelect: (color: string) => void 
   );
 }
 
-export function ColorPicker({ onColorSelect, initialColor = "#ffffff" }: ColorPickerProps) {
+export function ColorPicker({
+  onColorSelect,
+  initialColor = "#ffffff",
+}: ColorPickerProps) {
   const [open, setOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(initialColor);
 
@@ -140,8 +149,8 @@ export function ColorPicker({ onColorSelect, initialColor = "#ffffff" }: ColorPi
 
   const handleCustomColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const color = e.target.value;
+    setSelectedColor(color);
     if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
-      setSelectedColor(color);
       onColorSelect(color);
     }
   };

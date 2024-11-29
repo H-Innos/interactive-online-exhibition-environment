@@ -26,7 +26,7 @@ const Dashboard = () => {
     error: recentError,
     isLoading: isRecentLoading,
   } = api.exhibition.getRecent.useQuery({
-    limit: 5,
+    limit: 4,
   });
 
   useEffect(() => {

@@ -27,12 +27,16 @@ const ExhibitionViewPage: React.FC = () => {
   }, [data]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   if (error || !exhibition) {
     return (
-      <div className="flex items-center justify-center h-screen text-red-600">
+      <div className="flex h-screen items-center justify-center text-red-600">
         Error loading exhibition.
       </div>
     );
@@ -42,16 +46,16 @@ const ExhibitionViewPage: React.FC = () => {
     exhibition.exhibitionCoverUrl && exhibition.exhibitionCoverUrl.trim() !== ""
       ? exhibition.exhibitionCoverUrl
       : exhibition.thumbnailUrl
-      ? exhibition.thumbnailUrl
-      : configurations.DEFAULT_COVER_IMAGE_URL;
+        ? exhibition.thumbnailUrl
+        : configurations.DEFAULT_COVER_IMAGE_URL;
 
   return (
     <div
-      className="min-h-screen overflow-hidden p-4 text-text-dark sm:p-8"
+      className="min-h-screen overflow-hidden text-text-dark"
       style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}
     >
       <div
-        className="relative flex h-48 w-full items-center justify-center bg-cover bg-center sm:h-64 overflow-hidden"
+        className="relative flex h-48 w-full items-center justify-center overflow-hidden bg-cover bg-center sm:h-64"
         style={{
           backgroundImage: `url(${backgroundImage})`,
           backgroundPosition: `${
@@ -66,26 +70,26 @@ const ExhibitionViewPage: React.FC = () => {
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
           onClick={() => router.push("/")}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 text-3xl text-white sm:text-4xl"
+          className="absolute left-4 top-1/2 z-10 -translate-y-1/2 transform text-3xl text-white sm:text-4xl"
         >
           ❬
         </button>
-        <h1 className="relative z-10 text-center text-lg font-bold text-white sm:text-2xl lg:text-3xl px-4">
+        <h1 className="relative z-10 px-4 text-center text-lg font-bold text-white sm:text-2xl lg:text-3xl">
           {exhibition.name}
         </h1>
       </div>
 
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:gap-8">
+      <div className="mt-8 flex flex-col gap-4 p-4 sm:flex-row sm:gap-8 sm:p-8">
         <div className="flex-1">
           <div
             id="editor-content"
             dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }}
-            className="blocknote-content break-words text-sm sm:text-base lg:text-lg max-w-full"
+            className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
           />
         </div>
 
         {quizzes && quizzes.length > 0 && (
-          <div className="sm:ml-4 max-w-full">
+          <div className="max-w-full sm:ml-4">
             <QuizDropdown
               quizzes={quizzes}
               onQuizSelect={(quizId: number) => {
