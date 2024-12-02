@@ -256,6 +256,7 @@ export const exhibitionRouter = createTRPCRouter({
   getDrafts: publicProcedure.query(async ({ ctx }) => {
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "draft"),
+      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
@@ -268,6 +269,7 @@ export const exhibitionRouter = createTRPCRouter({
   getPublished: publicProcedure.query(async ({ ctx }) => {
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "published"),
+      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
