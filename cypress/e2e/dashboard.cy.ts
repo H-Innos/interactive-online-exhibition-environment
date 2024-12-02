@@ -20,20 +20,6 @@ describe("Dashboard Page", () => {
     cy.visit("/dashboard");
   });
 
-  after(() => {
-    cy.visit("/dashboard/drafts");
-    cy.get(selectors.exhibitionCard(exhibitionTitle), { timeout: 10000 })
-      .should("exist")
-      .then(($el) => {
-        if ($el.length) {
-          cy.wrap($el).should("be.visible");
-          deleteExhibition(exhibitionTitle);
-        } else {
-          cy.log("Exhibition card not found for deletion.");
-        }
-      });
-  });
-
   it("should display the Dashboard heading", () => {
     cy.get(selectors.dashboardHeading).should("be.visible");
   });
