@@ -20,7 +20,7 @@ const TrashedExhibitionsPage = () => {
   const restoreExhibition = api.exhibition.restore.useMutation({
     onSuccess: () => {
       toast.success(t("toasts.exhibitionRestored"));
-      refetch();
+      void refetch();
     },
     onError: (error) => {
       toast.error(
@@ -32,7 +32,7 @@ const TrashedExhibitionsPage = () => {
   const deleteExhibition = api.exhibition.delete.useMutation({
     onSuccess: () => {
       toast.success(t("toasts.exhibitionDeleted"));
-      refetch();
+      void refetch();
     },
     onError: (error) => {
       toast.error(
@@ -74,7 +74,7 @@ const TrashedExhibitionsPage = () => {
               >
                 <h3 className="text-lg font-bold">{exhibition.name}</h3>
                 <p className="text-sm text-gray-600">
-                  {exhibition.description || t("trash.noDescription")}
+                  {exhibition.description ?? t("trash.noDescription")}
                 </p>
 
                 <div className="mt-4 flex justify-between">
