@@ -6,25 +6,29 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "sonner";
+import { auth } from "~/server/auth";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "UTLib näitused",
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await auth();
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
-        <Header />
-
-        <TRPCReactProvider>
-          <main>{children}</main>
-        </TRPCReactProvider>
-        <Toaster />
-        <Footer />
+        <SessionProvider session={session}>
+          <TRPCReactProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <Toaster />
+          </TRPCReactProvider>
+        </SessionProvider>
       </body>
     </html>
   );

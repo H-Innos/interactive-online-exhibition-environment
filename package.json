@@ -19,6 +19,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.7.4",
     "@blocknote/core": "^0.19.0",
     "@blocknote/mantine": "^0.19.0",
     "@blocknote/react": "^0.19.0",
@@ -59,6 +60,7 @@
     "i18next": "^23.16.4",
     "lucide-react": "^0.454.0",
     "next": "^14.2.15",
+    "next-auth": "5.0.0-beta.25",
     "next-cloudinary": "^6.14.2",
     "next-themes": "^0.4.3",
     "postgres": "^3.4.4",

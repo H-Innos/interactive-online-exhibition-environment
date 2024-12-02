@@ -33,6 +33,7 @@
     ".eslintrc.cjs",
     "next-env.d.ts",
     "**/*.ts",
+    "src/server/auth/config.ts",
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
