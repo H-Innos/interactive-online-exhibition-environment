@@ -2,15 +2,14 @@ import { selectors } from "./selectors";
 
 export function createExhibition(title: string, description: string) {
   cy.intercept("POST", "/api/trpc/**").as("createRequest");
-
   cy.visit("/dashboard/drafts");
-  cy.get(selectors.newExhibitionButton).click();
-
+  cy.get(selectors.newExhibitionButton, { timeout: 10000 })
+    .should("be.visible")
+    .debug()
+    .click({ force: true });
   cy.get(selectors.exhibitionTitleInput).type(title);
   cy.get(selectors.exhibitionDescriptionInput).type(description);
-
-  cy.get(selectors.createExhibitionButton).contains("Create").click();
-
+  cy.get(selectors.createButton).click({ force: true });
   cy.wait("@createRequest").then((interception) => {
     expect(interception.response?.statusCode).to.eq(200);
   });
@@ -88,8 +87,75 @@ export function deleteExhibition(title: string) {
   });
 }
 
-function clickDropdownMenuItem(item: string) {
+export function archiveExhibition(exhibitionTitle: string) {
+  cy.intercept("POST", "/api/trpc/**").as("archiveRequest");
+  cy.visit("/dashboard/drafts");
+  cy.get(selectors.exhibitionCard(exhibitionTitle))
+    .first()
+    .within(() => {
+      cy.get(selectors.optionsButton)
+        .should("be.visible")
+        .click({ force: true });
+    });
+
+  cy.get(selectors.dropdownMenu).should("be.visible");
+  clickDropdownMenuItem("Archive");
+  cy.wait("@archiveRequest").then((interception) => {
+    expect(interception.response?.statusCode).to.eq(200);
+  });
+}
+
+export function unarchiveExhibition(exhibitionTitle: string) {
+  cy.intercept("POST", "/api/trpc/**").as("unarchiveRequest");
+  cy.visit("/dashboard/archive");
+  cy.get(selectors.exhibitionCard(exhibitionTitle))
+    .first()
+    .within(() => {
+      cy.get(selectors.optionsButton)
+        .should("be.visible")
+        .click({ force: true });
+    });
+
+  cy.get(selectors.dropdownMenu).should("be.visible");
+  clickDropdownMenuItem("Unarchive");
+  cy.wait("@unarchiveRequest").then((interception) => {
+    expect(interception.response?.statusCode).to.eq(200);
+  });
+}
+
+function clickDropdownMenuItem(item: string | number | RegExp) {
   cy.contains(selectors.dropdownMenuItem, item, { timeout: 20000 }).click({
     force: true,
   });
+}
+
+export function openExhibitionDropdown(exhibitionTitle: string) {
+  cy.get(selectors.exhibitionCard(exhibitionTitle))
+    .first()
+    .within(() => {
+      cy.get(selectors.optionsButton)
+        .should("be.visible")
+        .click({ force: true });
+    });
+
+  cy.get(selectors.dropdownMenu).should("be.visible");
+}
+
+export function checkDropdownButtonDisabled(
+  exhibitionTitle: string,
+  buttonText: string,
+) {
+  cy.get(selectors.exhibitionCard(exhibitionTitle))
+    .first()
+    .within(() => {
+      cy.get(selectors.optionsButton)
+        .should("be.visible")
+        .click({ force: true });
+    });
+
+  cy.get(selectors.dropdownMenu).should("be.visible");
+
+  cy.contains(selectors.dropdownMenuItem, buttonText)
+    .should("be.visible")
+    .and("have.attr", "aria-disabled", "true");
 }

@@ -3,7 +3,7 @@ import Header from "~/app/_components/header";
 import Footer from "~/app/_components/footer";
 
 import { GeistSans } from "geist/font/sans";
-import { type Metadata } from "next";
+import { Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "sonner";
 import { auth } from "~/server/auth";
@@ -16,7 +16,9 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   const session = await auth();
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
