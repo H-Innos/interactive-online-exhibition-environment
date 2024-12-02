@@ -19,11 +19,9 @@ const Dashboard = () => {
   } = api.exhibition.getPublished.useQuery();
 
   return (
-    <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
-      <div className="min-h-screen max-w-full overflow-x-hidden px-4 py-8 text-text-dark sm:px-12">
-        <h1 className="text-neutral mb-2 text-3xl font-bold">
-          {t("dashboard.title")}
-        </h1>
+    <Suspense fallback={<div className="p-4">{t("dashboard.loading")}</div>}>
+      <div className="min-h-screen max-w-full overflow-x-hidden p-8">
+        <h1 className="mb-2 text-3xl font-bold">{t("dashboard.title")}</h1>
         <h2 className="mb-6 text-xl text-gray-500">
           {t("dashboard.manageExhibitions")}
         </h2>
