@@ -157,7 +157,7 @@ export const useTrashExhibition = () => {
   });
 };
 
-export const useRestoreExhibition = () => {
+export const useRestoreExhibition = (p0?: { onSuccess: () => void }) => {
   const { t } = useTranslation();
   const utils = api.useUtils();
 

@@ -20,16 +20,17 @@ const TrashedExhibitionsPage = () => {
   } = api.exhibition.getTrashed.useQuery();
 
   const restoreExhibition = useRestoreExhibition();
-  const deleteExhibition = useDeleteExhibition({
-    onSuccess: () => {
-      refetch();
-    },
-  });
 
-  const handlePermanentDelete = (id: number) => {
+  const deleteExhibition = useDeleteExhibition();
+
+  const handlePermanentDelete = async (id: number) => {
     const confirmed = window.confirm(t("trash.confirmPermanentDelete"));
     if (confirmed) {
-      deleteExhibition.mutate({ id });
+      try {
+        await deleteExhibition.mutateAsync({ id });
+      } catch (error) {
+        console.error("Failed to delete exhibition:", error);
+      }
     }
   };
 
@@ -58,9 +59,15 @@ const TrashedExhibitionsPage = () => {
                 <div className="mt-4 flex justify-between">
                   <Button
                     variant="outline"
-                    onClick={() =>
-                      restoreExhibition.mutate({ id: exhibition.id })
-                    }
+                    onClick={async () => {
+                      try {
+                        await restoreExhibition.mutateAsync({
+                          id: exhibition.id,
+                        });
+                      } catch (error) {
+                        console.error("Failed to restore exhibition:", error);
+                      }
+                    }}
                     className="flex items-center gap-2"
                   >
                     <ArrowPathIcon className="h-5 w-5" />
@@ -69,7 +76,7 @@ const TrashedExhibitionsPage = () => {
 
                   <Button
                     variant="destructive"
-                    onClick={() => handlePermanentDelete(exhibition.id)}
+                    onClick={async () => handlePermanentDelete(exhibition.id)}
                     className="flex items-center gap-2"
                   >
                     <TrashIcon className="h-5 w-5" />
