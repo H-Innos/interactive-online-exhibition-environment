@@ -159,5 +159,7 @@
   "archive2": "Arhiiv",
   "drafts": "Mustandid",
   "publishedExhibitions": "Avaldatud näitused",
-  "exhibitionManager": "Näituste haldamine"
+  "exhibitionManager": "Näituste haldamine",
+  "fileUpload": "Lae fail üles",
+  "chooseCoverImage": "Taustapilt: "
 }

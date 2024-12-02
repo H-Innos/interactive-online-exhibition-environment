@@ -140,8 +140,8 @@
   "title": "Title",
   "description": "Description",
   "descriptionPlaceholder": "Enter exhibition description",
-  "thumbnail": "Cover Image",
-  "thumbnailPlaceholder": "Choose cover image",
+  "thumbnail": "Thumbnail",
+  "thumbnailPlaceholder": "Choose thumbnail",
   "edit": "Edit",
   "cancel": "Cancel",
   "characters": "characters",
@@ -159,5 +159,7 @@
   "archive2": "Archive",
   "drafts": "Drafts",
   "publishedExhibitions": "Published Exhibitions",
-  "exhibitionManager": "Exhibition Manager"
+  "exhibitionManager": "Exhibition Manager",
+  "fileUpload": "Upload File",
+  "chooseCoverImage": "Cover Image:"
 }

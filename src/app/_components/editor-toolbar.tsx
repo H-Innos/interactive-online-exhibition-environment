@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { ColorPicker } from "~/components/color-picker";
 import { useTranslation } from "react-i18next";
 import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { usePublishExhibition, useUpdateExhibition } from "~/hooks/exhibition-actions";
+import {
+  usePublishExhibition,
+  useUpdateExhibition,
+} from "~/hooks/exhibition-actions";
 import CoverImage from "~/components/cover-image";
 import FileUploadButton from "~/components/file-upload-button";
 import type { Exhibition } from "~/lib/types/entities";
@@ -30,7 +38,9 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const updateExhibition = useUpdateExhibition();
   const publishExhibition = usePublishExhibition();
 
-  const [localCoverUrl, setLocalCoverUrl] = useState<string | null>(exhibition?.exhibitionCoverUrl ?? null);
+  const [localCoverUrl, setLocalCoverUrl] = useState<string | null>(
+    exhibition?.exhibitionCoverUrl ?? null,
+  );
 
   const handlePositionChange = (newPosition: { x: number; y: number }) => {
     if (exhibition) {
@@ -70,9 +80,9 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
       url: string;
     }
 
-    const data: UploadResponse = await response.json() as UploadResponse;
+    const data: UploadResponse = (await response.json()) as UploadResponse;
     return data.url;
-}
+  }
 
   function handleSaveEditorChanges() {
     if (exhibition) {
@@ -99,11 +109,14 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
     if (exhibition) {
       const isConfirmed = window.confirm(t("confirmPublish"));
       if (isConfirmed) {
-        publishExhibition.mutate({ id: exhibition.id }, {
-          onSuccess: () => {
-            setIsDirty(false);
+        publishExhibition.mutate(
+          { id: exhibition.id },
+          {
+            onSuccess: () => {
+              setIsDirty(false);
+            },
           },
-        });
+        );
       }
     }
   }
@@ -114,11 +127,11 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
   return (
     <TooltipProvider>
-      <div className="flex flex-wrap items-center justify-between p-4 bg-white shadow-md gap-4">
-        <div className="flex items-center w-full sm:w-auto">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 shadow-md">
+        <div className="flex w-full items-center sm:w-auto">
           <button
             type="button"
-            className="ml-8 text-4xl mr-8"
+            className="ml-8 mr-8 text-4xl"
             onClick={() => router.push(`/dashboard`)}
           >
             ❬
@@ -129,7 +142,10 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          <label htmlFor="background-color" className="text-sm font-medium text-gray-700">
+          <label
+            htmlFor="background-color"
+            className="text-sm font-medium text-gray-700"
+          >
             {t("backgroundColor")}
           </label>
           <div className="w-full sm:w-[200px]">
@@ -139,17 +155,22 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             />
           </div>
 
-          <FileUploadButton
-            onFileSelect={handleFileSelect}
-            accept="image/*"
-          />
+          <label
+            htmlFor="cover-image"
+            className="text-sm font-medium text-gray-700"
+          >
+            {t("chooseCoverImage")}
+          </label>
+          <FileUploadButton onFileSelect={handleFileSelect} accept="image/*" />
 
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 type="button"
-                className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100"
-                onClick={() => router.push(`/dashboard/${exhibition?.id}/quizzes`)}
+                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
+                onClick={() =>
+                  router.push(`/dashboard/${exhibition?.id}/quizzes`)
+                }
                 data-testid="create-quiz"
               >
                 <FilePlus className="h-5 w-5 text-black" />
@@ -164,7 +185,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100"
+                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
                 onClick={() => setIsDetailsModalOpen(true)}
               >
                 <Info className="h-5 w-5 text-black" />
@@ -179,7 +200,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100"
+                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
                 onClick={() => setIsPreviewModalOpen(true)}
               >
                 <Eye className="h-5 w-5 text-black" />
@@ -195,7 +216,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
               <button
                 data-testid="save-editor-changes"
                 type="button"
-                className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100"
+                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
                 onClick={handleSaveEditorChanges}
               >
                 <Save className="h-5 w-5 text-black" />
@@ -210,7 +231,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                className="flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white hover:bg-gray-100 mr-8"
+                className="mr-8 flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
                 onClick={handlePublish}
                 data-testid="publish-exhibition"
               >
@@ -225,10 +246,18 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
         {exhibition && (
           <CoverImage
-          exhibitionCoverUrl={localCoverUrl ?? exhibition.exhibitionCoverUrl ?? exhibition.thumbnailUrl}
+            exhibitionCoverUrl={
+              localCoverUrl ??
+              exhibition.exhibitionCoverUrl ??
+              exhibition.thumbnailUrl
+            }
             initialPosition={{
-              x: exhibition.coverImagePositionX ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
-              y: exhibition.coverImagePositionY ?? configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
+              x:
+                exhibition.coverImagePositionX ??
+                configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
+              y:
+                exhibition.coverImagePositionY ??
+                configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
             }}
             onPositionChange={handlePositionChange}
           />
