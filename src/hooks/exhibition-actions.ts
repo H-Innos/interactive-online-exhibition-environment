@@ -73,7 +73,7 @@ export const useUnpublishExhibition = () => {
   });
 };
 
-export const useDeleteExhibition = () => {
+export const useDeleteExhibition = (p0?: { onSuccess: () => void }) => {
   const { t } = useTranslation();
   const utils = api.useUtils();
 
@@ -142,14 +142,17 @@ export const useTrashExhibition = () => {
     onSuccess: async () => {
       try {
         await invalidateExhibitionQueries(utils);
-        toast.success(t("toasts.exhibitionDeleted"));
+        await utils.exhibition.getTrashed.invalidate();
+        toast.success(t("toasts.exhibitionTrashed"));
       } catch (error) {
         console.error("Error invalidating queries:", error);
         toast.error(t("toasts.failedInvalidateCache"));
       }
     },
     onError: (error) => {
-      toast.error(t("toasts.exhibitionDeleted", { message: error.message }));
+      toast.error(
+        t("toasts.failedDeleteExhibition", { message: error.message }),
+      );
     },
   });
 };
@@ -162,6 +165,7 @@ export const useRestoreExhibition = () => {
     onSuccess: async () => {
       try {
         await invalidateExhibitionQueries(utils);
+        await utils.exhibition.getTrashed.invalidate();
         toast.success(t("toasts.exhibitionRestored"));
       } catch (error) {
         console.error("Error invalidating queries:", error);

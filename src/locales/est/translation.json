@@ -63,7 +63,10 @@
     "title": "Prügikast",
     "manageTrashedExhibitions": "Kustutatud näitused",
     "loading": "Laadimine...",
-    "noTrashedExhibitions": "Kustutatud näitusi pole saadaval."
+    "noTrashedExhibitions": "Kustutatud näitusi pole saadaval.",
+    "confirmTrash": "Oled kindel, et soovid seda näitust kustutada?",
+    "confirmPermanentDelete": "Oled kindel, et soovid seda näitust jäädavalt kustutada?",
+    "confirmRestore": "Oled kindel, et soovid seda näitust taastada?"
   },
 
   "quizzes": {
@@ -102,7 +105,8 @@
     "failedUnarchiveExhibition": "Arhiivist eemaldamine ebaõnnestus: {{message}}",
     "failedCreateQuiz": "Viktoriini loomine ebaõnnestus: {{message}}",
     "failedDeleteQuiz": "Viktoriini kustutamine ebaõnnestus: {{message}}",
-    "exhibitionDeleted": "Näitus kustutatud.",
+    "exhibitionTrashed": "Näitus kustutatud.",
+    "exhibitionDeleted": "Näitus jäädavalt kustutatud.",
     "exhibitionUpdated": "Näitus uuendatud.",
     "exhibitionPublished": "Näitus avaldatud.",
     "exhibitionUnpublished": "Näitus viidud tagasi mustanditesse.",
@@ -110,7 +114,9 @@
     "exhibitionUnarchived": "Näitus arhiivist eemaldatud.",
     "quizCreated": "Viktoriin loodud.",
     "quizDeleted": "Viktoriin kustutatud",
-    "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte."
+    "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte.",
+    "exhibitionRestored": "Näitus taastatud!",
+    "failedRestoreExhibition": "Näitust ei saanud taastada: {{message}}"
   },
 
   "archive": {

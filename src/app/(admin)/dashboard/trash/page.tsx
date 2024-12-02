@@ -5,50 +5,30 @@ import { useTranslation } from "react-i18next";
 import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { TrashIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
-import { toast } from "sonner";
+import {
+  useRestoreExhibition,
+  useDeleteExhibition,
+} from "~/hooks/exhibition-actions";
 
 const TrashedExhibitionsPage = () => {
   const { t } = useTranslation();
 
   const {
     data: trashedExhibitions,
-    error: errorLoading,
-    isLoading,
+    error,
     refetch,
   } = api.exhibition.getTrashed.useQuery();
 
-  const restoreExhibition = api.exhibition.restore.useMutation({
+  const restoreExhibition = useRestoreExhibition();
+  const deleteExhibition = useDeleteExhibition({
     onSuccess: () => {
-      toast.success(t("toasts.exhibitionRestored"));
-      void refetch();
-    },
-    onError: (error) => {
-      toast.error(
-        t("toasts.failedRestoreExhibition", { message: error.message }),
-      );
+      refetch();
     },
   });
-
-  const deleteExhibition = api.exhibition.delete.useMutation({
-    onSuccess: () => {
-      toast.success(t("toasts.exhibitionDeleted"));
-      void refetch();
-    },
-    onError: (error) => {
-      toast.error(
-        t("toasts.failedDeleteExhibition", { message: error.message }),
-      );
-    },
-  });
-
-  const handleRestore = (id: number) => {
-    if (window.confirm(t("trash.confirmRestore"))) {
-      restoreExhibition.mutate({ id });
-    }
-  };
 
   const handlePermanentDelete = (id: number) => {
-    if (window.confirm(t("trash.confirmPermanentDelete"))) {
+    const confirmed = window.confirm(t("trash.confirmPermanentDelete"));
+    if (confirmed) {
       deleteExhibition.mutate({ id });
     }
   };
@@ -61,9 +41,7 @@ const TrashedExhibitionsPage = () => {
           {t("trash.manageTrashedExhibitions")}
         </h2>
 
-        {isLoading ? (
-          <div>{t("trash.loading")}</div>
-        ) : errorLoading ? (
+        {error ? (
           <div>{t("trash.errorLoading")}</div>
         ) : trashedExhibitions && trashedExhibitions.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -80,7 +58,9 @@ const TrashedExhibitionsPage = () => {
                 <div className="mt-4 flex justify-between">
                   <Button
                     variant="outline"
-                    onClick={() => handleRestore(exhibition.id)}
+                    onClick={() =>
+                      restoreExhibition.mutate({ id: exhibition.id })
+                    }
                     className="flex items-center gap-2"
                   >
                     <ArrowPathIcon className="h-5 w-5" />

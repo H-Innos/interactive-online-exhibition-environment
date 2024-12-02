@@ -63,7 +63,9 @@
     "title": "Trash",
     "manageTrashedExhibitions": "Manage Trashed Exhibitions",
     "loading": "Loading...",
-    "noTrashedExhibitions": "No trashed exhibitions available."
+    "noTrashedExhibitions": "No trashed exhibitions available.",
+    "confirmPermanentDelete": "Are you sure you want to permanently delete this exhibition?",
+    "confirmRestore": "Are you sure you want to restore this exhibition?"
   },
 
   "quizzes": {
@@ -102,7 +104,8 @@
     "failedUnarchiveExhibition": "Failed to unarchive exhibition: {{message}}",
     "failedCreateQuiz": "Failed to create quiz: {{message}}",
     "failedDeleteQuiz": "Failed to delete quiz: {{message}}",
-    "exhibitionDeleted": "Exhibition deleted successfully!",
+    "exhibitionTrashed": "Exhibition deleted successfully!",
+    "exhibitionDeleted": "Exhibition permanently deleted!",
     "exhibitionUpdated": "Exhibition updated successfully!",
     "exhibitionPublished": "Exhibition published successfully!",
     "exhibitionUnpublished": "Exhibition moved back to drafts!",
@@ -110,7 +113,9 @@
     "exhibitionUnarchived": "Exhibition unarchived successfully!",
     "quizCreated": "Quiz created successfully!",
     "quizDeleted": "Quiz deleted successfully!",
-    "failedInvalidateCache": "Error updating page content. Please refresh the page."
+    "failedInvalidateCache": "Error updating page content. Please refresh the page.",
+    "exhibitionRestored": "Exhibition restored successfully!",
+    "failedRestoreExhibition": "Failed to restore exhibition: {{message}}"
   },
 
   "archive": {
@@ -120,7 +125,8 @@
     "view": "View",
     "now": "Archive",
     "confirmArchive": "Are you sure you want to archive this exhibition?",
-    "confirmUnarchive": "Are you sure you want to unarchive this exhibition?"
+    "confirmUnarchive": "Are you sure you want to unarchive this exhibition?",
+    "confirmTrash": "Are you sure you want to delete this exhibition?"
   },
 
   "confirmPublish": "Are you sure you want to publish this exhibition?",
