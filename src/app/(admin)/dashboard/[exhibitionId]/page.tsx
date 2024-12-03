@@ -68,7 +68,7 @@ const ExhibitionEditorPage = () => {
           aria-hidden="true"
         />
       )}
-      <div className="flex flex-col min-h-screen">
+      <div className="flex min-h-screen flex-col">
         <ExhibitionToolbar
           exhibition={editorState}
           setBackgroundColor={handleBackgroundColorChange}
@@ -90,6 +90,7 @@ const ExhibitionEditorPage = () => {
                 <ExhibitionContentEditor
                   initialContent={editorState.content ?? ""}
                   onChange={handleEditorChange}
+                  bgColor={editorState?.backgroundColor ?? "#ffffff"}
                 />
               </div>
             )}
@@ -99,8 +100,8 @@ const ExhibitionEditorPage = () => {
 
       {isDetailsModalOpen && editorState && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
-            <h2 className="text-xl font-bold mb-4">{t("exhibitionDetails")}</h2>
+          <div className="w-[600px] rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-xl font-bold">{t("exhibitionDetails")}</h2>
             <ExhibitionDataForm exhibition={editorState} />
             <button
               type="button"
