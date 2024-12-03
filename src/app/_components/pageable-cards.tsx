@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import PaginationControls from "~/components/pagination-controls";
 import type { Exhibition } from "~/lib/types/entities";
@@ -24,8 +24,12 @@ const PageableExhibitions = ({
   CardComponent,
 }: PageableExhibitionsProps) => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const currentPage = parseInt(searchParams.get("page") ?? "1", 10);
-  const [exhibitionsPerPage, setExhibitionsPerPage] = useState(12);
+  const [exhibitionsPerPage, setExhibitionsPerPage] = useState(() => {
+    const perPageFromUrl = searchParams.get("perPage");
+    return perPageFromUrl ? parseInt(perPageFromUrl, 10) : 12;
+  });
 
   useEffect(() => {
     const storedPerPage = localStorage.getItem("exhibitionsPerPage");
@@ -46,6 +50,9 @@ const PageableExhibitions = ({
     const newPerPage = parseInt(value, 10);
     setExhibitionsPerPage(newPerPage);
     localStorage.setItem("exhibitionsPerPage", value);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("perPage", value);
+    router.push(`?${newParams.toString()}`);
   };
 
   return (
