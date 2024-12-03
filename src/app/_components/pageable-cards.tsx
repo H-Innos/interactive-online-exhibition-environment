@@ -1,10 +1,16 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PaginationControls from "~/components/pagination-controls";
 import type { Exhibition } from "~/lib/types/entities";
-import { configurations } from "~/lib/constants/config";
+import {
+  Select,
+  SelectTrigger,
+  SelectItem,
+  SelectContent,
+  SelectValue,
+} from "~/components/ui/select";
 
 interface PageableExhibitionsProps {
   title: string;
@@ -19,7 +25,14 @@ const PageableExhibitions = ({
 }: PageableExhibitionsProps) => {
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") ?? "1", 10);
-  const exhibitionsPerPage = configurations.EXHIBITIONS_PER_PAGE;
+  const [exhibitionsPerPage, setExhibitionsPerPage] = useState(12);
+
+  useEffect(() => {
+    const storedPerPage = localStorage.getItem("exhibitionsPerPage");
+    if (storedPerPage) {
+      setExhibitionsPerPage(parseInt(storedPerPage, 10));
+    }
+  }, []);
 
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
   const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
@@ -29,9 +42,31 @@ const PageableExhibitions = ({
   );
   const totalPages = Math.ceil(exhibitions.length / exhibitionsPerPage);
 
+  const handlePerPageChange = (value: string) => {
+    const newPerPage = parseInt(value, 10);
+    setExhibitionsPerPage(newPerPage);
+    localStorage.setItem("exhibitionsPerPage", value);
+  };
+
   return (
     <div className="mb-10">
-      <h1 className="text-neutral mb-5 text-2xl font-bold">{title}</h1>
+      <div className="mb-5 flex items-center justify-between">
+        <h1 className="text-neutral text-2xl font-bold">{title}</h1>
+        <Select
+          value={exhibitionsPerPage.toString()}
+          onValueChange={handlePerPageChange}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Exhibitions per page" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="12">12 per page</SelectItem>
+            <SelectItem value="24">24 per page</SelectItem>
+            <SelectItem value="36">36 per page</SelectItem>
+            <SelectItem value="48">48 per page</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <div className="relative">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
