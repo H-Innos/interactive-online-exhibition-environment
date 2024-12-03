@@ -108,6 +108,12 @@ export default function SlideInMenu() {
           >
             {t("archive.title")}
           </Link>
+          <Link
+            href="/dashboard/trash"
+            className="block border-b border-gray-300 pb-2"
+          >
+            {t("trash2")}
+          </Link>
         </div>
 
         <div className="mt-8 w-full">
