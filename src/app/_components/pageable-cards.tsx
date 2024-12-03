@@ -31,13 +31,6 @@ const PageableExhibitions = ({
     return perPageFromUrl ? parseInt(perPageFromUrl, 10) : 12;
   });
 
-  useEffect(() => {
-    const storedPerPage = localStorage.getItem("exhibitionsPerPage");
-    if (storedPerPage) {
-      setExhibitionsPerPage(parseInt(storedPerPage, 10));
-    }
-  }, []);
-
   const indexOfLastExhibition = currentPage * exhibitionsPerPage;
   const indexOfFirstExhibition = indexOfLastExhibition - exhibitionsPerPage;
   const currentExhibitions = exhibitions.slice(
@@ -49,7 +42,6 @@ const PageableExhibitions = ({
   const handlePerPageChange = (value: string) => {
     const newPerPage = parseInt(value, 10);
     setExhibitionsPerPage(newPerPage);
-    localStorage.setItem("exhibitionsPerPage", value);
     const newParams = new URLSearchParams(searchParams);
     newParams.set("perPage", value);
     router.push(`?${newParams.toString()}`);
