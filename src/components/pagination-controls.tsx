@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,6 +14,8 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   totalPages,
 }) => {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const perPage = searchParams.get("perPage") ?? "12";
 
   if (totalPages <= 1) {
     return null;
@@ -23,7 +26,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
     pages.push(
       <Link
         key={1}
-        href={`?page=1`}
+        href={`?page=1&perPage=${perPage}`}
         className={`cursor-pointer px-2 py-1 text-sm sm:px-3 sm:py-1 sm:text-base ${
           currentPage === 1
             ? "rounded-md bg-black text-white"
@@ -53,7 +56,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       pages.push(
         <Link
           key={i}
-          href={`?page=${i}`}
+          href={`?page=${i}&perPage=${perPage}`}
           className={`cursor-pointer px-2 py-1 text-sm sm:px-3 sm:py-1 sm:text-base ${
             i === currentPage
               ? "rounded-md bg-black text-white"
@@ -80,7 +83,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       pages.push(
         <Link
           key={totalPages}
-          href={`?page=${totalPages}`}
+          href={`?page=${totalPages}&perPage=${perPage}`}
           className={`cursor-pointer px-2 py-1 text-sm sm:px-3 sm:py-1 sm:text-base ${
             currentPage === totalPages
               ? "rounded-md bg-black text-white"
@@ -99,7 +102,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
     <div className="mt-8 flex flex-wrap items-center justify-center space-x-2 sm:space-x-4">
       {currentPage > 1 ? (
         <Link
-          href={`?page=${currentPage - 1}`}
+          href={`?page=${currentPage - 1}&perPage=${perPage}`}
           className="flex cursor-pointer items-center rounded-md px-3 py-2 text-lg text-gray-700 hover:bg-gray-200 hover:text-black sm:px-4 sm:py-2 sm:text-xl"
         >
           <ChevronLeft className="mr-1 h-5 w-5 sm:mr-2 sm:h-7 sm:w-7" />
@@ -118,7 +121,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
       {currentPage < totalPages ? (
         <Link
-          href={`?page=${currentPage + 1}`}
+          href={`?page=${currentPage + 1}&perPage=${perPage}`}
           className="flex cursor-pointer items-center rounded-md px-3 py-2 text-lg text-gray-700 hover:bg-gray-200 hover:text-black sm:px-4 sm:py-2 sm:text-xl"
         >
           {t("pagination.next")}
