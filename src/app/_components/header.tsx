@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
 import { usePathname } from "next/navigation";
 import { Button } from "~/components/ui/button";
+import LoginDropdown from "~/components/log-in-dropdown";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -69,12 +70,7 @@ const Header = () => {
                 <SlideInMenu />
               </div>
             </div>
-            <Link
-              href="/login"
-              className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block"
-            >
-              {t("login")}
-            </Link>
+            <LoginDropdown />
           </div>
         </div>
       </header>
