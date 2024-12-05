@@ -19,7 +19,6 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
     isLoading,
   } = api.exhibition.getPublished.useQuery();
   const [searchTerm, setSearchTerm] = useState("");
-  console.log();
   const filteredExhibitions = exhibitions
     ? exhibitions.filter((exhibition) =>
         exhibition.name.toLowerCase().includes(searchTerm.toLowerCase()),
