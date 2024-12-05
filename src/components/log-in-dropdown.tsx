@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { type LoginFormSchema, loginSchema } from "~/lib/types/schemas";
-import { login } from "~/app/(auth)/login/actions";
+import { login } from "~/server/auth/actions";
 
 export default function LoginDropdown() {
   const [isOpen, setIsOpen] = useState(false);

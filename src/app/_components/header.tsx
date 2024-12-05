@@ -10,7 +10,7 @@ import LoginDropdown from "~/components/log-in-dropdown";
 import LanguageOptions from "~/components/language-options";
 import { useSession } from "~/lib/contexts/SessionProvider";
 import { Button } from "~/components/ui/button";
-import { logout } from "../(auth)/login/actions";
+import { logout } from "../../server/auth/actions";
 
 const Header = () => {
   const { t } = useTranslation();
