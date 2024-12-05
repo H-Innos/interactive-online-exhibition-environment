@@ -69,9 +69,12 @@ const Header = () => {
                 <SlideInMenu />
               </div>
             </div>
-            <Button className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block">
+            <Link
+              href="/login"
+              className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block"
+            >
               {t("login")}
-            </Button>
+            </Link>
           </div>
         </div>
       </header>
