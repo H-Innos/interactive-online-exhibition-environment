@@ -5,11 +5,9 @@ import Image from "next/image";
 import React, { useState } from "react";
 import SlideInMenu from "~/components/slide-in-menu";
 import { useTranslation } from "react-i18next";
-import i18n from "~/i18n";
 import { usePathname } from "next/navigation";
-import { Button } from "~/components/ui/button";
 import LoginDropdown from "~/components/log-in-dropdown";
-
+import LanguageOptions from "~/components/language-options";
 const Header = () => {
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,14 +18,6 @@ const Header = () => {
   const isNoHeaderPath =
     idPathRegex.exec(pathname) !== null ||
     dashboardPathRegex.exec(pathname) !== null;
-
-  const changeLanguage = async (lng: string | undefined) => {
-    try {
-      await i18n.changeLanguage(lng);
-    } catch (error) {
-      console.error("Error changing language:", error);
-    }
-  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -49,19 +39,7 @@ const Header = () => {
           </a>
 
           <div className="relative z-10 flex items-center space-x-4 sm:space-x-6">
-            <button
-              onClick={() => changeLanguage("en")}
-              className={`hidden text-lg text-text-dark hover:text-primary-dark sm:block ${i18n.language === "en" ? "font-bold" : ""}`}
-            >
-              ENG
-            </button>
-            <button
-              onClick={() => changeLanguage("est")}
-              className={`hidden text-lg text-text-dark hover:text-primary-dark sm:block ${i18n.language === "est" ? "font-bold" : ""}`}
-            >
-              EST
-            </button>
-
+            <LanguageOptions />
             <div className="block sm:hidden">
               <div
                 onClick={toggleMenu}
@@ -75,8 +53,8 @@ const Header = () => {
         </div>
       </header>
 
-      {!isMenuOpen && !isNoHeaderPath && (
-        <nav className="mt-4 hidden w-full items-center justify-center space-x-0 overflow-hidden bg-background text-text-dark sm:flex sm:space-x-32">
+      {!isNoHeaderPath && (
+        <nav className="mt-4 hidden w-full items-center justify-center space-x-0 overflow-hidden bg-background text-text-dark sm:block sm:flex sm:space-x-32">
           <Link href="/">
             <span className="group relative block cursor-pointer text-lg text-text-dark sm:inline-block">
               {t("allExhibitions")}

@@ -7,21 +7,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { z } from "zod";
-import { login } from "~/app/(auth)/login/actions";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-});
-
-type LoginFormSchema = z.infer<typeof loginSchema>;
+import { type LoginFormSchema, loginSchema } from "~/lib/types/schemas";
+import { login } from "~/app/(auth)/login/actions";
 
 export default function LoginDropdown() {
   const [isOpen, setIsOpen] = useState(false);
