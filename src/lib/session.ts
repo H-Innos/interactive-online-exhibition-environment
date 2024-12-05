@@ -40,12 +40,13 @@ export async function decrypt(session: string | undefined = "") {
     });
     return payload;
   } catch (error) {
-    console.log("Failed to verify session: ", error);
+    console.log("Failed to verify session");
   }
 }
 
 export async function getSession() {
   const cookie = cookies().get("session")?.value;
+  if (!cookie) return;
   const session = await decrypt(cookie);
   return session;
 }

@@ -8,6 +8,10 @@ import { useTranslation } from "react-i18next";
 import { usePathname } from "next/navigation";
 import LoginDropdown from "~/components/log-in-dropdown";
 import LanguageOptions from "~/components/language-options";
+import { useSession } from "~/lib/contexts/SessionProvider";
+import { Button } from "~/components/ui/button";
+import { logout } from "../(auth)/login/actions";
+
 const Header = () => {
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,6 +26,9 @@ const Header = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const { session } = useSession();
+  console.log(session);
 
   return (
     <>
@@ -48,7 +55,11 @@ const Header = () => {
                 <SlideInMenu />
               </div>
             </div>
-            <LoginDropdown />
+            {!!session ? (
+              <Button onClick={async () => await logout()}> Log out</Button>
+            ) : (
+              <LoginDropdown />
+            )}
           </div>
         </div>
       </header>
