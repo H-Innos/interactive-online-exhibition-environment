@@ -7,7 +7,7 @@ import SlideInMenu from "~/components/slide-in-menu";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { Button } from "~/components/ui/button";
 
 const Header = () => {
   const { t } = useTranslation();
@@ -31,8 +31,6 @@ const Header = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
-  const session = useSession();
 
   return (
     <>
@@ -71,24 +69,9 @@ const Header = () => {
                 <SlideInMenu />
               </div>
             </div>
-            {!session ? (
-              <Link
-                href="api/auth/signin"
-                className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block"
-              >
-                {t("login")}
-              </Link>
-            ) : (
-              <>
-                <p>logged in as {session.data?.user.name}</p>
-                <Link
-                  href="api/auth/signout"
-                  className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block"
-                >
-                  Log out
-                </Link>
-              </>
-            )}
+            <Button className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block">
+              {t("login")}
+            </Button>
           </div>
         </div>
       </header>
