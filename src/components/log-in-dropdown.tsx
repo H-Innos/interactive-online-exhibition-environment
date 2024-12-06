@@ -23,7 +23,10 @@ export default function LoginDropdown() {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block">
+        <Button
+          className="hidden rounded bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover sm:block"
+          data-testid="login-dropdown-button"
+        >
           {t("login")}
         </Button>
       </DropdownMenuTrigger>
@@ -85,7 +88,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
         <label htmlFor="email" className="text-sm font-medium text-gray-700">
           {t("slideInMenu.email")}
         </label>
-        <Input id="email" {...register("email")} className="w-full" />
+        <Input
+          id="email"
+          {...register("email")}
+          className="w-full"
+          data-testid="email-input"
+        />
         {errors?.email && (
           <p className="text-red-500">{errors.email.message}</p>
         )}
@@ -99,6 +107,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           type="password"
           {...register("password")}
           className="w-full"
+          data-testid="password-input"
         />
       </div>
       {errors?.password && (
@@ -109,6 +118,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           onClick={handleSubmit(onLogin)}
           disabled={isSubmitting}
           className="w-full"
+          data-testid="login-button"
         >
           <LogIn className="h-2 w-2" /> {t("slideInMenu.logIn")}
         </Button>
@@ -116,6 +126,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
           onClick={handleSubmit(onRegister)}
           disabled={isSubmitting}
           className="w-full"
+          data-testid="register-button"
         >
           <PenSquareIcon className="h-2 w-2" /> {t("signup")}
         </Button>

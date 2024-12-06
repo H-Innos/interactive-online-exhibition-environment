@@ -1,9 +1,34 @@
 import { selectors } from "./selectors";
 
+export function login() {
+  cy.visit("/");
+
+  cy.get("body").then(($body) => {
+    if ($body.find(selectors.logoutButton).length > 0) {
+      cy.log("User is already logged in, skipping the test.");
+      return; // Skip the rest of the test
+    } else {
+      cy.get(selectors.loginDropdownButton).click({ force: true });
+      cy.get(selectors.emailInput).type("test@test.com");
+      cy.get(selectors.passwordInput).type("12345678");
+      cy.get(selectors.registerButton).click({ force: true });
+
+      cy.contains("User already exists", { timeout: 10000, log: false }).then(
+        ($toast) => {
+          if ($toast.length > 0) {
+            cy.get(selectors.loginButton).click({ force: true });
+          }
+        },
+      );
+      cy.url().should("include", "/dashboard");
+    }
+  });
+}
+
 export function createExhibition(title: string, description: string) {
   cy.intercept("POST", "/api/trpc/**").as("createRequest");
   cy.visit("/dashboard/drafts");
-  cy.get(selectors.newExhibitionButton, { timeout: 10000 })
+  cy.get(selectors.newExhibitionButton, { timeout: 5000 })
     .should("be.visible")
     .debug()
     .click({ force: true });
