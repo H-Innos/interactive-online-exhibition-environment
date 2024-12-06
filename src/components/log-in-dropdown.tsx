@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { type LoginFormSchema, loginSchema } from "~/lib/types/schemas";
 import { login, registerUser } from "~/server/auth/actions";
 import { toast } from "sonner";
-import { LogIn, Pencil, PenSquareIcon, Plus } from "lucide-react";
+import { LogIn, PenSquareIcon } from "lucide-react";
 
 export default function LoginDropdown() {
   const [isOpen, setIsOpen] = useState(false);

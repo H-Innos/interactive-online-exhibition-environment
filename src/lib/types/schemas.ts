@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { configurations } from "~/lib/constants/config";
-import { db } from "~/server/db";
 
 const coverImageSchema = z
   .instanceof(File)
