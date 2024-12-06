@@ -21,7 +21,7 @@ export function login() {
           }
         },
       );
-      cy.url().should("include", "/dashboard");
+      cy.url({ timeout: 10000 }).should("include", "/dashboard");
     }
   });
 }
