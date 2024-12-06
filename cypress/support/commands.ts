@@ -15,6 +15,7 @@ export function login() {
 
       cy.contains("User already exists", { timeout: 10000, log: false }).then(
         ($toast) => {
+          // @ts-expect-error - this is fine
           if ($toast.length > 0) {
             cy.get(selectors.loginButton).click({ force: true });
           }
