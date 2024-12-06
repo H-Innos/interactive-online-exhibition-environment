@@ -2,20 +2,29 @@
 
 import { createSession, deleteSession } from "~/lib/session";
 import { redirect } from "next/navigation";
-
-const testUser = {
-  id: "1",
-  email: "test@ut.ee",
-  password: "12345678",
-};
+import { db } from "../db";
+import { users } from "../db/schema";
+import bcrypt from "bcrypt";
 
 export async function login(email: string, password: string) {
-  if (email !== testUser.email || password !== testUser.password) {
-    console.log("Invalid login credentials");
-    return;
+  const user = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
+  if (!user) {
+    return {
+      error: "Invalid email or password",
+    };
   }
-  await createSession(testUser.id);
 
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordCorrect) {
+    return {
+      error: "Invalid email or password",
+    };
+  }
+
+  await createSession(user.id.toString());
   redirect("/dashboard");
 }
 
@@ -23,3 +32,35 @@ export async function logout() {
   await deleteSession();
   redirect("/");
 }
+
+export const registerUser = async (email: string, password: string) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const existingUser = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.email, email),
+  });
+
+  if (existingUser) {
+    return {
+      error: "User already exists",
+    };
+  }
+
+  const newUser = await db
+    .insert(users)
+    .values({
+      email,
+      password: hashedPassword,
+    })
+    .returning();
+
+  const userId = newUser[0]?.id;
+
+  if (!userId) {
+    return {
+      error: "Can't create user",
+    };
+  }
+  await createSession(userId.toString());
+  redirect("/dashboard");
+};

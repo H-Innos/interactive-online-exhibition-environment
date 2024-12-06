@@ -8,6 +8,9 @@ import { Label } from "~/components/ui/label";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
+import { useSession } from "~/lib/contexts/SessionProvider";
+import { LoginForm } from "./log-in-dropdown";
+import { logout } from "~/server/auth/actions";
 
 export default function SlideInMenu() {
   const { t } = useTranslation();
@@ -44,6 +47,8 @@ export default function SlideInMenu() {
     }
   };
 
+  const { session } = useSession();
+
   return (
     <>
       <Button
@@ -78,19 +83,17 @@ export default function SlideInMenu() {
 
         <h2 className="mb-6 text-2xl font-bold">{t("slideInMenu.menu")}</h2>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("slideInMenu.email")}</Label>
-            <Input id="email" type="email" placeholder="m@example.com" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">{t("slideInMenu.password")}</Label>
-            <Input id="password" type="password" />
-          </div>
-          <Button className="w-full bg-primary-dark text-white">
-            <LogIn className="mr-2 h-4 w-4" /> {t("slideInMenu.logIn")}
+        {session ? (
+          <Button
+            onClick={async () => await logout()}
+            className="flex sm:hidden"
+          >
+            {" "}
+            {t("logout")}
           </Button>
-        </div>
+        ) : (
+          <LoginForm onSubmit={() => setIsOpen(false)} />
+        )}
 
         <div className="mt-8 space-y-2">
           <Link
@@ -99,15 +102,19 @@ export default function SlideInMenu() {
           >
             {t("allExhibitions")}
           </Link>
-          <Link href="/dashboard" className="block border-gray-300">
-            {t("dashboardNav")}
-          </Link>
-          <Link
-            href="/dashboard/archive"
-            className="block border-b border-t border-gray-300 py-2"
-          >
-            {t("archive.title")}
-          </Link>
+          {!!session && (
+            <>
+              <Link href="/dashboard" className="block border-gray-300">
+                {t("dashboardNav")}
+              </Link>
+              <Link
+                href="/dashboard/archive"
+                className="block border-b border-t border-gray-300 py-2"
+              >
+                {t("archive.title")}
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="mt-8 w-full">

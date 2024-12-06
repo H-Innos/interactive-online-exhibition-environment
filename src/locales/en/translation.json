@@ -2,6 +2,8 @@
   "allExhibitions": "All exhibitions",
   "dashboardNav": "Dashboard",
   "login": "Log In",
+  "logout": "Log Out",
+  "signup": "Sign Up",
 
   "createExhibition": {
     "title": "Create a New Exhibition",

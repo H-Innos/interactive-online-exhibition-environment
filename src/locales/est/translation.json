@@ -2,6 +2,8 @@
   "allExhibitions": "Kõik näitused",
   "dashboardNav": "Töölaud",
   "login": "Logi sisse",
+  "logout": "Logi välja",
+  "signup": "Loo kasutaja",
 
   "createExhibition": {
     "title": "Loo uus näitus",
