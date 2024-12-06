@@ -23,9 +23,7 @@ const QuizzesPage = () => {
     isLoading,
   } = api.quiz.getAllByExhibitionId.useQuery({ exhibitionId: Number(id) });
   const [quizzes, setQuizzes] = useState<CreateQuizDTO[]>([]);
-  const [selectedQuiz, setSelectedQuiz] = useState<CreateQuizDTO>(
-    generateEmptyQuiz(id),
-  );
+  const [selectedQuiz, setSelectedQuiz] = useState<CreateQuizDTO | null>(null);
   const [isEditable, setIsEditable] = useState(false);
 
   const deleteQuiz = useDeleteQuiz();
@@ -47,12 +45,17 @@ const QuizzesPage = () => {
 
   function handleCancel() {
     setIsEditable(false);
-    setSelectedQuiz(generateEmptyQuiz(id));
+    setSelectedQuiz(null);
   }
 
   function handleNewQuiz() {
     setIsEditable(true);
     setSelectedQuiz(generateEmptyQuiz(id));
+  }
+
+  function handleEdit(quiz: CreateQuizDTO) {
+    setSelectedQuiz(quiz);
+    setIsEditable(true);
   }
 
   return (
@@ -64,7 +67,6 @@ const QuizzesPage = () => {
         >
           ❬
         </button>
-        <h1 className="text-dark mb-10 text-3xl font-bold">{}</h1>
       </div>
       <Card className="w-full md:w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
@@ -72,7 +74,7 @@ const QuizzesPage = () => {
         </CardHeader>
         <CardContent>
           {error && <div>{t("quizzes.errorLoading")}</div>}
-          {!selectedQuiz && <p> {t("quizzes.noQuizzes")}</p>}
+          {!quizzes.length && <p>{t("quizzes.noQuizzes")}</p>}
           {isLoading && <div>Loading...</div>}
           <ul className="space-y-1">
             {quizzes.map((quiz) => (
@@ -84,14 +86,24 @@ const QuizzesPage = () => {
                   >
                     {quiz.title}
                   </button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(quiz.id!)}
-                    aria-label={`Delete ${quiz.title}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(quiz)}
+                      aria-label={`Edit ${quiz.title}`}
+                    >
+                      ✎
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(quiz.id!)}
+                      aria-label={`Delete ${quiz.title}`}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 <Separator />
               </li>
@@ -101,7 +113,11 @@ const QuizzesPage = () => {
       </Card>
       <Card className="w-full md:w-2/3">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>{t("quizzes.quizPreview")}</CardTitle>
+          <CardTitle>
+            {isEditable
+              ? t("quizzes.editQuizTitle", { title: selectedQuiz?.title })
+              : t("quizzes.quizPreview")}
+          </CardTitle>
           {selectedQuiz &&
             (isEditable ? (
               <CancelButton onClick={handleCancel} />
@@ -114,7 +130,16 @@ const QuizzesPage = () => {
             <QuizCreator
               creatorContent={selectedQuiz}
               disabled={!isEditable}
-              onCreate={() => setIsEditable(false)}
+              onCreate={() => {
+                setIsEditable(false);
+                setSelectedQuiz(null);
+              }}
+              onEdit={() => {
+                setIsEditable(false);
+                setSelectedQuiz(null);
+              }}
+              isEditMode={isEditable}
+              quizId={selectedQuiz?.id}
             />
           ) : (
             <div className="flex min-h-screen w-full items-center justify-center">
