@@ -11,7 +11,7 @@ export function generateEmptyQuiz(exhibitionId: number): CreateQuizDTO {
 }
 
 export function generateId() {
-  return Date.now();
+  return Date.now() % 100;
 }
 
 export function generateEmptyQuestion(quizId: number) {
