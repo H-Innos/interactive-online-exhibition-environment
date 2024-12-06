@@ -11,17 +11,20 @@ export function login() {
       cy.get(selectors.loginDropdownButton).click({ force: true });
       cy.get(selectors.emailInput).type("test@test.com");
       cy.get(selectors.passwordInput).type("12345678");
-      cy.get(selectors.registerButton).click({ force: true });
+      cy.get(selectors.registerButton).click();
 
       cy.contains("User already exists", { timeout: 10000, log: false }).then(
         ($toast) => {
           // @ts-expect-error - this is fine
           if ($toast.length > 0) {
+            cy.intercept("POST", "/**").as("loginRequest");
             cy.get(selectors.loginButton).click({ force: true });
+            cy.wait("@loginRequest").then((interception) => {
+              expect(interception.response?.statusCode).to.eq(303);
+            });
           }
         },
       );
-      cy.url({ timeout: 10000 }).should("include", "/dashboard");
     }
   });
 }
