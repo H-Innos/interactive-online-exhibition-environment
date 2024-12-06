@@ -9,6 +9,8 @@ import {
   usePublishExhibition,
   useUnarchiveExhibition,
   useUnpublishExhibition,
+  useTrashExhibition,
+  useRestoreExhibition,
 } from "~/hooks/exhibition-actions";
 import {
   DropdownMenu,
@@ -195,21 +197,22 @@ ExhibitionActionsDropdown.Unpublish =
     );
   };
 
-ExhibitionActionsDropdown.Delete = function ExhibitionCardDelete() {
+ExhibitionActionsDropdown.Trash = function ExhibitionActionsDropdownTrash() {
   const { exhibition } = useExhibitionActionsDropdownContext();
   const { t } = useTranslation();
-  const deleteExhibition = useDeleteExhibition();
+  const trashExhibition = useTrashExhibition();
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.id && window.confirm(t("confirmDelete"))) {
-      deleteExhibition.mutate({ id: exhibition.id });
+    const confirmTrash = window.confirm(t("archive.confirmTrash"));
+    if (confirmTrash) {
+      trashExhibition.mutate({ id: exhibition.id });
     }
   };
 
   return (
     <DropdownMenuItem
-      data-testid="select-delete-exhibition"
+      data-testid="select-trash-exhibition"
       onClick={handleClick}
       className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
       disabled={exhibition.status !== "draft"}
@@ -218,5 +221,54 @@ ExhibitionActionsDropdown.Delete = function ExhibitionCardDelete() {
     </DropdownMenuItem>
   );
 };
+
+ExhibitionActionsDropdown.Restore =
+  function ExhibitionActionsDropdownRestore() {
+    const { exhibition } = useExhibitionActionsDropdownContext();
+    const { t } = useTranslation();
+    const restoreExhibition = useRestoreExhibition();
+
+    const handleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (window.confirm(t("confirmRestore"))) {
+        restoreExhibition.mutate({ id: exhibition.id });
+      }
+    };
+
+    return (
+      <DropdownMenuItem
+        data-testid="select-restore-exhibition"
+        onClick={handleClick}
+        disabled={exhibition.status !== "trashed"}
+      >
+        {t("restore")}
+      </DropdownMenuItem>
+    );
+  };
+
+ExhibitionActionsDropdown.PermanentDelete =
+  function ExhibitionActionsDropdownPermanentDelete() {
+    const { exhibition } = useExhibitionActionsDropdownContext();
+    const { t } = useTranslation();
+    const deleteExhibition = useDeleteExhibition();
+
+    const handleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (window.confirm(t("confirmPermanentDelete"))) {
+        deleteExhibition.mutate({ id: exhibition.id });
+      }
+    };
+
+    return (
+      <DropdownMenuItem
+        data-testid="select-permanent-delete-exhibition"
+        onClick={handleClick}
+        className="text-destructive focus:bg-destructive focus:text-destructive-foreground"
+        disabled={exhibition.status !== "trashed"}
+      >
+        {t("permanentDelete")}
+      </DropdownMenuItem>
+    );
+  };
 
 export { ExhibitionActionsDropdown };

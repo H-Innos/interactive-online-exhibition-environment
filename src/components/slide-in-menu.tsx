@@ -103,10 +103,16 @@ export default function SlideInMenu() {
             {t("dashboardNav")}
           </Link>
           <Link
-            href="/archive"
+            href="/dashboard/archive"
             className="block border-b border-t border-gray-300 py-2"
           >
             {t("archive.title")}
+          </Link>
+          <Link
+            href="/dashboard/trash"
+            className="block border-b border-gray-300 pb-2"
+          >
+            {t("trash2")}
           </Link>
         </div>
 

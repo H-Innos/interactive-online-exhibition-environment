@@ -27,7 +27,12 @@
     "errorLoading": "Error loading exhibitions.",
     "drafts": "Drafts",
     "publishedExhibitions": "Published Exhibitions",
-    "allDrafts": "All Drafts"
+    "allDrafts": "All Drafts",
+    "recentExhibitions": "Recently Published Exhibitions",
+    "errorLoadingDrafts": "Error loading drafts.",
+    "errorLoadingRecent": "Error loading recently exhibitions.",
+    "loadingRecent": "Loading recently published exhibitions.",
+    "published": "Published Exhibitions"
   },
 
   "mainPage": {
@@ -50,6 +55,17 @@
   "pagination": {
     "previous": "Previous",
     "next": "Next"
+  },
+
+  "trash": {
+    "permanentDelete": "Delete permanently",
+    "restore": "Restore",
+    "title": "Trash",
+    "manageTrashedExhibitions": "Manage Trashed Exhibitions",
+    "loading": "Loading...",
+    "noTrashedExhibitions": "No trashed exhibitions available.",
+    "confirmPermanentDelete": "Are you sure you want to permanently delete this exhibition?",
+    "confirmRestore": "Are you sure you want to restore this exhibition?"
   },
 
   "quizzes": {
@@ -88,7 +104,8 @@
     "failedUnarchiveExhibition": "Failed to unarchive exhibition: {{message}}",
     "failedCreateQuiz": "Failed to create quiz: {{message}}",
     "failedDeleteQuiz": "Failed to delete quiz: {{message}}",
-    "exhibitionDeleted": "Exhibition deleted successfully!",
+    "exhibitionTrashed": "Exhibition deleted successfully!",
+    "exhibitionDeleted": "Exhibition permanently deleted!",
     "exhibitionUpdated": "Exhibition updated successfully!",
     "exhibitionPublished": "Exhibition published successfully!",
     "exhibitionUnpublished": "Exhibition moved back to drafts!",
@@ -96,7 +113,9 @@
     "exhibitionUnarchived": "Exhibition unarchived successfully!",
     "quizCreated": "Quiz created successfully!",
     "quizDeleted": "Quiz deleted successfully!",
-    "failedInvalidateCache": "Error updating page content. Please refresh the page."
+    "failedInvalidateCache": "Error updating page content. Please refresh the page.",
+    "exhibitionRestored": "Exhibition restored successfully!",
+    "failedRestoreExhibition": "Failed to restore exhibition: {{message}}"
   },
 
   "archive": {
@@ -106,7 +125,8 @@
     "view": "View",
     "now": "Archive",
     "confirmArchive": "Are you sure you want to archive this exhibition?",
-    "confirmUnarchive": "Are you sure you want to unarchive this exhibition?"
+    "confirmUnarchive": "Are you sure you want to unarchive this exhibition?",
+    "confirmTrash": "Are you sure you want to delete this exhibition?"
   },
 
   "confirmPublish": "Are you sure you want to publish this exhibition?",
@@ -117,7 +137,7 @@
   "exit": "Exit",
   "uploadImage": "Upload Image",
   "imageUploaded": "Image uploaded",
-  "saveChanges": "Save changes",
+  "saveChanges": "Save Changes",
   "preview": "Preview",
   "createQuiz": "Create Quiz",
   "publishing": "Publishing...",
@@ -126,8 +146,8 @@
   "title": "Title",
   "description": "Description",
   "descriptionPlaceholder": "Enter exhibition description",
-  "thumbnail": "Cover Image",
-  "thumbnailPlaceholder": "Choose cover image",
+  "thumbnail": "Thumbnail",
+  "thumbnailPlaceholder": "Choose thumbnail",
   "edit": "Edit",
   "cancel": "Cancel",
   "characters": "characters",
@@ -139,5 +159,13 @@
   "details": "Details",
   "backgroundColor": "Background Color: ",
   "close": "Close",
-  "searchExhibitionsPlaceholder": "Search exhibitions..."
+  "searchExhibitionsPlaceholder": "Search exhibitions...",
+  "dashboard2": "Dashboard",
+  "trash2": "Trash",
+  "archive2": "Archive",
+  "drafts": "Drafts",
+  "publishedExhibitions": "Published",
+  "exhibitionManager": "Exhibition Manager",
+  "fileUpload": "Upload File",
+  "chooseCoverImage": "Cover Image:"
 }

@@ -6,7 +6,7 @@ export type Exhibition = {
   coverImagePositionX: number;
   coverImagePositionY: number;
   content: string | null;
-  status: "draft" | "published" | "archived";
+  status: "draft" | "published" | "archived" | "trashed";
   createdAt: Date | string;
   updatedAt: Date | null;
   backgroundColor: string | null;

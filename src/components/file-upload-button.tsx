@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { t } from "i18next";
 
 interface FileUploadButtonProps {
   onFileSelect: (file: File) => void;
@@ -47,7 +48,7 @@ export default function FileUploadButton({
         className="flex items-center space-x-2"
       >
         <Upload className="h-4 w-4" />
-        <p>Upload File</p>
+        <p>{t("fileUpload")}</p>
       </Button>
     </div>
   );

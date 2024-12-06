@@ -71,7 +71,6 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
       setSelectedCategories([...selectedCategories, category]);
       setIsDirty(true);
 
-      // If it's a new category, add it to the database
       if (!availableCategories.includes(category)) {
         try {
           await addCategory.mutateAsync({ name: category });
@@ -202,6 +201,12 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             />
           </div>
 
+          <label
+            htmlFor="cover-image"
+            className="text-sm font-medium text-gray-700"
+          >
+            {t("chooseCoverImage")}
+          </label>
           <FileUploadButton onFileSelect={handleFileSelect} accept="image/*" />
 
           <Tooltip>

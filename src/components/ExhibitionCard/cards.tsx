@@ -24,7 +24,7 @@ export const DraftCard: React.FC<CardProps> = ({ exhibition }) => {
           <ExhibitionCard.Dropdown.Edit />
           <ExhibitionCard.Dropdown.Archive />
           <ExhibitionCard.Dropdown.Publish />
-          <ExhibitionCard.Dropdown.Delete />
+          <ExhibitionCard.Dropdown.Trash />
         </ExhibitionCard.Dropdown>
       </ExhibitionCard.Header>
       <ExhibitionCard.Content>
@@ -45,7 +45,7 @@ export const PublishedCard: React.FC<CardProps> = ({ exhibition }) => {
           <ExhibitionCard.Dropdown.Edit />
           <ExhibitionCard.Dropdown.Archive />
           <ExhibitionCard.Dropdown.Unpublish />
-          <ExhibitionCard.Dropdown.Delete />
+          <ExhibitionCard.Dropdown.Trash />
         </ExhibitionCard.Dropdown>
       </ExhibitionCard.Header>
       <ExhibitionCard.Content>
@@ -71,7 +71,7 @@ export const ArchiveCard: React.FC<CardProps> = ({ exhibition }) => {
           <ExhibitionCard.Dropdown.View />
           <ExhibitionCard.Dropdown.Edit />
           <ExhibitionCard.Dropdown.Unarchive />
-          <ExhibitionCard.Dropdown.Delete />
+          <ExhibitionCard.Dropdown.Trash />
         </ExhibitionCard.Dropdown>
       </ExhibitionCard.Header>
       <ExhibitionCard.Content>
