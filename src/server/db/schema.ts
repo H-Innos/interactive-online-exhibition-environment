@@ -73,9 +73,48 @@ export const exhibitions = createTable("post", {
   ),
 });
 
+export const categories = createTable("category", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }).notNull().unique(),
+});
+
+export const exhibitionCategories = createTable("exhibition_category", {
+  exhibitionId: serial("exhibition_id")
+    .notNull()
+    .references(() => exhibitions.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  categoryId: serial("category_id")
+    .notNull()
+    .references(() => categories.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+});
+
 export const exhibitionsRelations = relations(exhibitions, ({ many }) => ({
   quizzes: many(quizzes),
+  exhibitionCategories: many(exhibitionCategories),
 }));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  exhibitionCategories: many(exhibitionCategories),
+}));
+
+export const exhibitionCategoriesRelations = relations(
+  exhibitionCategories,
+  ({ one }) => ({
+    exhibition: one(exhibitions, {
+      fields: [exhibitionCategories.exhibitionId],
+      references: [exhibitions.id],
+    }),
+    category: one(categories, {
+      fields: [exhibitionCategories.categoryId],
+      references: [categories.id],
+    }),
+  }),
+);
 
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
   exhibitions: one(exhibitions, {

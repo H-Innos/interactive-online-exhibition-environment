@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { exhibitions } from "~/server/db/schema";
+import {
+  exhibitions,
+  exhibitionCategories,
+  categories,
+} from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const exhibitionRouter = createTRPCRouter({
@@ -11,17 +15,55 @@ export const exhibitionRouter = createTRPCRouter({
         description: z.string().optional(),
         thumbnailUrl: z.string().optional(),
         exhibitionCoverUrl: z.string().optional(),
+        categories: z.array(z.string()).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const newExhibition = await ctx.db.insert(exhibitions).values({
-        name: input.name,
-        description: input.description ?? "",
-        thumbnailUrl: input.thumbnailUrl ?? "",
-        exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
-      });
+      const newExhibition = await ctx.db
+        .insert(exhibitions)
+        .values({
+          name: input.name,
+          description: input.description ?? "",
+          thumbnailUrl: input.thumbnailUrl ?? "",
+          exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
+        })
+        .returning();
+      const createdExhibition = newExhibition[0];
+      if (!createdExhibition) {
+        throw new Error("Failed to create exhibition");
+      }
 
-      return newExhibition;
+      if (input.categories && input.categories.length > 0) {
+        const existingCategories = await ctx.db.query.categories.findMany({
+          where: (categories, { inArray }) =>
+            inArray(categories.name, input.categories ?? []),
+        });
+
+        const existingCategoryNames = existingCategories.map((c) => c.name);
+        const newCategoryNames = input.categories.filter(
+          (c) => !existingCategoryNames.includes(c),
+        );
+
+        if (newCategoryNames.length > 0) {
+          await ctx.db
+            .insert(categories)
+            .values(newCategoryNames.map((name) => ({ name })));
+        }
+
+        const allCategories = await ctx.db.query.categories.findMany({
+          where: (categories, { inArray }) =>
+            inArray(categories.name, input.categories ?? []),
+        });
+
+        await ctx.db.insert(exhibitionCategories).values(
+          allCategories.map((category) => ({
+            exhibitionId: createdExhibition.id,
+            categoryId: category.id,
+          })),
+        );
+      }
+
+      return createdExhibition;
     }),
 
   update: publicProcedure
@@ -36,9 +78,11 @@ export const exhibitionRouter = createTRPCRouter({
         coverImagePositionY: z.number().optional(),
         content: z.string().optional(),
         backgroundColor: z.string().optional(),
+        categories: z.array(z.string()).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("Updating exhibition:", input);
       await ctx.db
         .update(exhibitions)
         .set({
@@ -52,6 +96,44 @@ export const exhibitionRouter = createTRPCRouter({
           backgroundColor: input.backgroundColor,
         })
         .where(eq(exhibitions.id, input.id));
+
+      if (input.categories && input.categories.length > 0) {
+        console.log("Updating categories:", input.categories);
+
+        await ctx.db
+          .delete(exhibitionCategories)
+          .where(eq(exhibitionCategories.exhibitionId, input.id));
+
+        const existingCategories = await ctx.db.query.categories.findMany({
+          where: (categories, { inArray }) =>
+            inArray(categories.name, input.categories),
+        });
+
+        const existingCategoryNames = existingCategories.map((c) => c.name);
+        const newCategoryNames = input.categories.filter(
+          (c) => !existingCategoryNames.includes(c),
+        );
+
+        if (newCategoryNames.length > 0) {
+          await ctx.db
+            .insert(categories)
+            .values(newCategoryNames.map((name) => ({ name })))
+            .onConflictDoNothing();
+        }
+
+        const allCategories = await ctx.db.query.categories.findMany({
+          where: (categories, { inArray }) =>
+            inArray(categories.name, input.categories),
+        });
+
+        await ctx.db.insert(exhibitionCategories).values(
+          allCategories.map((category) => ({
+            exhibitionId: input.id,
+            categoryId: category.id,
+          })),
+        );
+      }
+      return { id: input.id };
     }),
 
   delete: publicProcedure
@@ -178,11 +260,24 @@ export const exhibitionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const exhibition = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+        with: {
+          exhibitionCategories: {
+            with: {
+              category: true,
+            },
+          },
+        },
       });
+
+      if (!exhibition) return null;
 
       // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
       return exhibition
-        ? { ...exhibition, status: assertExhibitionStatus(exhibition.status) }
+        ? {
+            ...exhibition,
+            status: assertExhibitionStatus(exhibition.status),
+            categories: transformExhibitionCategories(exhibition),
+          }
         : null;
     }),
 
@@ -242,4 +337,12 @@ function assertExhibitionStatus(status: string): ExhibitionStatus {
     return status as ExhibitionStatus;
   }
   throw new Error("Invalid exhibition status");
+}
+
+function transformExhibitionCategories(exhibition: any) {
+  if (!exhibition.exhibitionCategories) return [];
+  return exhibition.exhibitionCategories.map((ec: any) => ({
+    id: ec.category.id,
+    name: ec.category.name,
+  }));
 }

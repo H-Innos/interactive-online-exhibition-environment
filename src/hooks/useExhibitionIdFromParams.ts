@@ -4,6 +4,10 @@ import { useParams } from "next/navigation";
 export function useExhibitionIdFromParams(): number {
   const { exhibitionId: id } = useParams();
 
+  if (!id) {
+    throw new Error("Route must contain an exhibition ID.");
+  }
+
   const resolvedId = Array.isArray(id) ? id[0] : id;
 
   if (!resolvedId || resolvedId.length === 0) {
