@@ -109,6 +109,9 @@ const QuizzesPage = () => {
               </li>
             ))}
           </ul>
+          <div className="mt-4">
+            <NewQuizButton onClick={handleNewQuiz} />
+          </div>
         </CardContent>
       </Card>
       <Card className="w-full md:w-2/3">
@@ -118,12 +121,9 @@ const QuizzesPage = () => {
               ? t("quizzes.editQuizTitle", { title: selectedQuiz?.title })
               : t("quizzes.quizPreview")}
           </CardTitle>
-          {selectedQuiz &&
-            (isEditable ? (
-              <CancelButton onClick={handleCancel} />
-            ) : (
-              <NewQuizButton onClick={() => handleNewQuiz()} />
-            ))}
+          {selectedQuiz && isEditable && (
+            <CancelButton onClick={handleCancel} />
+          )}
         </CardHeader>
         <CardContent>
           {selectedQuiz ? (

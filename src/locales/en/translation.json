@@ -172,5 +172,6 @@
   "publishedExhibitions": "Published",
   "exhibitionManager": "Exhibition Manager",
   "fileUpload": "Upload File",
-  "chooseCoverImage": "Cover Image:"
+  "chooseCoverImage": "Cover Image:",
+  "perPage": "{{count}} per page"
 }

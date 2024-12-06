@@ -11,6 +11,7 @@ import {
   SelectContent,
   SelectValue,
 } from "~/components/ui/select";
+import { t } from "i18next";
 
 interface PageableExhibitionsProps {
   title: string;
@@ -55,10 +56,10 @@ const PageableExhibitions = ({
             <SelectValue placeholder="Exhibitions per page" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="12">12 per page</SelectItem>
-            <SelectItem value="24">24 per page</SelectItem>
-            <SelectItem value="36">36 per page</SelectItem>
-            <SelectItem value="48">48 per page</SelectItem>
+            <SelectItem value="12">{t("perPage", { count: 12 })}</SelectItem>
+            <SelectItem value="24">{t("perPage", { count: 24 })}</SelectItem>
+            <SelectItem value="36">{t("perPage", { count: 36 })}</SelectItem>
+            <SelectItem value="48">{t("perPage", { count: 48 })}</SelectItem>
           </SelectContent>
         </Select>
       </div>

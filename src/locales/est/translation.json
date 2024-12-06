@@ -172,5 +172,6 @@
   "publishedExhibitions": "Avaldatud näitused",
   "exhibitionManager": "Näituste haldamine",
   "fileUpload": "Lae fail üles",
-  "chooseCoverImage": "Taustapilt: "
+  "chooseCoverImage": "Taustapilt: ",
+  "perPage": "{{count}} näitust lehel"
 }
