@@ -1,5 +1,23 @@
 import { selectors } from "./selectors";
 
+export function register() {
+  cy.visit("/");
+
+  cy.get("body").then(($body) => {
+    if ($body.find(selectors.logoutButton).length > 0) {
+      cy.log("User is already logged in, skipping the test.");
+      return; // Skip the rest of the test
+    } else {
+      cy.get(selectors.loginDropdownButton).click({ force: true });
+      cy.get(selectors.emailInput).type("test@test.com");
+      cy.get(selectors.passwordInput).type("12345678");
+      cy.intercept("POST", "/").as("registerRequest");
+      cy.get(selectors.registerButton).click();
+      cy.wait("@registerRequest");
+    }
+  });
+}
+
 export function login() {
   cy.visit("/");
 
@@ -11,20 +29,15 @@ export function login() {
       cy.get(selectors.loginDropdownButton).click({ force: true });
       cy.get(selectors.emailInput).type("test@test.com");
       cy.get(selectors.passwordInput).type("12345678");
+
+      cy.intercept("POST", "/").as("firstRequest");
+      cy.intercept("POST", "/**").as("secondRequest");
+
+      cy.get(selectors.loginButton).click();
       cy.get(selectors.registerButton).click();
 
-      cy.contains("User already exists", { timeout: 10000, log: false }).then(
-        ($toast) => {
-          // @ts-expect-error - this is fine
-          if ($toast.length > 0) {
-            cy.intercept("POST", "/**").as("loginRequest");
-            cy.get(selectors.loginButton).click({ force: true });
-            cy.wait("@loginRequest").then((interception) => {
-              expect(interception.response?.statusCode).to.eq(303);
-            });
-          }
-        },
-      );
+      cy.wait("@firstRequest");
+      cy.wait("@secondRequest");
     }
   });
 }

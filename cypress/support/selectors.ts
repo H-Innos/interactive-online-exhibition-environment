@@ -27,4 +27,5 @@ export const selectors = {
   registerButton: '[data-testid="register-button"]:visible',
   emailInput: '[data-testid="email-input"]:visible',
   passwordInput: '[data-testid="password-input"]:visible',
+  userExistsToast: ':contains("User already exists")',
 };
