@@ -7,9 +7,12 @@ import {
   filterSuggestionItems,
   BlockNoteSchema,
   defaultBlockSpecs,
+  defaultStyleSpecs,
   insertOrUpdateBlock,
   locales,
 } from "@blocknote/core";
+
+import "@blocknote/core/fonts/inter.css";
 
 import {
   getDefaultReactSlashMenuItems,
@@ -26,6 +29,7 @@ import {
   NestBlockButton,
   TextAlignButton,
   UnnestBlockButton,
+  useComponentsContext,
 } from "@blocknote/react";
 
 import {
@@ -37,8 +41,9 @@ import {
 
 import { uploadFile } from "~/lib/utils/image-uploader";
 import { PDF } from "./PDFBlock";
-
 import { RiFilePdfFill } from "react-icons/ri";
+import { RiText } from "react-icons/ri";
+import { Font, FontSelectorModal } from "./Font";
 
 interface ExhibitionContentEditorProps {
   initialContent: string;
@@ -54,6 +59,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+  const [isFontModalOpen, setFontModalOpen] = useState(false);
 
   useEffect(() => {
     if (editor) {
@@ -72,7 +78,26 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
       ...defaultBlockSpecs,
       pdf: PDF,
     },
+    styleSpecs: {
+      ...defaultStyleSpecs,
+      font: Font,
+    },
   });
+
+  const SetFontStyleButton = () => {
+    const Components = useComponentsContext()!;
+
+    return (
+      <Components.FormattingToolbar.Button
+        label="Set Font"
+        mainTooltip={"Set Font"}
+        icon={<RiText />}
+        onClick={() => {
+          setFontModalOpen(true);
+        }}
+      />
+    );
+  };
 
   // TODO types and linter etc
   const customBgTheme: Theme = {
@@ -84,24 +109,24 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         background: bgColor,
       },
       highlights: {
-        white: { text: "#ffffff", background: "#ffffff" },
-        black: { text: "#000000", background: "#000000" },
-        gray: { text: "#ff0000", background: "#3366ff" },
-        brown: { text: "#ff0000", background: "#3366ff" },
-        red: { text: "#ff0000", background: "#3366ff" },
-        orange: { text: "#ff0000", background: "#3366ff" },
-        yellow: { text: "#ff0000", background: "#3366ff" },
-        green: { text: "#ff0000", background: "#3366ff" },
-        blue: { text: "#ff0000", background: "#3366ff" },
-        purple: { text: "#ff0000", background: "#3366ff" },
-        pink: { text: "#ff0000", background: "#3366ff" },
+        // white: { text: "#ffffff", background: "#ffffff" }, // Pure white
+        // black: { text: "#000000", background: "#000000" }, // Pure black
+        gray: { text: "#808080", background: "#d3d3d3" }, // Neutral gray tones
+        brown: { text: "#654321", background: "#a0522d" }, // Rich brown tones
+        red: { text: "#ff0000", background: "#ffcccc" }, // Vibrant red
+        orange: { text: "#ff8c00", background: "#ffe5b4" }, // Bright orange
+        yellow: { text: "#ffd700", background: "#fffacd" }, // Vibrant yellow
+        green: { text: "#008000", background: "#98fb98" }, // Rich green
+        blue: { text: "#0000ff", background: "#add8e6" }, // Bright blue
+        purple: { text: "#800080", background: "#dda0dd" }, // Deep purple
+        pink: { text: "#ff69b4", background: "#ffb6c1" }, // Vibrant pink
       },
     },
   };
 
   const editor = useCreateBlockNote({
     uploadFile: uploadFile,
-    schema: withMultiColumn(schema),
+    schema: withMultiColumn(schema), // TODO eslint acting up here :/
     dropCursor: multiColumnDropCursor,
     dictionary: {
       ...locales.en,
@@ -122,9 +147,23 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
     subtext: "PDF file with interactive preview window",
   });
 
+  const handleFontSelect = (fontName: string) => {
+    setFontModalOpen(false);
+    editor.addStyles({
+      font: fontName,
+    });
+  };
+
   return (
     <div>
       <div className="main-container">
+        {/* TODO move out into nice modal window */}
+        <FontSelectorModal
+          isOpen={isFontModalOpen}
+          onClose={() => setFontModalOpen(false)}
+          onSelectFont={handleFontSelect}
+        />
+
         <div className="editor-container__editor">
           <div ref={editorRef}>
             {isLayoutReady && (
@@ -189,7 +228,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                         key={"codeStyleButton"}
                         basicTextStyle={"code"}
                       />
-
+                      <SetFontStyleButton />
                       <TextAlignButton
                         textAlignment={"left"}
                         key={"textAlignLeftButton"}
