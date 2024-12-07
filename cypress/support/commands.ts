@@ -9,11 +9,12 @@ export function register() {
       return; // Skip the rest of the test
     } else {
       cy.get(selectors.loginDropdownButton).click({ force: true });
-      cy.get(selectors.emailInput).type("test@test.com");
+      cy.get(selectors.emailInput).type("test12@test.com");
       cy.get(selectors.passwordInput).type("12345678");
       cy.intercept("POST", "/").as("registerRequest");
       cy.get(selectors.registerButton).click();
       cy.wait("@registerRequest");
+      cy.wait(1000);
     }
   });
 }
@@ -27,16 +28,12 @@ export function login() {
       return; // Skip the rest of the test
     } else {
       cy.get(selectors.loginDropdownButton).click({ force: true });
-      cy.get(selectors.emailInput).type("test@test.com");
+      cy.get(selectors.emailInput).type("test12@test.com");
       cy.get(selectors.passwordInput).type("12345678");
 
       cy.intercept("POST", "/").as("firstRequest");
-      cy.intercept("GET", "/**").as("secondRequest");
-
       cy.get(selectors.loginButton).click();
-
       cy.wait("@firstRequest");
-      cy.wait("@secondRequest");
     }
   });
 }
