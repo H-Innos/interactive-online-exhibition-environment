@@ -3,13 +3,19 @@ import {
   archiveExhibition,
   unarchiveExhibition,
   deleteExhibition,
+  login,
+  register,
 } from "cypress/support/commands";
 
 describe("Archive Functionality", () => {
   const exhibitionTitle = "Test Exhibition for Archiving" + Date.now();
 
+  before(() => {
+    register();
+  });
+
   beforeEach(() => {
-    cy.intercept("POST", "/api/trpc/**").as("apiRequest");
+    login();
   });
 
   it("should create a new exhibition", () => {

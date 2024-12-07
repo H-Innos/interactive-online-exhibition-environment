@@ -1,9 +1,46 @@
 import { selectors } from "./selectors";
 
+export function register() {
+  cy.visit("/");
+
+  cy.get("body").then(($body) => {
+    if ($body.find(selectors.logoutButton).length > 0) {
+      cy.log("User is already logged in, skipping the test.");
+      return; // Skip the rest of the test
+    } else {
+      cy.get(selectors.loginDropdownButton).click({ force: true });
+      cy.get(selectors.emailInput).type("test12@test.com");
+      cy.get(selectors.passwordInput).type("12345678");
+      cy.intercept("POST", "/").as("registerRequest");
+      cy.get(selectors.registerButton).click();
+      cy.wait("@registerRequest");
+    }
+  });
+}
+
+export function login() {
+  cy.visit("/");
+
+  cy.get("body").then(($body) => {
+    if ($body.find(selectors.logoutButton).length > 0) {
+      cy.log("User is already logged in, skipping the test.");
+      return; // Skip the rest of the test
+    } else {
+      cy.get(selectors.loginDropdownButton).click({ force: true });
+      cy.get(selectors.emailInput).type("test12@test.com");
+      cy.get(selectors.passwordInput).type("12345678");
+
+      cy.intercept("POST", "/").as("firstRequest");
+      cy.get(selectors.loginButton).click();
+      cy.wait("@firstRequest");
+    }
+  });
+}
+
 export function createExhibition(title: string, description: string) {
   cy.intercept("POST", "/api/trpc/**").as("createRequest");
   cy.visit("/dashboard/drafts");
-  cy.get(selectors.newExhibitionButton, { timeout: 10000 })
+  cy.get(selectors.newExhibitionButton, { timeout: 5000 })
     .should("be.visible")
     .debug()
     .click({ force: true });

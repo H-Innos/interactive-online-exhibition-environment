@@ -1,6 +1,7 @@
 import {
   createExhibition,
   deleteExhibition,
+  login,
   openExhibitionEditor,
 } from "cypress/support/commands";
 import { selectors } from "cypress/support/selectors";
@@ -9,6 +10,7 @@ describe("Create Exhibition", () => {
   const exhibitionTitle = `exhibition-${Date.now()}`;
   const exhibtionDescription = "create test description";
   beforeEach(() => {
+    login();
     createExhibition(exhibitionTitle, exhibtionDescription);
     openExhibitionEditor(exhibitionTitle);
   });

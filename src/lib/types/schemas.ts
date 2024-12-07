@@ -20,6 +20,15 @@ export const exhibitionFormSchema = z.object({
 
 export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>;
 
+export const loginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" }),
+});
+
+export type LoginFormSchema = z.infer<typeof loginSchema>;
+
 export const createAnswerSchema = z.object({
   id: z.number().optional(),
   text: z.string().min(1, { message: "Answer text can't be empty." }),
