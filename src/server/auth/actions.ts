@@ -25,7 +25,6 @@ export async function login(email: string, password: string) {
   }
 
   await createSession(user.id.toString());
-  redirect("/dashboard");
 }
 
 export async function logout() {
