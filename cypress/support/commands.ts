@@ -31,13 +31,10 @@ export function login() {
       cy.get(selectors.passwordInput).type("12345678");
 
       cy.intercept("POST", "/").as("firstRequest");
-      cy.intercept("POST", "/**").as("secondRequest");
 
       cy.get(selectors.loginButton).click();
-      cy.get(selectors.registerButton).click();
 
       cy.wait("@firstRequest");
-      cy.wait("@secondRequest");
     }
   });
 }
