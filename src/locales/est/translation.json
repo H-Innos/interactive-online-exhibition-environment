@@ -74,7 +74,7 @@
   "quizzes": {
     "quizzes": "Viktoriinid",
     "errorLoading": "Viga viktoriinide laadimisel.",
-    "noQuizzes": "Hetkel ei ole ühtegi viktoriini.",
+    "noQuizzes": "Hetkel ei ole ühtegi viktoriini selle näituse jaoks.",
     "quizPreview": "Viktoriini eelvaade",
     "noQuizSelected": "Muutmiseka valige viktoriin",
     "newQuiz": "Uus viktoriin",
@@ -94,7 +94,10 @@
     "partiallyCorrect": "Osaliselt õige.",
     "correctAnswers": "Õiged vastused on: ",
     "correctAnswer": "Õige vastus on ",
-    "activities": "Tegevused"
+    "activities": "Tegevused",
+    "saveChanges": "Salvesta muudatused",
+    "addQuestion": "Lisa küsimus",
+    "editQuizTitle": "Muuda viktoriini"
   },
 
   "toasts": {
@@ -118,7 +121,9 @@
     "quizDeleted": "Viktoriin kustutatud",
     "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte.",
     "exhibitionRestored": "Näitus taastatud!",
-    "failedRestoreExhibition": "Näitust ei saanud taastada: {{message}}"
+    "failedRestoreExhibition": "Näitust ei saanud taastada: {{message}}",
+    "quizEdited": "Viktoriin muudetud.",
+    "failedEditQuiz": "Viktoriini ei õnnestunud muuta: {{message}}"
   },
 
   "archive": {
@@ -169,5 +174,6 @@
   "publishedExhibitions": "Avaldatud näitused",
   "exhibitionManager": "Näituste haldamine",
   "fileUpload": "Lae fail üles",
-  "chooseCoverImage": "Taustapilt: "
+  "chooseCoverImage": "Taustapilt: ",
+  "perPage": "{{count}} näitust lehel"
 }

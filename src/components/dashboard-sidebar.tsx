@@ -56,13 +56,10 @@ export function ExhibitionManagerSidebar() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <Sidebar
-        collapsible="icon"
-        className="sticky w-64 border-r bg-white shadow"
-      >
+      <Sidebar collapsible="icon" className="sticky w-64 border-r shadow">
         <SidebarHeader className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
-            <h2 className="mr-2 text-lg font-semibold group-data-[collapsible=icon]:hidden">
+            <h2 className="mr-2 text-lg font-semibold text-black group-data-[collapsible=icon]:hidden">
               {t("exhibitionManager")}
             </h2>
             <SidebarTrigger onClick={() => setOpen(!open)} className="p-2">
@@ -70,7 +67,7 @@ export function ExhibitionManagerSidebar() {
             </SidebarTrigger>
           </div>
         </SidebarHeader>
-        <SidebarContent className="ml-6 group-data-[collapsible=icon]:hidden">
+        <SidebarContent className="ml-6 text-xl text-black group-data-[collapsible=icon]:hidden">
           <SidebarMenu>
             {mainNavItems.map((item) => (
               <SidebarMenuItem key={item.name} className="mb-2">

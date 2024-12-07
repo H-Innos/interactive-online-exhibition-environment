@@ -29,40 +29,36 @@ export const QuizCard: React.FC<{ quiz: Quiz }> = ({ quiz }) => {
 
   function handleSubmit() {
     setQuestionsState(
-      questionsState.map((q, index) => {
-        if (index === currentQuestionIndex) {
-          return { ...q, isSubmitted: true };
-        }
-        return q;
-      }),
+      questionsState.map((q, index) =>
+        index === currentQuestionIndex ? { ...q, isSubmitted: true } : q,
+      ),
     );
   }
 
   function handleUnsubmit() {
     setQuestionsState(
-      questionsState.map((q, index) => {
-        if (index === currentQuestionIndex) {
-          return { ...q, isSubmitted: false };
-        }
-        return q;
-      }),
+      questionsState.map((q, index) =>
+        index === currentQuestionIndex ? { ...q, isSubmitted: false } : q,
+      ),
     );
   }
 
   return (
     <Card className="mx-auto w-full max-w-3xl">
-      <CardHeader>
-        <CardTitle>{quiz.title}</CardTitle>
+      <CardHeader className="border-b">
+        <CardTitle className="text-xl font-bold">{quiz.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <QuestionCard
-          question={currentQuestionState!.question}
-          isSubmitted={currentQuestionState!.isSubmitted}
-          onSubmit={handleSubmit}
-          onUnsubmit={handleUnsubmit}
-        />
+        {currentQuestionState && (
+          <QuestionCard
+            question={currentQuestionState.question}
+            isSubmitted={currentQuestionState.isSubmitted}
+            onSubmit={handleSubmit}
+            onUnsubmit={handleUnsubmit}
+          />
+        )}
       </CardContent>
-      <CardFooter className="flex w-full flex-row justify-between p-6">
+      <CardFooter className="flex justify-between p-4">
         <Button
           onClick={() =>
             setCurrentQuestionIndex((prevIndex) => Math.max(0, prevIndex - 1))
