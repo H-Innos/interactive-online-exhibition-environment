@@ -14,7 +14,6 @@ export function register() {
       cy.intercept("POST", "/").as("registerRequest");
       cy.get(selectors.registerButton).click();
       cy.wait("@registerRequest");
-      cy.wait(3000);
     }
   });
 }
@@ -34,7 +33,6 @@ export function login() {
       cy.intercept("POST", "/").as("firstRequest");
       cy.get(selectors.loginButton).click();
       cy.wait("@firstRequest");
-      cy.wait(3000);
     }
   });
 }
