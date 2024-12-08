@@ -6,17 +6,20 @@ import {
   publishExhibition,
   openExhibitionDropdown,
   checkDropdownButtonDisabled,
+  login,
 } from "cypress/support/commands";
 
 describe("Dashboard Page", () => {
   const exhibitionTitle = `Test exhibition ${Date.now()}`;
 
   before(() => {
+    login();
     createExhibition(exhibitionTitle, "Test Exhibition Description");
     publishExhibition(exhibitionTitle);
   });
 
   beforeEach(() => {
+    login();
     cy.visit("/dashboard");
   });
 

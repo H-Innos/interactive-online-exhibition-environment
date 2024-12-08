@@ -1,6 +1,7 @@
 import {
   createExhibition,
   deleteExhibition,
+  login,
   publishExhibition,
   unpublishExhibition,
 } from "cypress/support/commands";
@@ -15,11 +16,13 @@ describe("All Exhibitions Page", () => {
   const exhibitionTitle = `Test exhibition ${Date.now()}`;
 
   before(() => {
+    login();
     createExhibition(exhibitionTitle, "Test Exhibition Description");
     publishExhibition(exhibitionTitle);
   });
 
   beforeEach(() => {
+    login();
     cy.visit("/");
   });
 

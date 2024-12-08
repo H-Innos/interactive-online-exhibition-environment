@@ -11,13 +11,13 @@ export function useExhibitionIdFromParams(): number {
   const resolvedId = Array.isArray(id) ? id[0] : id;
 
   if (!resolvedId || resolvedId.length === 0) {
-    throw new Error("Route must contain an exhibition ID.");
+    return Number.NaN;
   }
 
   const exhibitionId = Number(resolvedId);
 
   if (isNaN(exhibitionId)) {
-    throw new Error("The exhibition ID is not a valid number.");
+    return Number.NaN;
   }
 
   return exhibitionId;
@@ -29,13 +29,13 @@ export function useQuizIdFromParams(): number {
   const resolvedId = Array.isArray(id) ? id[0] : id;
 
   if (!resolvedId || resolvedId.length === 0) {
-    throw new Error("Route must contain an quiz ID.");
+    return Number.NaN;
   }
 
   const quizId = Number(resolvedId);
 
   if (isNaN(quizId)) {
-    throw new Error("The quiz ID is not a valid number.");
+    return Number.NaN;
   }
 
   return quizId;

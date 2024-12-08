@@ -1,6 +1,7 @@
 import {
   createExhibition,
   deleteExhibition,
+  login,
   openExhibitionEditor,
   unpublishExhibition,
 } from "cypress/support/commands";
@@ -29,6 +30,7 @@ describe("Quiz Functionality", () => {
     createQuizButton: '[data-testid="create-quiz"]',
   };
   beforeEach(() => {
+    login();
     createExhibition(exhibitionTitle, "sdasd");
     openExhibitionEditor(exhibitionTitle);
   });

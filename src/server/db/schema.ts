@@ -138,3 +138,12 @@ export const answersRelations = relations(answers, ({ one }) => ({
     references: [questions.id],
   }),
 }));
+
+export const users = createTable("user", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 256 }).notNull().unique(),
+  password: varchar("password", { length: 256 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});

@@ -54,6 +54,19 @@ test:
   except:
     - main
 
+# only comment out when needed to save time
+# deploy_preview:
+#   stage: deploy
+#   except:
+#     - main
+#   script:
+#     - npm install -g pnpm
+#     - pnpm install
+#     - npm install --global vercel
+#     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+#     - vercel build --token=$VERCEL_TOKEN
+#     - vercel deploy --prebuilt  --token=$VERCEL_TOKEN
+
 deploy:
   stage: deploy
   only:
