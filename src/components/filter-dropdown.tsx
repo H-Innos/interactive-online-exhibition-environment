@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  Select,
-  SelectTrigger,
-  SelectItem,
-  SelectContent,
-  SelectValue,
-  SelectGroup,
-} from "~/components/ui/select";
+import React, { useState, useEffect } from "react";
+import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
-import { ChevronRight } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "~/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
+import { Exhibition } from "~/lib/types/entities";
 
 interface FilterDropdownProps {
   filterOption: string;
@@ -17,6 +18,7 @@ interface FilterDropdownProps {
   selectedCategories: string[];
   setSelectedCategories: (categories: string[]) => void;
   categories: { id: string; name: string }[];
+  exhibitions: Exhibition[] | undefined;
 }
 
 const FilterDropdown: React.FC<FilterDropdownProps> = ({
@@ -25,73 +27,72 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   selectedCategories,
   setSelectedCategories,
   categories,
+  exhibitions,
 }) => {
   const { t } = useTranslation();
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [tempSelectedCategories, setTempSelectedCategories] =
+    useState(selectedCategories);
 
-  const handleFilterChange = (value: string) => {
-    setFilterOption(value);
-    if (value !== "category") {
-      setSelectedCategories([]);
-    }
-  };
+  useEffect(() => {
+    setTempSelectedCategories(selectedCategories);
+  }, [selectedCategories]);
 
   const handleCategoryToggle = (categoryName: string) => {
-    setSelectedCategories((prev) =>
+    setTempSelectedCategories((prev) =>
       prev.includes(categoryName)
         ? prev.filter((cat) => cat !== categoryName)
         : [...prev, categoryName],
     );
   };
 
+  const handleApply = () => {
+    setSelectedCategories(tempSelectedCategories);
+    setIsOpen(false);
+  };
+
   return (
-    <div className="relative">
-      <Select value={filterOption} onValueChange={handleFilterChange}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={t("filter")} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="publishedDate">
-              {t("filterOptions.publishedDate")}
-            </SelectItem>
-            <SelectItem value="alphabetical">
-              {t("filterOptions.alphabetical")}
-            </SelectItem>
-            <SelectItem
-              value="category"
-              onMouseEnter={() => setIsCategoryOpen(true)}
-              onMouseLeave={() => setIsCategoryOpen(false)}
-            >
-              <div className="flex w-full items-center justify-between">
-                {t("filterOptions.category")}
-                <ChevronRight className="h-4 w-4" />
-              </div>
-            </SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      {isCategoryOpen && (
-        <div
-          className="absolute left-full top-0 z-10 w-48 rounded-md border bg-white p-2 shadow-md"
-          onMouseEnter={() => setIsCategoryOpen(true)}
-          onMouseLeave={() => setIsCategoryOpen(false)}
-        >
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">{t("filter.filterBy")}</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-64">
+        <div className="p-2">
+          <h3 className="mb-2 font-semibold">{t("filter.sortBy")}</h3>
+          <DropdownMenuRadioGroup
+            value={filterOption}
+            onValueChange={setFilterOption}
+          >
+            <DropdownMenuRadioItem value="publishedDate">
+              {t("filter.publishedDate")}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="alphabetical">
+              {t("filter.alphabetical")}
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </div>
+        <DropdownMenuSeparator />
+        <div className="p-2">
+          <h3 className="mb-2 font-semibold">{t("filter.categories")}</h3>
           {categories.map((category) => (
-            <div key={category.id} className="flex items-center space-x-2 py-1">
+            <div key={category.id} className="mb-2 flex items-center space-x-2">
               <Checkbox
-                id={category.id}
-                checked={selectedCategories.includes(category.name)}
+                id={`category-${category.id}`}
+                checked={tempSelectedCategories.includes(category.name)}
                 onCheckedChange={() => handleCategoryToggle(category.name)}
               />
-              <label htmlFor={category.id} className="text-sm">
-                {category.name}
-              </label>
+              <label htmlFor={`category-${category.id}`}>{category.name}</label>
             </div>
           ))}
         </div>
-      )}
-    </div>
+        <DropdownMenuSeparator />
+        <div className="p-2">
+          <Button onClick={handleApply} className="w-full">
+            {t("filter.apply")}
+          </Button>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
