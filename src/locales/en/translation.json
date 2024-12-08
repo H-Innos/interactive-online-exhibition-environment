@@ -2,6 +2,8 @@
   "allExhibitions": "All exhibitions",
   "dashboardNav": "Dashboard",
   "login": "Log In",
+  "logout": "Log Out",
+  "signup": "Sign Up",
 
   "createExhibition": {
     "title": "Create a New Exhibition",
@@ -71,7 +73,7 @@
   "quizzes": {
     "quizzes": "Quizzes",
     "errorLoading": "Error loading quizzes.",
-    "noQuizzes": "There are currently no quizzes.",
+    "noQuizzes": "There are currently no quizzes for this exhibition.",
     "quizPreview": "Quiz Preview",
     "noQuizSelected": "Select a quiz to start editing.",
     "newQuiz": "New Quiz",
@@ -91,7 +93,10 @@
     "partiallyCorrect": "Partially correct.",
     "correctAnswers": "The correct answers are: ",
     "correctAnswer": " The correct answer is: ",
-    "activities": "Activities"
+    "activities": "Activities",
+    "saveChanges": "Save Changes",
+    "addQuestion": "Add Question",
+    "editQuizTitle": "Edit Quiz"
   },
 
   "toasts": {
@@ -115,7 +120,9 @@
     "quizDeleted": "Quiz deleted successfully!",
     "failedInvalidateCache": "Error updating page content. Please refresh the page.",
     "exhibitionRestored": "Exhibition restored successfully!",
-    "failedRestoreExhibition": "Failed to restore exhibition: {{message}}"
+    "failedRestoreExhibition": "Failed to restore exhibition: {{message}}",
+    "quizEdited": "Quiz updated successfully!",
+    "failedEditQuiz": "Failed to edit quiz: {{message}}"
   },
 
   "archive": {
@@ -164,8 +171,9 @@
   "trash2": "Trash",
   "archive2": "Archive",
   "drafts": "Drafts",
-  "publishedExhibitions": "Published Exhibitions",
+  "publishedExhibitions": "Published",
   "exhibitionManager": "Exhibition Manager",
   "fileUpload": "Upload File",
-  "chooseCoverImage": "Cover Image:"
+  "chooseCoverImage": "Cover Image:",
+  "perPage": "{{count}} per page"
 }

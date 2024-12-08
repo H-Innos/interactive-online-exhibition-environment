@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense } from "react";
-import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
@@ -10,7 +9,6 @@ import { DraftCard } from "~/components/ExhibitionCard/cards";
 
 const DraftsPage = () => {
   const { t } = useTranslation();
-  const router = useRouter();
 
   const {
     data: drafts,

@@ -19,4 +19,13 @@ export const selectors = {
   archiveButton: '[data-testid="select-archive-exhibition"]',
   dashboardHeading: 'h1:contains("Dashboard")',
   viewAllButton: 'span:contains("〉")',
+
+  // Login
+  loginDropdownButton: '[data-testid="login-dropdown-button"]:visible',
+  loginButton: '[data-testid="login-button"]:visible',
+  logoutButton: 'button:contains("Log Out")',
+  registerButton: '[data-testid="register-button"]:visible',
+  emailInput: '[data-testid="email-input"]:visible',
+  passwordInput: '[data-testid="password-input"]:visible',
+  userExistsToast: ':contains("User already exists")',
 };

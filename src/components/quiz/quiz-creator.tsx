@@ -12,21 +12,29 @@ import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import type { CreateQuizDTO, CreateQuestionDTO } from "~/lib/types/schemas";
 import { generateEmptyQuestion } from "~/lib/utils/quiz-utils";
 import { useTranslation } from "react-i18next";
+import { useEditQuiz } from "~/hooks/quiz-actions";
 
 type QuizCreatorProps = {
   creatorContent: CreateQuizDTO | null;
   disabled: boolean;
   onCreate: () => void;
+  onEdit?: (quizId: number) => void;
+  isEditMode?: boolean;
+  quizId?: number;
 };
 
 export default function QuizCreator({
   creatorContent,
   disabled,
   onCreate,
+  onEdit,
+  isEditMode = false,
+  quizId,
 }: QuizCreatorProps) {
   const { t } = useTranslation();
   const exhibitionId = useExhibitionIdFromParams();
   const createQuiz = useCreateQuiz();
+  const editQuiz = useEditQuiz();
 
   const [title, setTitle] = useState<string>("");
   const [questions, setQuestions] = useState<CreateQuestionDTO[]>([
@@ -40,14 +48,11 @@ export default function QuizCreator({
     }
   }, [creatorContent]);
 
-  const addQuestion = () => {
-    const newQuestion: CreateQuestionDTO = generateEmptyQuestion(exhibitionId);
-    setQuestions([...questions, newQuestion]);
-  };
-
   const updateQuestion = (updatedQuestion: CreateQuestionDTO) => {
-    setQuestions(
-      questions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q)),
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) =>
+        q.id === updatedQuestion.id ? updatedQuestion : q,
+      ),
     );
   };
 
@@ -57,14 +62,21 @@ export default function QuizCreator({
     }
   };
 
+  const addQuestion = () => {
+    const newQuestion: CreateQuestionDTO = generateEmptyQuestion(exhibitionId);
+    setQuestions([...questions, newQuestion]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (questions.every((q) => q.answers.some((a) => a.isCorrect))) {
       for (const question of questions) {
         if (!question.imageUrl) continue;
         question.imageUrl = await uploadImage(question.imageUrl);
       }
-      createQuiz.mutate({
+
+      const quizData = {
         title: title,
         exhibitionId: Number(exhibitionId),
         questions: questions.map((q) => ({
@@ -75,8 +87,15 @@ export default function QuizCreator({
             isCorrect: a.isCorrect,
           })),
         })),
-      });
-      onCreate();
+      };
+
+      if (isEditMode && quizId) {
+        await editQuiz.mutate(quizId, quizData);
+        if (onEdit) onEdit(quizId);
+      } else {
+        createQuiz.mutate(quizData);
+        onCreate();
+      }
     } else {
       alert(t("quizzes.noCorrectAnswersSpecified"));
     }
@@ -114,10 +133,12 @@ export default function QuizCreator({
             <div className="mt-4 flex justify-between">
               <Button type="button" onClick={addQuestion} disabled={disabled}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add Question
+                {t("quizzes.addQuestion")}
               </Button>
               <Button type="submit" disabled={disabled}>
-                {t("quizzes.createQuiz")}
+                {isEditMode
+                  ? t("quizzes.saveChanges")
+                  : t("quizzes.createQuiz")}
               </Button>
             </div>
           </CardContent>
