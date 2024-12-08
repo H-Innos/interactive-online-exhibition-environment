@@ -1,5 +1,9 @@
 import React from "react";
 
+import "@blocknote/mantine/style.css";
+import "@blocknote/core/fonts/inter.css";
+import "~/styles/colors.css";
+
 interface EditorPreviewProps {
   content: string;
 }

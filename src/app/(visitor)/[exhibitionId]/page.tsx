@@ -8,6 +8,7 @@ import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { QuizDropdown } from "~/components/quiz-dropdown";
 import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
+import "~/styles/colors.css";
 import { configurations } from "~/lib/constants/config";
 
 const ExhibitionViewPage: React.FC = () => {
