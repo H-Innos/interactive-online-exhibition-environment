@@ -40,10 +40,11 @@ import {
 } from "@blocknote/xl-multi-column";
 
 import { uploadFile } from "~/lib/utils/image-uploader";
-import { PDF } from "./pdf-block";
 import { RiFilePdfFill } from "react-icons/ri";
 import { RiText } from "react-icons/ri";
-import { Font, FontSelectorModal } from "./font";
+
+import { PDF } from "~/app/_components/pdf-block";
+import { Font, FontSelectorModal } from "~/app/_components/font-selector";
 
 interface ExhibitionContentEditorProps {
   initialContent: string;
