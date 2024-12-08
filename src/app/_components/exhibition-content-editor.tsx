@@ -40,10 +40,10 @@ import {
 } from "@blocknote/xl-multi-column";
 
 import { uploadFile } from "~/lib/utils/image-uploader";
-import { PDF } from "./PDFBlock";
+import { PDF } from "./pdf-block";
 import { RiFilePdfFill } from "react-icons/ri";
 import { RiText } from "react-icons/ri";
-import { Font, FontSelectorModal } from "./Font";
+import { Font, FontSelectorModal } from "./font";
 
 interface ExhibitionContentEditorProps {
   initialContent: string;
@@ -99,7 +99,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
     );
   };
 
-  // TODO types and linter etc
   const customBgTheme: Theme = {
     ...lightDefaultTheme,
     colors: {
@@ -109,11 +108,9 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         background: bgColor,
       },
       highlights: {
-        // white: { text: "#ffffff", background: "#ffffff" }, // Pure white
-        // black: { text: "#000000", background: "#000000" }, // Pure black
         gray: { text: "#808080", background: "#d3d3d3" }, // Neutral gray tones
         brown: { text: "#654321", background: "#a0522d" }, // Rich brown tones
-        red: { text: "#ff0000", background: "#ffcccc" }, // Vibrant red
+        red: { text: "#ff0000", background: "#ff0000" }, // Vibrant red
         orange: { text: "#ff8c00", background: "#ffe5b4" }, // Bright orange
         yellow: { text: "#ffd700", background: "#fffacd" }, // Vibrant yellow
         green: { text: "#008000", background: "#98fb98" }, // Rich green
@@ -126,7 +123,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
 
   const editor = useCreateBlockNote({
     uploadFile: uploadFile,
-    schema: withMultiColumn(schema), // TODO eslint acting up here :/
+    schema: withMultiColumn(schema),
     dropCursor: multiColumnDropCursor,
     dictionary: {
       ...locales.en,
@@ -157,7 +154,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   return (
     <div>
       <div className="main-container">
-        {/* TODO move out into nice modal window */}
         <FontSelectorModal
           isOpen={isFontModalOpen}
           onClose={() => setFontModalOpen(false)}
@@ -191,6 +187,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                           getDefaultReactSlashMenuItems(editor),
                           getMultiColumnSlashMenuItems(editor),
                         ),
+                        // @ts-expect-error: xl multi-column breaks previous typing, incompatible
                         insertPDF(editor),
                       ],
                       query,
@@ -205,8 +202,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
 
                       <FileCaptionButton key={"fileCaptionButton"} />
                       <FileReplaceButton key={"replaceFileButton"} />
-
-                      {/* TODO: Font selection button and custom dialog... */}
 
                       <BasicTextStyleButton
                         basicTextStyle={"bold"}
@@ -242,7 +237,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                         key={"textAlignRightButton"}
                       />
 
-                      {/* TODO: re-create color style button with custom colors added in (ie white, black) */}
                       <ColorStyleButton key={"colorStyleButton"} />
 
                       <NestBlockButton key={"nestBlockButton"} />

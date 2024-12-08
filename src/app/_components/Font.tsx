@@ -30,19 +30,28 @@ export const FontSelectorModal: React.FC<FontSelectorModalProps> = ({
   const fontOptions = [
     "Arial",
     "Verdana",
+    "Tahoma",
+    "Trebuchet MS",
     "Times New Roman",
     "Comic Sans MS",
     "Georgia",
+    "Garamond",
+    "Courier New",
+    "Brush Script MT",
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
+    <div
+      style={{ zIndex: 10000 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75"
+    >
       <div className="w-96 rounded-lg bg-white p-6 shadow-lg">
         <h3 className="mb-4 text-lg font-bold text-gray-800">Select Font</h3>
         <form className="mb-4">
           {fontOptions.map((font) => (
             <label
               key={font}
+              style={{ fontFamily: font }}
               className="mb-2 block cursor-pointer text-gray-700"
             >
               <input
@@ -63,13 +72,13 @@ export const FontSelectorModal: React.FC<FontSelectorModalProps> = ({
               onSelectFont(selectedFont);
               setSelectedFont("");
             }}
-            className="rounded-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+            className="rounded-md bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark_hover"
           >
             OK
           </button>
           <button
             onClick={onClose}
-            className="rounded-md bg-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-400"
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-100"
           >
             Cancel
           </button>
