@@ -48,8 +48,8 @@ Because exhibition space in libraries is limited and some materials must be stor
 POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local-db
 ```
 **Also add to the file the API key, required for file uploads (ask for this from a team member).**
-
-5.  Run `pnpm db:up` to start the local database. Make sure that postgres is not already running as a background task.
-6.  If this is your first time starting the database, or you have modified the `src/server/db/schema.ts` file, run `pnpm db:push` to update the database schema.
-7.  Run `pnpm dev` and the application will be accessible at http://localhost:3000.
-8.  Run `pnpm db:down` to stop the database.
+5.  Make sure you have Docker installed and running.
+6.  Run `pnpm db:up` to start the local database. Make sure that postgres is not already running as a background task.
+7.  If this is your first time starting the database, or you have modified the `src/server/db/schema.ts` file, run `pnpm db:push` to update the database schema.
+8.  Run `pnpm dev` and the application will be accessible at http://localhost:3000.
+9.  Run `pnpm db:down` to stop the database.
