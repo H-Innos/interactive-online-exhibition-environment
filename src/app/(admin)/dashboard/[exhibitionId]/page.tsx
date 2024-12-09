@@ -103,16 +103,17 @@ const ExhibitionEditorPage = () => {
 
       {isDetailsModalOpen && editorState && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-[600px] rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-bold">{t("exhibitionDetails")}</h2>
-            <ExhibitionDataForm exhibition={editorState} />
+          <div className="relative h-[90%] w-[90%] max-w-lg rounded-lg bg-white p-4 shadow-lg md:p-6">
             <button
               type="button"
-              className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-600 md:text-base"
+              className="absolute right-4 top-2 text-4xl text-gray-500 hover:text-gray-600"
               onClick={() => setIsDetailsModalOpen(false)}
+              aria-label="Close"
             >
-              {t("close")}
+              &times;
             </button>
+            <h2 className="mb-4 text-xl font-bold">{t("exhibitionDetails")}</h2>
+            <ExhibitionDataForm exhibition={editorState} />
           </div>
         </div>
       )}
