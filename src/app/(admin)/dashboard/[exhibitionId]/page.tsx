@@ -48,9 +48,12 @@ const ExhibitionEditorPage = () => {
     const validHTMLContent = convertToValidHTML(updatedContent);
     setEditorState((prevState) => {
       if (!prevState) return null;
+      const isContentChanged = prevState.content !== validHTMLContent;
+      if (isContentChanged) {
+        setIsDirty(true);
+      }
       return { ...prevState, content: validHTMLContent };
     });
-    setIsDirty(true);
   }
 
   function handleBackgroundColorChange(color: string) {

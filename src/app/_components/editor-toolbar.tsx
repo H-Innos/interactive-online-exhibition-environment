@@ -109,6 +109,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
     if (exhibition) {
       const isConfirmed = window.confirm(t("confirmPublish"));
       if (isConfirmed) {
+        handleSaveEditorChanges();
         publishExhibition.mutate(
           { id: exhibition.id },
           {
