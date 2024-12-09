@@ -27,7 +27,6 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   selectedCategories,
   setSelectedCategories,
   categories,
-  exhibitions,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +53,9 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">{t("filter.filterBy")}</Button>
+        <Button data-testid="filter-by-button" variant="outline">
+          {t("filter.filterBy")}
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         <div className="p-2">
@@ -63,8 +64,8 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             value={filterOption}
             onValueChange={setFilterOption}
           >
-            <DropdownMenuRadioItem value="publishedDate">
-              {t("filter.publishedDate")}
+            <DropdownMenuRadioItem value="updatedDate">
+              {t("filter.updatedDate")}
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="alphabetical">
               {t("filter.alphabetical")}
@@ -73,13 +74,14 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         </div>
         <DropdownMenuSeparator />
         <div className="p-2">
-          <h3 className="mb-2 font-semibold">{t("filter.categories")}</h3>
+          <h3 className="mb-2 font-semibold">{t("categories")}</h3>
           {categories.map((category) => (
             <div key={category.id} className="mb-2 flex items-center space-x-2">
               <Checkbox
                 id={`category-${category.id}`}
                 checked={tempSelectedCategories.includes(category.name)}
                 onCheckedChange={() => handleCategoryToggle(category.name)}
+                data-testid={`category-checkbox-${category.name}`}
               />
               <label htmlFor={`category-${category.id}`}>{category.name}</label>
             </div>
@@ -87,7 +89,11 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
         </div>
         <DropdownMenuSeparator />
         <div className="p-2">
-          <Button onClick={handleApply} className="w-full">
+          <Button
+            data-testid="apply-filter-button"
+            onClick={handleApply}
+            className="w-full"
+          >
             {t("filter.apply")}
           </Button>
         </div>

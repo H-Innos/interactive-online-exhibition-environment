@@ -70,7 +70,10 @@ const PageableExhibitions = ({
       </div>
 
       <div className="relative">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          data-testid="exhibition-list"
+        >
           {currentExhibitions.map((exhibition) => (
             <CardComponent key={exhibition.id} exhibition={exhibition} />
           ))}

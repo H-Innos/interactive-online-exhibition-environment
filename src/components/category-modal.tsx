@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface CategoryModalProps {
   onCategorySelect: (category: string) => void;
   onCategoryDeselect: (category: string) => void;
   onAddCategory: (category: string) => void;
+  onDeleteCategory: (category: string) => void;
 }
 
 const CategoryModal: React.FC<CategoryModalProps> = ({
@@ -19,10 +21,11 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   onCategorySelect,
   onCategoryDeselect,
   onAddCategory,
+  onDeleteCategory,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [newCategory, setNewCategory] = useState("");
-
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const handleCategoryClick = (category: string) => {
@@ -47,12 +50,16 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-96 rounded-lg bg-white p-4 shadow-lg">
-        <button onClick={onClose} className="mb-4 text-right">
+        <button
+          data-testid="close-category-modal"
+          onClick={onClose}
+          className="mb-4 text-right"
+        >
           Close
         </button>
         <input
           type="text"
-          placeholder="Search categories"
+          placeholder={t("categoryModal.searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-4 w-full rounded border p-2"
@@ -60,12 +67,14 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         <div className="mb-4 flex">
           <input
             type="text"
-            placeholder="New category"
+            data-testid="new-category-input"
+            placeholder={t("categoryModal.newCategoryPlaceholder")}
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
             className="flex-grow rounded border p-2"
           />
           <button
+            data-testid="add-category-button"
             onClick={handleAddCategory}
             className="ml-2 rounded bg-blue-500 p-2 text-white"
           >
@@ -73,7 +82,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           </button>
         </div>
         <div className="mb-4">
-          <h3 className="mb-2">Selected Categories</h3>
+          <h3 className="mb-2">{t("categoryModal.selectedCategories")}</h3>
           <div className="flex flex-wrap gap-2">
             {selectedCategories.map((category) => (
               <span
@@ -82,7 +91,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               >
                 {category}
                 <X
-                  className="ml-1 cursor-pointer text-red-500"
+                  className="ml-1 cursor-pointer text-gray-500"
                   onClick={() => handleCategoryClick(category)}
                 />
               </span>
@@ -90,19 +99,40 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           </div>
         </div>
         <div>
-          <h3 className="mb-2">Available Categories</h3>
-          <div className="flex flex-wrap gap-2">
+          <h3 className="mb-2">{t("categoryModal.availableCategories")}</h3>
+          <div className="flex flex-wrap gap-2" data-testid="category-list">
             {filteredCategories.map((category) => (
               <span
                 key={category}
-                className={`cursor-pointer rounded px-2 py-1 ${
+                className={`flex cursor-pointer items-center rounded px-2 py-1 ${
                   selectedCategories.includes(category)
                     ? "bg-blue-200"
                     : "bg-gray-200"
                 }`}
-                onClick={() => handleCategoryClick(category)}
+                data-testid={`category-item-${category}`}
               >
-                {category}
+                <span onClick={() => handleCategoryClick(category)}>
+                  {category}
+                </span>
+                {selectedCategories.includes(category) ? (
+                  <X
+                    className="ml-1 cursor-pointer text-gray-500"
+                    data-testid={`deselect-category-${category}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCategoryClick(category);
+                    }}
+                  />
+                ) : (
+                  <X
+                    className="ml-1 cursor-pointer text-red-500"
+                    data-testid={`delete-category-${category}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteCategory(category);
+                    }}
+                  />
+                )}
               </span>
             ))}
           </div>

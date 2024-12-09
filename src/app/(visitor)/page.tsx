@@ -23,7 +23,7 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
   } = api.exhibition.getPublished.useQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [filterOption, setFilterOption] = useState<string>("publishedDate");
+  const [filterOption, setFilterOption] = useState<string>("updatedDate");
 
   const { data: categories = [] } = api.category.getAll.useQuery();
 
@@ -32,18 +32,11 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
   }, []);
 
   const handleCategoryChange = useCallback((categories: string[]) => {
-    console.log("Categories changed:", categories);
     setSelectedCategories(categories);
   }, []);
 
   const filteredAndSortedExhibitions = useMemo(() => {
     if (!exhibitions) return [];
-
-    console.log("Filtering exhibitions:", {
-      totalExhibitions: exhibitions.length,
-      searchTerm,
-      selectedCategories,
-    });
 
     const filtered = exhibitions.filter((exhibition: Exhibition) => {
       const nameMatch = exhibition.name
@@ -56,25 +49,16 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
             selectedCategories.includes(cat.name),
           ));
 
-      console.log("Exhibition:", {
-        name: exhibition.name,
-        categories: exhibition.categories,
-        nameMatch,
-        categoryMatch,
-      });
-
       return nameMatch && (selectedCategories.length === 0 || categoryMatch);
     });
 
-    console.log("Filtered exhibitions:", filtered.length);
-
     return filtered.sort((a: Exhibition, b: Exhibition) => {
       switch (filterOption) {
-        case "publishedDate":
+        case t("updatedDate"):
           return (
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
-        case "alphabetical":
+        case t("alphabetical"):
           return a.name.localeCompare(b.name);
         default:
           return 0;
@@ -101,11 +85,6 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
               <div>{t("mainPage.errorLoading")}</div>
             ) : (
               <>
-                {console.log(
-                  "Rendering exhibitions:",
-                  filteredAndSortedExhibitions.length,
-                )}
-
                 <PageableExhibitions
                   title=""
                   exhibitions={filteredAndSortedExhibitions}

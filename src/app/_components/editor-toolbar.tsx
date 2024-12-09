@@ -51,6 +51,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
   const { data: categoriesData } = api.category.getAll.useQuery();
   const addCategory = api.category.create.useMutation();
+  const deleteCategory = api.category.delete.useMutation();
 
   useEffect(() => {
     if (categoriesData) {
@@ -85,6 +86,22 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const handleRemoveCategory = (category: string) => {
     setSelectedCategories(selectedCategories.filter((c) => c !== category));
     setIsDirty(true);
+  };
+
+  const handleDeleteCategory = async (category: string) => {
+    setAvailableCategories(availableCategories.filter((c) => c !== category));
+    setSelectedCategories(selectedCategories.filter((c) => c !== category));
+    setIsDirty(true);
+
+    try {
+      await deleteCategory.mutateAsync({ name: category });
+    } catch (error) {
+      alert(t("failedToDeleteCategory", { category }));
+      setAvailableCategories([...availableCategories, category]);
+      if (selectedCategories.includes(category)) {
+        setSelectedCategories([...selectedCategories, category]);
+      }
+    }
   };
 
   const handlePositionChange = (newPosition: { x: number; y: number }) => {
@@ -260,6 +277,22 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
+                onClick={() => setIsCategoryModalOpen(true)}
+                data-testid="categories-button"
+              >
+                <Tag className="h-5 w-5 text-black" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t("categories")}</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
                 data-testid="save-editor-changes"
                 type="button"
                 className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
@@ -286,20 +319,6 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             </TooltipTrigger>
             <TooltipContent>
               <p>{t("publish")}</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
-                onClick={() => setIsCategoryModalOpen(true)}
-              >
-                <Tag className="h-5 w-5 text-black" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{t("addCategory")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -332,6 +351,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
             onCategorySelect={handleAddCategory}
             onCategoryDeselect={handleRemoveCategory}
             onAddCategory={handleAddCategory}
+            onDeleteCategory={handleDeleteCategory}
           />
         )}
       </div>

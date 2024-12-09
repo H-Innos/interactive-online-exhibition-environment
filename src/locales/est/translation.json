@@ -136,6 +136,26 @@
     "confirmUnarchive": "Kas oled kindel, et soovid selle näituse arhiivist eemaldada?"
   },
 
+  "categoryModal": {
+    "searchPlaceholder": "Otsi kategooriaid",
+    "newCategoryPlaceholder": "Sisesta uue kategooria nimi",
+    "selectedCategories": "Valitud kategooriad",
+    "availableCategories": "Saadaval kategooriad"
+  },
+
+  "filter": {
+    "filterBy": "Filtreeri",
+    "sortBy": "Sorteeri",
+    "apply": "Rakenda",
+    "alphabetical": "Tähestikuline",
+    "updatedDate": "Uuendamise kuupäev"
+  },
+
+  "alphabetical": "Tähestikuline",
+  "updatedDate": "Uuendamise kuupäev",
+  "failedToDeleteCategory": "Kategooria kustutamine ebaõnnestus: {{category}}",
+  "categories": "Kategooriad",
+
   "confirmPublish": "Kas oled kindel, et soovid selle näituse avalikuks teha?",
   "editExhibition": "Muuda näitust",
   "status": "Staatus",

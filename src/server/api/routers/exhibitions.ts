@@ -82,58 +82,69 @@ export const exhibitionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("Updating exhibition:", input);
-      await ctx.db
-        .update(exhibitions)
-        .set({
-          name: input.name,
-          description: input.description,
-          thumbnailUrl: input.thumbnailUrl,
-          exhibitionCoverUrl: input.exhibitionCoverUrl,
-          coverImagePositionX: input.coverImagePositionX,
-          coverImagePositionY: input.coverImagePositionY,
-          content: input.content,
-          backgroundColor: input.backgroundColor,
-        })
-        .where(eq(exhibitions.id, input.id));
-
-      if (input.categories && input.categories.length > 0) {
-        console.log("Updating categories:", input.categories);
-
+      try {
         await ctx.db
-          .delete(exhibitionCategories)
-          .where(eq(exhibitionCategories.exhibitionId, input.id));
+          .update(exhibitions)
+          .set({
+            name: input.name,
+            description: input.description,
+            thumbnailUrl: input.thumbnailUrl,
+            exhibitionCoverUrl: input.exhibitionCoverUrl,
+            coverImagePositionX: input.coverImagePositionX,
+            coverImagePositionY: input.coverImagePositionY,
+            content: input.content,
+            backgroundColor: input.backgroundColor,
+          })
+          .where(eq(exhibitions.id, input.id));
 
-        const existingCategories = await ctx.db.query.categories.findMany({
-          where: (categories, { inArray }) =>
-            inArray(categories.name, input.categories),
-        });
-
-        const existingCategoryNames = existingCategories.map((c) => c.name);
-        const newCategoryNames = input.categories.filter(
-          (c) => !existingCategoryNames.includes(c),
-        );
-
-        if (newCategoryNames.length > 0) {
+        if (input.categories && input.categories.length > 0) {
           await ctx.db
-            .insert(categories)
-            .values(newCategoryNames.map((name) => ({ name })))
-            .onConflictDoNothing();
+            .delete(exhibitionCategories)
+            .where(eq(exhibitionCategories.exhibitionId, input.id));
+
+          // Get existing categories
+          const existingCategories = await ctx.db.query.categories.findMany({
+            where: (categories, { inArray }) =>
+              input.categories
+                ? inArray(categories.name, input.categories)
+                : undefined,
+          });
+
+          const existingCategoryNames = existingCategories.map((c) => c.name);
+          const newCategoryNames = input.categories.filter(
+            (c) => !existingCategoryNames.includes(c),
+          );
+
+          if (newCategoryNames.length > 0) {
+            await ctx.db
+              .insert(categories)
+              .values(newCategoryNames.map((name) => ({ name })))
+              .onConflictDoNothing();
+          }
+
+          const allCategories = await ctx.db.query.categories.findMany({
+            where: (categories, { inArray }) =>
+              input.categories
+                ? inArray(categories.name, input.categories)
+                : undefined,
+          });
+
+          await ctx.db.insert(exhibitionCategories).values(
+            allCategories.map((category) => ({
+              exhibitionId: input.id,
+              categoryId: category.id,
+            })),
+          );
+        } else {
+          await ctx.db
+            .delete(exhibitionCategories)
+            .where(eq(exhibitionCategories.exhibitionId, input.id));
         }
-
-        const allCategories = await ctx.db.query.categories.findMany({
-          where: (categories, { inArray }) =>
-            inArray(categories.name, input.categories),
-        });
-
-        await ctx.db.insert(exhibitionCategories).values(
-          allCategories.map((category) => ({
-            exhibitionId: input.id,
-            categoryId: category.id,
-          })),
-        );
+        return { id: input.id };
+      } catch (error) {
+        console.error("Error updating exhibition:", error);
+        throw new Error("Failed to update exhibition");
       }
-      return { id: input.id };
     }),
 
   delete: publicProcedure
@@ -302,12 +313,20 @@ export const exhibitionRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return (allExhibitions ?? []).map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition),
     }));
   }),
 
@@ -352,12 +371,20 @@ export const exhibitionRouter = createTRPCRouter({
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "draft"),
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition),
     }));
   }),
 
@@ -365,24 +392,40 @@ export const exhibitionRouter = createTRPCRouter({
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "published"),
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition),
     }));
   }),
 
   getArchived: publicProcedure.query(async ({ ctx }) => {
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "archived"),
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition),
     }));
   }),
 
