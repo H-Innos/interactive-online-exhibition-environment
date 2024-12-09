@@ -119,7 +119,6 @@ ExhibitionActionsDropdown.Archive =
       <DropdownMenuItem
         data-testid="select-archive-exhibition"
         onClick={handleClick}
-        disabled={exhibition.status !== "draft"}
       >
         {t("archive.now")}
       </DropdownMenuItem>

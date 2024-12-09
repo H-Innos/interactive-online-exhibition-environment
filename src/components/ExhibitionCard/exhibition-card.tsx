@@ -81,7 +81,12 @@ ExhibitionCard.Description = function ExhibitionCardDescription({
 ExhibitionCard.Date = function ExhibitionCardDate({ className }: DefaultProps) {
   const { exhibition } = useExhibitionCardContext();
   return (
-    <p className={cn("break-words text-sm text-foreground", className)}>
+    <p
+      className={cn(
+        "break-words pb-2 text-sm text-foreground text-gray-500",
+        className,
+      )}
+    >
       {formatDate(exhibition.updatedAt)}
     </p>
   );
