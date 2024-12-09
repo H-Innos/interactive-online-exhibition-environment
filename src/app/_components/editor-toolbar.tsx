@@ -39,7 +39,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const publishExhibition = usePublishExhibition();
 
   const [localCoverUrl, setLocalCoverUrl] = useState<string | null>(
-    exhibition?.exhibitionCoverUrl ?? null,
+    exhibition?.exhibitionCoverUrl ?? exhibition?.thumbnailUrl ?? null,
   );
 
   const handlePositionChange = (newPosition: { x: number; y: number }) => {
@@ -109,6 +109,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
     if (exhibition) {
       const isConfirmed = window.confirm(t("confirmPublish"));
       if (isConfirmed) {
+        handleSaveEditorChanges();
         publishExhibition.mutate(
           { id: exhibition.id },
           {
@@ -246,11 +247,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
 
         {exhibition && (
           <CoverImage
-            exhibitionCoverUrl={
-              localCoverUrl ??
-              exhibition.exhibitionCoverUrl ??
-              exhibition.thumbnailUrl
-            }
+            exhibitionCoverUrl={localCoverUrl ?? exhibition.thumbnailUrl}
             initialPosition={{
               x:
                 exhibition.coverImagePositionX ??
