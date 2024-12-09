@@ -20,6 +20,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
   const [description, setDescription] = useState("");
   const [thumbnail, setCoverImage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const createExhibition = useCreateExhibition();
@@ -32,6 +33,8 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
       return;
     }
 
+    setIsSubmitting(true);
+
     let thumbnailUrl = configurations.DEFAULT_COVER_IMAGE_URL;
 
     if (thumbnail) {
@@ -40,13 +43,18 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
         configurations.DEFAULT_COVER_IMAGE_URL;
     }
 
-    await createExhibition.mutateAsync({
-      name,
-      description,
-      thumbnailUrl,
-    });
-
-    onClose();
+    try {
+      await createExhibition.mutateAsync({
+        name,
+        description,
+        thumbnailUrl,
+      });
+      onClose();
+    } catch (error) {
+      console.error("Failed to create exhibition:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,9 +176,9 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
               type="submit"
               data-testid="create-exhibition-button"
               className="rounded-md bg-primary px-4 py-2 text-text-light hover:bg-primary-dark_hover"
-              disabled={createExhibition.isPending}
+              disabled={isSubmitting}
             >
-              {createExhibition.isPending
+              {isSubmitting
                 ? t("createExhibition.saving")
                 : t("createExhibition.create")}
             </button>

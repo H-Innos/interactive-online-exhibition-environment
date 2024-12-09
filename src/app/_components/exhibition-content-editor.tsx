@@ -109,7 +109,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         background: bgColor,
       },
       highlights: {
-        gray: { text: "#808080", background: "#d3d3d3" }, // Neutral gray tones
+        gray: { text: "#F5F5F5", background: "#B8B8B8" }, // Neutral gray tones
         brown: { text: "#654321", background: "#a0522d" }, // Rich brown tones
         red: { text: "#ff0000", background: "#ff0000" }, // Vibrant red
         orange: { text: "#ff8c00", background: "#ffe5b4" }, // Bright orange

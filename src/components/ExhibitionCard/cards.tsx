@@ -42,6 +42,7 @@ export const PublishedCard: React.FC<CardProps> = ({ exhibition }) => {
       <ExhibitionCard.Header>
         <ExhibitionCard.ImageAlternative />
         <ExhibitionCard.Dropdown>
+          <ExhibitionCard.Dropdown.View />
           <ExhibitionCard.Dropdown.Edit />
           <ExhibitionCard.Dropdown.Archive />
           <ExhibitionCard.Dropdown.Unpublish />
@@ -58,13 +59,8 @@ export const PublishedCard: React.FC<CardProps> = ({ exhibition }) => {
 };
 
 export const ArchiveCard: React.FC<CardProps> = ({ exhibition }) => {
-  const router = useRouter();
-  const handleClick = (id: number) => {
-    router.push(`/${id}`);
-  };
-
   return (
-    <ExhibitionCard exhibition={exhibition} onClick={handleClick}>
+    <ExhibitionCard exhibition={exhibition}>
       <ExhibitionCard.Header>
         <ExhibitionCard.ImageAlternative />
         <ExhibitionCard.Dropdown>
