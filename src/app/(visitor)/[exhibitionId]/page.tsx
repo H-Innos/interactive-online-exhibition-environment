@@ -70,7 +70,7 @@ const ExhibitionViewPage: React.FC = () => {
       >
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/")}
           className="absolute left-4 top-1/2 z-10 -translate-y-1/2 transform bg-transparent p-2 text-white sm:p-3 sm:text-4xl"
         >
           <span className="text-3xl sm:text-4xl">❬</span>
