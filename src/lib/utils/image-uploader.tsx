@@ -3,11 +3,16 @@ interface UploadResponse {
 }
 
 // TODO rename from Image to anything
-export async function uploadImage(imageDataUrl: string): Promise<string> {
+export async function uploadImage(
+  imageDataUrl: string,
+  fileName?: string,
+): Promise<string> {
   try {
     const imageBlob = await (await fetch(imageDataUrl)).blob();
     const formData = new FormData();
     formData.append("file", imageBlob);
+
+    if (typeof fileName !== "undefined") formData.append("fileName", fileName);
 
     const response = await fetch("/api/upload", {
       method: "POST",
@@ -38,5 +43,5 @@ export async function uploadImage(imageDataUrl: string): Promise<string> {
 
 export async function uploadFile(imgFile: File): Promise<string> {
   const imageDataUrl = URL.createObjectURL(imgFile); // TODO check performance of this
-  return await uploadImage(imageDataUrl);
+  return await uploadImage(imageDataUrl, imgFile.name);
 }

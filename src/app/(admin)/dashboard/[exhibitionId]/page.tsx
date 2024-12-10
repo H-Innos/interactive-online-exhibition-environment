@@ -48,9 +48,12 @@ const ExhibitionEditorPage = () => {
     const validHTMLContent = convertToValidHTML(updatedContent);
     setEditorState((prevState) => {
       if (!prevState) return null;
+      const isContentChanged = prevState.content !== validHTMLContent;
+      if (isContentChanged) {
+        setIsDirty(true);
+      }
       return { ...prevState, content: validHTMLContent };
     });
-    setIsDirty(true);
   }
 
   function handleBackgroundColorChange(color: string) {
@@ -68,7 +71,7 @@ const ExhibitionEditorPage = () => {
           aria-hidden="true"
         />
       )}
-      <div className="flex flex-col min-h-screen">
+      <div className="flex min-h-screen flex-col">
         <ExhibitionToolbar
           exhibition={editorState}
           setBackgroundColor={handleBackgroundColorChange}
@@ -90,6 +93,7 @@ const ExhibitionEditorPage = () => {
                 <ExhibitionContentEditor
                   initialContent={editorState.content ?? ""}
                   onChange={handleEditorChange}
+                  bgColor={editorState?.backgroundColor ?? "#ffffff"}
                 />
               </div>
             )}
@@ -99,16 +103,17 @@ const ExhibitionEditorPage = () => {
 
       {isDetailsModalOpen && editorState && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[600px]">
-            <h2 className="text-xl font-bold mb-4">{t("exhibitionDetails")}</h2>
-            <ExhibitionDataForm exhibition={editorState} />
+          <div className="relative h-[90%] w-[90%] max-w-lg rounded-lg bg-white p-4 shadow-lg md:p-6">
             <button
               type="button"
-              className="mt-4 rounded-md bg-gray-500 px-4 py-2 text-sm text-white hover:bg-gray-600 md:text-base"
+              className="absolute right-4 top-2 text-4xl text-gray-500 hover:text-gray-600"
               onClick={() => setIsDetailsModalOpen(false)}
+              aria-label="Close"
             >
-              {t("close")}
+              &times;
             </button>
+            <h2 className="mb-4 text-xl font-bold">{t("exhibitionDetails")}</h2>
+            <ExhibitionDataForm exhibition={editorState} />
           </div>
         </div>
       )}

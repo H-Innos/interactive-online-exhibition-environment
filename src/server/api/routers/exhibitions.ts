@@ -272,11 +272,6 @@ export const exhibitionRouter = createTRPCRouter({
       if (!exhibition) {
         throw new Error("Exhibition not found");
       }
-
-      if (exhibition.status === "published") {
-        throw new Error("Cannot archive a published exhibition");
-      }
-
       const archivedExhibition = await ctx.db
         .update(exhibitions)
         .set({ status: "archived" })

@@ -28,12 +28,12 @@ const TrashedExhibitionsPage = () => {
     if (confirmed) {
       try {
         await deleteExhibition.mutateAsync({ id });
+        await refetch();
       } catch (error) {
         console.error("Failed to delete exhibition:", error);
       }
     }
   };
-
   return (
     <Suspense fallback={<div className="p-4">{t("trash.loading")}</div>}>
       <div className="min-h-screen max-w-full overflow-x-hidden p-8">
@@ -45,7 +45,7 @@ const TrashedExhibitionsPage = () => {
         {error ? (
           <div>{t("trash.errorLoading")}</div>
         ) : trashedExhibitions && trashedExhibitions.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
             {trashedExhibitions.map((exhibition) => (
               <div
                 key={exhibition.id}

@@ -8,6 +8,7 @@ import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import { QuizDropdown } from "~/components/quiz-dropdown";
 import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
+import "~/styles/colors.css";
 import { configurations } from "~/lib/constants/config";
 
 const ExhibitionViewPage: React.FC = () => {
@@ -70,9 +71,9 @@ const ExhibitionViewPage: React.FC = () => {
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <button
           onClick={() => router.push("/")}
-          className="absolute left-4 top-1/2 z-10 -translate-y-1/2 transform text-3xl text-white sm:text-4xl"
+          className="absolute left-4 top-1/2 z-10 -translate-y-1/2 transform bg-transparent p-2 text-white sm:p-3 sm:text-4xl"
         >
-          ❬
+          <span className="text-3xl sm:text-4xl">❬</span>
         </button>
         <h1 className="relative z-10 px-4 text-center text-lg font-bold text-white sm:text-2xl lg:text-3xl">
           {exhibition.name}

@@ -87,7 +87,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
           <CardTitle>{t("exhibitionDetails")}</CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6 p-6">
+      <CardContent className="space-y-6 p-4 md:p-6">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-2">
             <Label htmlFor="title">{t("title")}</Label>
@@ -127,9 +127,11 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
             <Label htmlFor="thumbnail">{t("thumbnail")}</Label>
             <div className="flex flex-col items-start space-y-2">
               <RemovableImage
-                src={coverImageDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
+                src={
+                  coverImageDataUrl || configurations.DEFAULT_COVER_IMAGE_URL
+                }
                 alt={t("thumbnail")}
-                className="h-48 w-48"
+                className="h-32 w-32 md:h-48 md:w-48"
                 onDelete={handleThumbnailDelete}
               />
               <FileUploadButton
@@ -140,7 +142,9 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
             </div>
             <p className="h-5 text-sm">
               {errors.coverImage ? (
-                <span className="text-red-500">{errors.coverImage.message}</span>
+                <span className="text-red-500">
+                  {errors.coverImage.message}
+                </span>
               ) : (
                 <span>&nbsp;</span>
               )}
@@ -150,7 +154,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
             type="submit"
             variant="outline"
             disabled={isSubmitting}
-            className="mt-4 w-full"
+            className="mt-4 w-full bg-gray-300"
           >
             <Save className="mr-2 h-4 w-4" />
             {t("saveChanges")}
