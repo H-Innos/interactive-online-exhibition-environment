@@ -97,7 +97,12 @@
     "activities": "Tegevused",
     "saveChanges": "Salvesta muudatused",
     "addQuestion": "Lisa küsimus",
-    "editQuizTitle": "Muuda viktoriini"
+    "editQuizTitle": "Muuda viktoriini",
+    "scoreMessage": "Sinu tulemus on {{score}} / {{totalQuestions}}.",
+    "scorePercentage": "{{percentage}}%",
+    "result": "Tulemus",
+    "retakeQuiz": "Tee test uuesti",
+    "finishQuiz": "Finish Quiz"
   },
 
   "toasts": {

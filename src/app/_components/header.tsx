@@ -17,7 +17,7 @@ const Header = () => {
   const changeLanguage = async (lng: string | undefined) => {
     try {
       await i18n.changeLanguage(lng);
-      localStorage.setItem("language", lng || "en");
+      localStorage.setItem("language", lng ?? "en");
     } catch (error) {
       console.error("Error changing language:", error);
     }
@@ -26,7 +26,9 @@ const Header = () => {
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage) {
-      i18n.changeLanguage(savedLanguage);
+      void i18n.changeLanguage(savedLanguage).catch((error) => {
+        console.error("Error setting saved language:", error);
+      });
     }
   }, []);
 
