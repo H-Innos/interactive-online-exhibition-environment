@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SlideInMenu from "~/components/slide-in-menu";
 import { useTranslation } from "react-i18next";
 import i18n from "~/i18n";
@@ -17,10 +17,18 @@ const Header = () => {
   const changeLanguage = async (lng: string | undefined) => {
     try {
       await i18n.changeLanguage(lng);
+      localStorage.setItem("language", lng || "en");
     } catch (error) {
       console.error("Error changing language:", error);
     }
   };
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
