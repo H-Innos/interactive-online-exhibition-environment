@@ -1,4 +1,6 @@
 import { FileBlockConfig } from "@blocknote/core";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
 
 import {
   AddFileButton,
@@ -20,13 +22,32 @@ export const PDFPreview = (
   >,
 ) => {
   return (
-    <embed
-      type={"application/pdf"}
-      src={props.block.props.url}
-      contentEditable={false}
-      draggable={true}
-      onClick={() => props.editor.setTextCursorPosition(props.block)}
-    />
+    <ResizableBox
+      width={props.block.props.previewWidth as unknown as number}
+      height={props.block.props.previewHeight ?? 600}
+      minConstraints={[300, 300]}
+      maxConstraints={[2500, 2500]}
+      resizeHandles={["se", "e", "s"]}
+      onResizeStop={(e, data) => {
+        props.editor.updateBlock(props.block, {
+          //previewWidth: data.size.width,
+          //previewHeight: data.size.height,
+        });
+      }}
+    >
+      <embed
+        type={"application/pdf"}
+        src={props.block.props.url}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+        }}
+        contentEditable={false}
+        draggable={true}
+        onClick={() => props.editor.setTextCursorPosition(props.block)}
+      />
+    </ResizableBox>
   );
 };
 
@@ -49,13 +70,16 @@ export const PDF = createReactBlockSpec(
       previewWidth: {
         default: 512,
       },
+      previewHeight: {
+        default: 600,
+      },
     },
     content: "none",
     isFileBlock: true,
   },
   {
     render: (props) => (
-      <div className={"bn-file-block-content-wrapper"}>
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
         {props.block.props.url === "" ? (
           <AddFileButton
             {...props}

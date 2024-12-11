@@ -52,7 +52,7 @@ const ExhibitionViewPage: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen overflow-hidden text-text-dark"
+      className="relative min-h-screen overflow-hidden text-text-dark"
       style={{ backgroundColor: exhibition.backgroundColor ?? "#ffffff" }}
     >
       <div
@@ -75,22 +75,14 @@ const ExhibitionViewPage: React.FC = () => {
         >
           <span className="text-3xl sm:text-4xl">❬</span>
         </button>
-        <h1 className="relative z-10 px-4 text-center text-lg font-bold text-white sm:text-2xl lg:text-3xl">
+        <h1 className="z-5 relative px-4 text-center text-lg font-bold text-white sm:text-2xl lg:text-3xl">
           {exhibition.name}
         </h1>
       </div>
 
-      <div className="mt-8 flex flex-col gap-4 p-4 sm:flex-row sm:gap-8 sm:p-8">
-        <div className="flex-1">
-          <div
-            id="editor-content"
-            dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }}
-            className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
-          />
-        </div>
-
+      <div className="flex flex-col p-4">
         {quizzes && quizzes.length > 0 && (
-          <div className="max-w-full sm:ml-4">
+          <div className="mb-4 self-end">
             <QuizDropdown
               quizzes={quizzes}
               onQuizSelect={(quizId: number) => {
@@ -99,6 +91,14 @@ const ExhibitionViewPage: React.FC = () => {
             />
           </div>
         )}
+
+        <div className="flex-1">
+          <div
+            id="editor-content"
+            dangerouslySetInnerHTML={{ __html: exhibition.content ?? "" }}
+            className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
+          />
+        </div>
       </div>
     </div>
   );

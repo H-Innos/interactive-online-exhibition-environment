@@ -96,7 +96,12 @@
     "activities": "Activities",
     "saveChanges": "Save Changes",
     "addQuestion": "Add Question",
-    "editQuizTitle": "Edit Quiz"
+    "editQuizTitle": "Edit Quiz",
+    "scoreMessage": "Your score is {{score}} out of {{totalQuestions}}.",
+    "scorePercentage": "{{percentage}}%",
+    "result": "Result",
+    "retakeQuiz": "Retake Quiz",
+    "finishQuiz": "Finish Quiz"
   },
 
   "toasts": {

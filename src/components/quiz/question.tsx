@@ -17,7 +17,8 @@ enum QuestionResult {
 type QuestionCardProps = {
   question: Question;
   isSubmitted: boolean;
-  onSubmit: () => void;
+  isCorrect: boolean;
+  onSubmit: (isCorrect: boolean) => void;
   onUnsubmit: () => void;
 };
 
@@ -26,6 +27,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
   onSubmit,
   onUnsubmit,
   isSubmitted,
+  isCorrect,
 }) => {
   const { t } = useTranslation();
   const [selectedAnswers, setSelectedAnswers] = React.useState<Answer[]>([]);
@@ -62,6 +64,10 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
     );
   }
 
+  function handleSubmit() {
+    onSubmit(result === QuestionResult.CORRECT);
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -79,6 +85,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
                 id={`answer-${index}`}
                 checked={selectedAnswers.includes(answer)}
                 onCheckedChange={() => onAnswerToggle(answer)}
+                disabled={isSubmitted}
               />
               <Label
                 htmlFor={`answer-${index}`}
@@ -89,18 +96,16 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             </div>
           ))}
         </div>
-        {isSubmitted ? (
-          <FeedBackLabel result={result} correctAnswers={correctAnswers} />
-        ) : (
-          <FeedBackLabelPlaceholder />
+        {isSubmitted && (
+          <FeedBackLabel
+            result={
+              isCorrect ? QuestionResult.CORRECT : QuestionResult.INCORRECT
+            }
+            correctAnswers={correctAnswers}
+          />
         )}
         <div className="mt-2 flex w-full justify-end">
-          <Button
-            type="button"
-            onClick={() => {
-              onSubmit();
-            }}
-          >
+          <Button type="button" onClick={handleSubmit} disabled={isSubmitted}>
             <Check className="h-4 w-4" /> {t("quizzes.checkAnswer")}
           </Button>
         </div>
@@ -136,8 +141,4 @@ const FeedBackLabel: React.FC<{
     default:
       throw new Error("Unknown question result");
   }
-};
-
-const FeedBackLabelPlaceholder: React.FC = () => {
-  return <div className="break-words rounded-md p-4">&nbsp;</div>;
 };
