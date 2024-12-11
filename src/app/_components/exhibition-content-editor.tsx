@@ -52,6 +52,12 @@ interface ExhibitionContentEditorProps {
   bgColor: string;
 }
 
+type GroupType = "Heading" | "Media" | "Other";
+
+interface SuggestionItem {
+  group: GroupType;
+}
+
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   initialContent,
   onChange,
@@ -140,7 +146,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
       });
     },
     aliases: ["pdf"],
-    group: "Other",
+    group: "Media",
     icon: <RiFilePdfFill />,
     subtext: "PDF file with interactive preview window",
   });
@@ -149,6 +155,43 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
     setFontModalOpen(false);
     editor.addStyles({
       font: fontName,
+    });
+  };
+
+  useEffect(() => {
+    if (editor) {
+      const getInitBlocks = async () => {
+        const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
+        editor.replaceBlocks(editor.document, parsedBlocks);
+      };
+      void getInitBlocks();
+      setIsLayoutReady(true);
+    }
+    return () => setIsLayoutReady(false);
+  }, [editor, initialContent]);
+
+  const reorderSuggestions = (
+    defaultItems: ReturnType<typeof getDefaultReactSlashMenuItems>,
+    additionalItems: ReturnType<typeof getMultiColumnSlashMenuItems>,
+    customItems: SuggestionItem[],
+  ) => {
+    const groupedItems = [
+      ...combineByGroup(defaultItems, additionalItems, customItems),
+    ];
+
+    return groupedItems.sort((a, b) => {
+      const order: Record<GroupType, number> = {
+        Heading: 1,
+        Media: 2,
+        Other: 3,
+      };
+
+      const aGroup = order[a.group as GroupType] ?? Number.MAX_SAFE_INTEGER;
+      const bGroup = order[b.group as GroupType] ?? Number.MAX_SAFE_INTEGER;
+
+      if (aGroup < bGroup) return -1;
+      if (aGroup > bGroup) return 1;
+      return 0;
     });
   };
 
@@ -183,14 +226,14 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                   triggerCharacter={"/"}
                   getItems={async (query: string) =>
                     filterSuggestionItems(
-                      [
-                        ...combineByGroup(
-                          getDefaultReactSlashMenuItems(editor),
-                          getMultiColumnSlashMenuItems(editor),
-                        ),
-                        // @ts-expect-error: xl multi-column breaks previous typing, incompatible
-                        insertPDF(editor),
-                      ],
+                      reorderSuggestions(
+                        getDefaultReactSlashMenuItems(editor),
+                        getMultiColumnSlashMenuItems(editor),
+                        [
+                          // @ts-expect-error: xl multi-column breaks previous typing, incompatible
+                          insertPDF(editor),
+                        ],
+                      ),
                       query,
                     )
                   }
