@@ -4,30 +4,22 @@ import {
   deleteExhibition,
   login,
   openExhibitionEditor,
+  register,
 } from "cypress/support/commands";
 
 describe("Categories and Filtering Functionality", () => {
   const exhibitionTitle = "Test Exhibition for cat and fit";
   const exhibitionDescription = "This is a test exhibition";
-  const newCategoryName = "Test Category";
+  const newCategoryName = "Test Category5";
+
+  before(() => {
+    cy.visit("/");
+    register();
+  });
 
   beforeEach(() => {
     cy.visit("/");
-
-    cy.get("body").then(($body) => {
-      if ($body.find(selectors.logoutButton).length > 0) {
-        cy.log("User is already logged in, skipping the test.");
-        return; // Skip the rest of the test
-      } else {
-        cy.get(selectors.loginDropdownButton).click({ force: true });
-        cy.get(selectors.emailInput).type("123test@test.com");
-        cy.get(selectors.passwordInput).type("12345678");
-
-        cy.intercept("POST", "/").as("firstRequest");
-        cy.get(selectors.loginButton).click({ force: true });
-        cy.wait("@firstRequest");
-      }
-    });
+    login();
 
     cy.visit("/dashboard");
   });
@@ -42,6 +34,7 @@ describe("Categories and Filtering Functionality", () => {
     cy.get('[data-testid="categories-button"]').click({ force: true });
     cy.get('[data-testid="new-category-input"]').type(newCategoryName);
     cy.get('[data-testid="add-category-button"]').click({ force: true });
+    cy.wait(2000);
     cy.get('[data-testid="close-category-modal"]').click({ force: true });
 
     // Save changes
@@ -49,7 +42,7 @@ describe("Categories and Filtering Functionality", () => {
     cy.get('[data-sonner-toast][data-type="success"]', { timeout: 10000 })
       .should("be.visible")
       .and("contain", "Exhibition updated successfully!");
-
+    cy.wait(2000);
     // Go back to drafts and filter
     cy.visit("/dashboard/drafts");
     cy.get('[data-testid="filter-by-button"]').click({ force: true });
