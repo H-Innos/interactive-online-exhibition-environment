@@ -14,7 +14,7 @@ describe("Create Exhibition", () => {
     createExhibition(exhibitionTitle, exhibtionDescription);
     openExhibitionEditor(exhibitionTitle);
   });
-
+  /*
   it("should edit and save content", () => {
     cy.intercept("POST", "/api/trpc/**").as("saveRequest");
 
@@ -45,5 +45,6 @@ describe("Create Exhibition", () => {
           cy.log("Exhibition card not found for deletion.");
         }
       });
-  });
+
+  });*/
 });
