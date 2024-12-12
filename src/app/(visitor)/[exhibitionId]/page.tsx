@@ -10,6 +10,8 @@ import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
 import "~/styles/colors.css";
 import { configurations } from "~/lib/constants/config";
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import "photoswipe/style.css";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -25,7 +27,31 @@ const ExhibitionViewPage: React.FC = () => {
     if (data) {
       setExhibition(data);
     }
-  }, [data]);
+
+    if (exhibition) {
+      // Set image sizes after they've been rendered (for lightbox)
+      document.querySelectorAll("a.gallery-img").forEach((link) => {
+        const img = link.querySelector("img");
+        if (img) {
+          img.onload = (e) => {
+            link.setAttribute("data-pswp-width", img.naturalWidth.toString());
+            link.setAttribute("data-pswp-height", img.naturalHeight.toString());
+          };
+        }
+      });
+
+      const lightbox = new PhotoSwipeLightbox({
+        gallery: "#editor-content",
+        children: "a.gallery-img",
+        pswpModule: () => import("photoswipe"),
+      });
+      lightbox.init();
+
+      return () => {
+        lightbox.destroy();
+      };
+    }
+  }, [exhibition, data]);
 
   if (isLoading) {
     return (
