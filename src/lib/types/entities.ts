@@ -12,6 +12,7 @@ export type Exhibition = {
   content: string | null;
   backgroundColor: string | null;
   categories: Category[];
+  contributors: Contributor[];
 };
 
 export type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
@@ -38,12 +39,17 @@ export type Quiz = {
   questions: Question[];
 };
 
-export type ExhibitionFromDB = Omit<Exhibition, "categories" | "status"> & {
-  status: string;
-  exhibitionCategories: { category: Category }[];
-};
+// export type ExhibitionFromDB = Omit<Exhibition, "categories" | "status"> & {
+//   status: string;
+//   exhibitionCategories: { category: Category }[];
+// };
 
 export type Category = {
   id: number;
   name: string;
+};
+
+export type Contributor = {
+  role: string;
+  names: string;
 };
