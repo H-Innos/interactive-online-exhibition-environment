@@ -39,11 +39,6 @@ export type Quiz = {
   questions: Question[];
 };
 
-// export type ExhibitionFromDB = Omit<Exhibition, "categories" | "status"> & {
-//   status: string;
-//   exhibitionCategories: { category: Category }[];
-// };
-
 export type Category = {
   id: number;
   name: string;

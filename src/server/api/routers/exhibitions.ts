@@ -355,7 +355,6 @@ export const exhibitionRouter = createTRPCRouter({
   getArchived: publicProcedure.query(async ({ ctx }) => {
     const exhibitions = await getExhibitions(ctx.db, "status", "archived");
 
-    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
 
