@@ -58,17 +58,18 @@ const DraftsPage = () => {
 
     return filtered.sort((a: Exhibition, b: Exhibition) => {
       switch (filterOption) {
-        case t("updatedDate"):
+        case "updatedDate":
           return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b.updatedAt ?? b.createdAt).getTime() -
+            new Date(a.updatedAt ?? a.createdAt).getTime()
           );
-        case t("alphabetical"):
+        case "alphabetical":
           return a.name.localeCompare(b.name);
         default:
           return 0;
       }
     });
-  }, [drafts, selectedCategories, filterOption, t]);
+  }, [drafts, selectedCategories, filterOption]);
 
   return (
     <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
