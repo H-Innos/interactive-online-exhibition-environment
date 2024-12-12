@@ -11,6 +11,7 @@ import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
 import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
 import ExhibitionToolbar from "~/app/_components/editor-toolbar";
 import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
+import ExhibitionTabs from "~/components/details-tabs";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
@@ -106,14 +107,13 @@ const ExhibitionEditorPage = () => {
           <div className="relative h-[90%] w-[90%] max-w-lg rounded-lg bg-white p-4 shadow-lg md:p-6">
             <button
               type="button"
-              className="absolute right-4 top-2 text-4xl text-gray-500 hover:text-gray-600"
+              className="flex w-full flex-row justify-end text-4xl text-gray-500 hover:text-gray-600"
               onClick={() => setIsDetailsModalOpen(false)}
               aria-label="Close"
             >
               &times;
             </button>
-            <h2 className="mb-4 text-xl font-bold">{t("exhibitionDetails")}</h2>
-            <ExhibitionDataForm exhibition={editorState} />
+            <ExhibitionTabs exhibition={editorState} />
           </div>
         </div>
       )}

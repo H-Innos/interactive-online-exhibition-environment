@@ -14,9 +14,11 @@ type ContributorFormProps = {
 };
 
 const ContributorForm: React.FC<ContributorFormProps> = ({ exhibition }) => {
-  const [contributors, setContributors] = useState<Contributor[]>([
-    { role: "", names: "" },
-  ]);
+  const [contributors, setContributors] = useState<Contributor[]>(
+    exhibition.contributors?.length !== 0
+      ? exhibition.contributors
+      : [{ role: "", names: "" }],
+  );
 
   const updateExhibition = useUpdateExhibition();
 
@@ -26,7 +28,7 @@ const ContributorForm: React.FC<ContributorFormProps> = ({ exhibition }) => {
 
   const updateContributor = (
     index: number,
-    field: "role" | "name",
+    field: keyof Contributor,
     value: string,
   ) => {
     const updatedContributors = contributors.map((contributor, i) => {
@@ -86,7 +88,7 @@ const ContributorForm: React.FC<ContributorFormProps> = ({ exhibition }) => {
                   id={`name-${index}`}
                   value={contributor.names}
                   onChange={(e) =>
-                    updateContributor(index, "name", e.target.value)
+                    updateContributor(index, "names", e.target.value)
                   }
                   placeholder="Contributor's name"
                 />
@@ -105,7 +107,6 @@ const ContributorForm: React.FC<ContributorFormProps> = ({ exhibition }) => {
           </div>
         ))}
       </div>
-      s
       <div className="flex justify-between">
         <Button type="button" onClick={addContributorField} variant="outline">
           <PlusCircle className="mr-2 h-4 w-4" />

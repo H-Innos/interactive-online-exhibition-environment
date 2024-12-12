@@ -34,7 +34,8 @@
     "errorLoadingDrafts": "Error loading drafts.",
     "errorLoadingRecent": "Error loading recently exhibitions.",
     "loadingRecent": "Loading recently published exhibitions.",
-    "published": "Published Exhibitions"
+    "published": "Published Exhibitions",
+    "noExhibitions": "There are currently no exhibitions"
   },
 
   "mainPage": {

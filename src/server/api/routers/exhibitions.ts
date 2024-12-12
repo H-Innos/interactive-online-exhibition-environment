@@ -392,10 +392,6 @@ async function getExhibitions(
     },
   });
 
-  if (fullExhibitions.length === 0) {
-    throw new Error("No exhibitions found");
-  }
-
   return fullExhibitions;
 }
 
@@ -448,10 +444,17 @@ function assertExhibitionStatus(status: string): ExhibitionStatus {
   throw new Error(`Invalid exhibition status: ${status}`);
 }
 
-function assertContributors(contributorsJson: unknown): Contributor[] {
+function assertContributors(contributorsJson: string | null): Contributor[] {
+  if (contributorsJson === null || contributorsJson === undefined) {
+    return [];
+  }
+
+  if (contributorsJson.trim() === "") {
+    return [];
+  }
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const parsedData: Contributor[] = JSON.parse(contributorsJson as string);
+    const parsedData: Contributor[] = JSON.parse(contributorsJson);
     return parsedData;
   } catch (error) {
     console.error("Error parsing contributors JSON:", error);

@@ -8,7 +8,6 @@ import {
   boolean,
   integer,
   pgEnum,
-  json,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator(
@@ -66,7 +65,7 @@ export const exhibitions = createTable("post", {
   backgroundColor: varchar("background_color", { length: 7 }).default(
     "#FFFFFF",
   ),
-  contributors: json("contributors").default(""),
+  contributors: text("contributors").default(""),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
