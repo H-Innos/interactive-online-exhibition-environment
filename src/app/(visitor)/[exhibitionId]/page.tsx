@@ -10,11 +10,16 @@ import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
 import "~/styles/colors.css";
 import { configurations } from "~/lib/constants/config";
+import { Button } from "~/components/ui/button";
+import { Download } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
   const router = useRouter();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
+  const { t } = useTranslation();
 
   const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
   const { data: quizzes } = api.quiz.getAllByExhibitionId.useQuery({
@@ -26,6 +31,41 @@ const ExhibitionViewPage: React.FC = () => {
       setExhibition(data);
     }
   }, [data]);
+
+  const [isDownloading, setIsDownloading] = useState(false);
+  const downloadExhibitionPDF = api.pdf.generateExhibitionPDF.useMutation();
+
+  function handleDownloadPDF(exhibitionId: number) {
+    setIsDownloading(true);
+    downloadExhibitionPDF.mutate(
+      { exhibitionId },
+      {
+        onSuccess: (data) => {
+          try {
+            const blob = new Blob([Buffer.from(data.pdfBuffer, "base64")], {
+              type: "application/pdf",
+            });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = data.fileName;
+            link.click();
+            window.URL.revokeObjectURL(link.href);
+            setIsDownloading(false);
+            toast.success("PDF downloaded successfully");
+          } catch (error) {
+            console.error("Error creating PDF blob:", error);
+            toast.error("Failed to create PDF download");
+            setIsDownloading(false);
+          }
+        },
+        onError: (error) => {
+          console.error("Error downloading PDF:", error);
+          toast.error("Failed to generate PDF");
+          setIsDownloading(false);
+        },
+      },
+    );
+  }
 
   if (isLoading) {
     return (
@@ -99,6 +139,12 @@ const ExhibitionViewPage: React.FC = () => {
             />
           </div>
         )}
+        <Button
+          onClick={() => handleDownloadPDF(exhibition.id)}
+          disabled={isDownloading}
+        >
+          {isDownloading ? "Downloading..." : "Download Exhibition PDF"}
+        </Button>
       </div>
     </div>
   );
