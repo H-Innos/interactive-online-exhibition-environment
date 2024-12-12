@@ -39,14 +39,12 @@ export default function ArchivePage() {
   const filteredAndSortedArchived = useMemo(() => {
     if (!archivedExhibitions) return [];
 
-    let filtered = archivedExhibitions.filter((exhibition) =>
-      exhibition.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    let filtered = archivedExhibitions;
 
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(
-        (draft: Exhibition) =>
-          draft.categories?.some((cat) =>
+        (exhibition: Exhibition) =>
+          exhibition.categories?.some((cat) =>
             selectedCategories.includes(cat.name),
           ) ?? false,
       );
@@ -54,17 +52,18 @@ export default function ArchivePage() {
 
     return filtered.sort((a: Exhibition, b: Exhibition) => {
       switch (filterOption) {
-        case t("updatedDate"):
+        case "updatedDate":
           return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b.updatedAt ?? b.createdAt).getTime() -
+            new Date(a.updatedAt ?? a.createdAt).getTime()
           );
-        case t("alphabetical"):
+        case "alphabetical":
           return a.name.localeCompare(b.name);
         default:
           return 0;
       }
     });
-  }, [archivedExhibitions, searchTerm, selectedCategories, filterOption, t]);
+  }, [archivedExhibitions, selectedCategories, filterOption]);
 
   const filterComponent = (
     <FilterDropdown
