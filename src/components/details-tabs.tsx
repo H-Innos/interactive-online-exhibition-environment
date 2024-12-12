@@ -8,9 +8,13 @@ import type { Exhibition } from "~/lib/types/entities";
 
 type ExhibitionTabsProps = {
   exhibition: Exhibition;
+  onSave: () => void;
 };
 
-const ExhibitionTabs: React.FC<ExhibitionTabsProps> = ({ exhibition }) => {
+const ExhibitionTabs: React.FC<ExhibitionTabsProps> = ({
+  exhibition,
+  onSave,
+}) => {
   const [activeTab, setActiveTab] = useState("details");
 
   return (
@@ -24,10 +28,10 @@ const ExhibitionTabs: React.FC<ExhibitionTabsProps> = ({ exhibition }) => {
         <TabsTrigger value="contributors">Contributors</TabsTrigger>
       </TabsList>
       <TabsContent value="details">
-        <ExhibitionDataForm exhibition={exhibition} />
+        <ExhibitionDataForm exhibition={exhibition} onSave={onSave} />
       </TabsContent>
       <TabsContent value="contributors">
-        <ContributorForm exhibition={exhibition} />
+        <ContributorForm exhibition={exhibition} onSave={onSave} />
       </TabsContent>
     </Tabs>
   );

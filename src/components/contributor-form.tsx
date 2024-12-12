@@ -6,14 +6,18 @@ import { PlusCircle, X, Save } from "lucide-react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Exhibition, type Contributor } from "~/lib/types/entities";
+import type { Exhibition, Contributor } from "~/lib/types/entities";
 import { useUpdateExhibition } from "~/hooks/exhibition-actions";
 
 type ContributorFormProps = {
   exhibition: Exhibition;
+  onSave: () => void;
 };
 
-const ContributorForm: React.FC<ContributorFormProps> = ({ exhibition }) => {
+const ContributorForm: React.FC<ContributorFormProps> = ({
+  exhibition,
+  onSave,
+}) => {
   const [contributors, setContributors] = useState<Contributor[]>(
     exhibition.contributors?.length !== 0
       ? exhibition.contributors
@@ -47,6 +51,7 @@ const ContributorForm: React.FC<ContributorFormProps> = ({ exhibition }) => {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    onSave();
     const validContributors = contributors.filter(
       (c) => c.role.trim() !== "" && c.names.trim() !== "",
     );

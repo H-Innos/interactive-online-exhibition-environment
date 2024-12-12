@@ -113,7 +113,10 @@ const ExhibitionEditorPage = () => {
             >
               &times;
             </button>
-            <ExhibitionTabs exhibition={editorState} />
+            <ExhibitionTabs
+              exhibition={editorState}
+              onSave={() => setIsDetailsModalOpen(false)}
+            />
           </div>
         </div>
       )}
