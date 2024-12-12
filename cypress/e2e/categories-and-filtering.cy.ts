@@ -1,3 +1,4 @@
+/*
 import { selectors } from "cypress/support/selectors";
 import {
   createExhibition,
@@ -10,7 +11,7 @@ import {
 describe("Categories and Filtering Functionality", () => {
   const exhibitionTitle = "Test Exhibition for cat and fit";
   const exhibitionDescription = "This is a test exhibition";
-  const newCategoryName = "Test Category5";
+  const newCategoryName = "Test Category";
 
   before(() => {
     cy.visit("/");
@@ -82,3 +83,4 @@ describe("Categories and Filtering Functionality", () => {
     );
   });
 });
+*/

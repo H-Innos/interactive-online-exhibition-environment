@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { api } from "~/trpc/react";
+import { toast } from "sonner";
 
 interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  categories: string[];
   selectedCategories: string[];
   onCategorySelect: (category: string) => void;
   onCategoryDeselect: (category: string) => void;
@@ -16,7 +17,6 @@ interface CategoryModalProps {
 const CategoryModal: React.FC<CategoryModalProps> = ({
   isOpen,
   onClose,
-  categories,
   selectedCategories,
   onCategorySelect,
   onCategoryDeselect,
@@ -25,7 +25,25 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [newCategory, setNewCategory] = useState("");
+  const [localCategories, setLocalCategories] = useState<
+    { id: string; name: string }[]
+  >([]);
   const { t } = useTranslation();
+
+  const { data: fetchedCategories = [], refetch } =
+    api.category.getAll.useQuery();
+
+  useEffect(() => {
+    if (fetchedCategories) {
+      setLocalCategories(
+        fetchedCategories.map((cat) => ({
+          ...cat,
+          id: cat.id.toString(),
+        })),
+      );
+    }
+  }, [fetchedCategories]);
+
   if (!isOpen) return null;
 
   const handleCategoryClick = (category: string) => {
@@ -36,15 +54,40 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
     }
   };
 
-  const handleAddCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      onAddCategory(newCategory);
-      setNewCategory("");
+  const handleAddCategory = async () => {
+    if (
+      newCategory &&
+      !localCategories.some((cat) => cat.name === newCategory)
+    ) {
+      try {
+        await onAddCategory(newCategory);
+        await refetch();
+        setNewCategory("");
+        toast.success(`Category "${newCategory}" added successfully`);
+      } catch (error) {
+        console.error("Error adding category:", error);
+        toast.error(
+          `Failed to add category "${newCategory}". Please try again.`,
+        );
+      }
     }
   };
 
-  const filteredCategories = categories.filter((category) =>
-    category.toLowerCase().includes(searchTerm.toLowerCase()),
+  const handleDeleteCategory = async (categoryName: string) => {
+    try {
+      await onDeleteCategory(categoryName);
+      await refetch();
+      toast.success(`Category "${categoryName}" deleted successfully`);
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error(
+        `Failed to delete category "${categoryName}". Please try again.`,
+      );
+    }
+  };
+
+  const filteredCategories = localCategories.filter((category) =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -103,24 +146,24 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           <div className="flex flex-wrap gap-2" data-testid="category-list">
             {filteredCategories.map((category) => (
               <span
-                key={category}
+                key={category.id}
                 className={`flex cursor-pointer items-center rounded px-2 py-1 ${
-                  selectedCategories.includes(category)
+                  selectedCategories.includes(category.name)
                     ? "bg-blue-200"
                     : "bg-gray-200"
                 }`}
-                data-testid={`category-item-${category}`}
+                data-testid={`category-item-${category.name}`}
               >
-                <span onClick={() => handleCategoryClick(category)}>
-                  {category}
+                <span onClick={() => handleCategoryClick(category.name)}>
+                  {category.name}
                 </span>
-                {selectedCategories.includes(category) ? (
+                {selectedCategories.includes(category.name) ? (
                   <X
                     className="ml-1 cursor-pointer text-gray-500"
                     data-testid={`deselect-category-${category}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleCategoryClick(category);
+                      handleCategoryClick(category.name);
                     }}
                   />
                 ) : (
@@ -129,7 +172,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                     data-testid={`delete-category-${category}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      onDeleteCategory(category);
+                      handleDeleteCategory(category.name);
                     }}
                   />
                 )}

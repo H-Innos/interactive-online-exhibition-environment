@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useCallback } from "react";
+import { useState, Suspense, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
@@ -30,6 +30,32 @@ const Dashboard = () => {
   const handleCategoryChange = useCallback((categories: string[]) => {
     setSelectedCategories(categories);
   }, []);
+
+  const filteredAndSortedExhibitions = useMemo(() => {
+    if (!publishedExhibitions) return [];
+
+    const filtered = publishedExhibitions.filter((exhibition) => {
+      const categoryMatch =
+        selectedCategories.length === 0 ||
+        exhibition.categories?.some((cat) =>
+          selectedCategories.includes(cat.name),
+        );
+      return categoryMatch;
+    });
+
+    return filtered.sort((a, b) => {
+      switch (filterOption) {
+        case "updatedDate":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case "alphabetical":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+  }, [publishedExhibitions, selectedCategories, filterOption, t]);
 
   const filterComponent = (
     <FilterDropdown
@@ -72,13 +98,15 @@ const Dashboard = () => {
           <div>{t("dashboard.errorLoading")}</div>
         ) : (
           <>
-            {publishedExhibitions && (
+            {filteredAndSortedExhibitions.length > 0 ? (
               <PageableExhibitions
                 title={t("dashboard.publishedExhibitions")}
-                exhibitions={publishedExhibitions}
+                exhibitions={filteredAndSortedExhibitions}
                 CardComponent={(props) => <PublishedCard {...props} />}
                 FilterComponent={filterComponent}
               />
+            ) : (
+              <p>{t("dashboard.noExhibitions")}</p>
             )}
           </>
         )}
