@@ -1,7 +1,18 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { exhibitions } from "~/server/db/schema";
+import {
+  exhibitions,
+  exhibitionCategories,
+  categories,
+} from "~/server/db/schema";
 import { eq } from "drizzle-orm";
+import {
+  type Exhibition,
+  type Category,
+  type ExhibitionStatus,
+  type ExhibitionFromDB,
+} from "~/lib/types/entities";
+//import { Category } from '~/lib/types/entities';
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
@@ -11,17 +22,65 @@ export const exhibitionRouter = createTRPCRouter({
         description: z.string().optional(),
         thumbnailUrl: z.string().optional(),
         exhibitionCoverUrl: z.string().optional(),
+        categories: z.array(z.string()).optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
-      const newExhibition = await ctx.db.insert(exhibitions).values({
-        name: input.name,
-        description: input.description ?? "",
-        thumbnailUrl: input.thumbnailUrl ?? "",
-        exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
-      });
+    .mutation(async ({ ctx, input }): Promise<Exhibition> => {
+      const newExhibition = await ctx.db
+        .insert(exhibitions)
+        .values({
+          name: input.name,
+          description: input.description ?? "",
+          thumbnailUrl: input.thumbnailUrl ?? "",
+          exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
+          status: "draft",
+        })
+        .returning();
+      const createdExhibition = newExhibition[0];
+      if (!createdExhibition) {
+        throw new Error("Failed to create exhibition");
+      }
 
-      return newExhibition;
+      let associatedCategories: Category[] = [];
+
+      if (input.categories && input.categories.length > 0) {
+        const existingCategories = await ctx.db.query.categories.findMany({
+          where: (categories, { inArray }) =>
+            inArray(categories.name, input.categories ?? []),
+        });
+
+        const existingCategoryNames = existingCategories.map((c) => c.name);
+        const newCategoryNames = input.categories.filter(
+          (c) => !existingCategoryNames.includes(c),
+        );
+
+        if (newCategoryNames.length > 0) {
+          await ctx.db
+            .insert(categories)
+            .values(newCategoryNames.map((name) => ({ name })));
+        }
+
+        const allCategories = await ctx.db.query.categories.findMany({
+          where: (categories, { inArray }) =>
+            inArray(categories.name, input.categories ?? []),
+        });
+
+        await ctx.db.insert(exhibitionCategories).values(
+          allCategories.map((category) => ({
+            exhibitionId: createdExhibition.id,
+            categoryId: category.id,
+          })),
+        );
+        associatedCategories = allCategories;
+      }
+
+      const fullExhibition: Exhibition = {
+        ...createdExhibition,
+        categories: associatedCategories,
+        status: assertExhibitionStatus(createdExhibition.status),
+      };
+
+      return fullExhibition;
     }),
 
   update: publicProcedure
@@ -36,22 +95,72 @@ export const exhibitionRouter = createTRPCRouter({
         coverImagePositionY: z.number().optional(),
         content: z.string().optional(),
         backgroundColor: z.string().optional(),
+        categories: z.array(z.string()).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db
-        .update(exhibitions)
-        .set({
-          name: input.name,
-          description: input.description,
-          thumbnailUrl: input.thumbnailUrl,
-          exhibitionCoverUrl: input.exhibitionCoverUrl,
-          coverImagePositionX: input.coverImagePositionX,
-          coverImagePositionY: input.coverImagePositionY,
-          content: input.content,
-          backgroundColor: input.backgroundColor,
-        })
-        .where(eq(exhibitions.id, input.id));
+      try {
+        await ctx.db
+          .update(exhibitions)
+          .set({
+            name: input.name,
+            description: input.description,
+            thumbnailUrl: input.thumbnailUrl,
+            exhibitionCoverUrl: input.exhibitionCoverUrl,
+            coverImagePositionX: input.coverImagePositionX,
+            coverImagePositionY: input.coverImagePositionY,
+            content: input.content,
+            backgroundColor: input.backgroundColor,
+          })
+          .where(eq(exhibitions.id, input.id));
+
+        if (input.categories && input.categories.length > 0) {
+          await ctx.db
+            .delete(exhibitionCategories)
+            .where(eq(exhibitionCategories.exhibitionId, input.id));
+
+          const existingCategories = await ctx.db.query.categories.findMany({
+            where: (categories, { inArray }) =>
+              input.categories
+                ? inArray(categories.name, input.categories)
+                : undefined,
+          });
+
+          const existingCategoryNames = existingCategories.map((c) => c.name);
+          const newCategoryNames = input.categories.filter(
+            (c) => !existingCategoryNames.includes(c),
+          );
+
+          if (newCategoryNames.length > 0) {
+            await ctx.db
+              .insert(categories)
+              .values(newCategoryNames.map((name) => ({ name })))
+              .onConflictDoNothing();
+          }
+
+          const allCategories = await ctx.db.query.categories.findMany({
+            where: (categories, { inArray }) =>
+              input.categories
+                ? inArray(categories.name, input.categories)
+                : undefined,
+          });
+
+          await ctx.db.insert(exhibitionCategories).values(
+            allCategories.map((category) => ({
+              exhibitionId: input.id,
+              categoryId: category.id,
+            })),
+          );
+        } else {
+          await ctx.db
+            .delete(exhibitionCategories)
+            .where(eq(exhibitionCategories.exhibitionId, input.id));
+        }
+        return { id: input.id };
+      } catch (error) {
+        console.error("Error updating exhibition:", error);
+        throw new Error("Failed to update exhibition");
+      }
     }),
 
   delete: publicProcedure
@@ -215,12 +324,20 @@ export const exhibitionRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await ctx.db.query.exhibitions.findMany({
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return (allExhibitions ?? []).map((exhibition) => ({
+    return allExhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition),
     }));
   }),
 
@@ -229,12 +346,16 @@ export const exhibitionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const exhibition = await ctx.db.query.exhibitions.findFirst({
         where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+        with: {
+          exhibitionCategories: {
+            with: {
+              category: true,
+            },
+          },
+        },
       });
-
-      // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-      return exhibition
-        ? { ...exhibition, status: assertExhibitionStatus(exhibition.status) }
-        : null;
+      if (!exhibition) return null;
+      return transformExhibition(exhibition as ExhibitionFromDB);
     }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
@@ -252,12 +373,20 @@ export const exhibitionRouter = createTRPCRouter({
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "draft"),
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
     }));
   }),
 
@@ -265,24 +394,40 @@ export const exhibitionRouter = createTRPCRouter({
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "published"),
       orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
     }));
   }),
 
   getArchived: publicProcedure.query(async ({ ctx }) => {
     const exhibitions = await ctx.db.query.exhibitions.findMany({
       where: (exhibitions, { eq }) => eq(exhibitions.status, "archived"),
+      with: {
+        exhibitionCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
+      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
     }));
   }),
 
@@ -300,7 +445,7 @@ export const exhibitionRouter = createTRPCRouter({
 });
 
 // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
+//type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
 
 function assertExhibitionStatus(status: string): ExhibitionStatus {
   if (
@@ -309,7 +454,21 @@ function assertExhibitionStatus(status: string): ExhibitionStatus {
     status === "archived" ||
     status === "trashed"
   ) {
-    return status as ExhibitionStatus;
+    return status;
   }
-  throw new Error("Invalid exhibition status");
+  throw new Error(`Invalid exhibition status: ${status}`);
+}
+
+const transformExhibitionCategories = (
+  exhibition: ExhibitionFromDB,
+): Category[] => {
+  return exhibition.exhibitionCategories?.map((ec) => ec.category) ?? [];
+};
+
+function transformExhibition(exhibition: ExhibitionFromDB): Exhibition {
+  return {
+    ...exhibition,
+    status: assertExhibitionStatus(exhibition.status),
+    categories: exhibition.exhibitionCategories.map((ec) => ec.category),
+  };
 }

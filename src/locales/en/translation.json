@@ -141,6 +141,26 @@
     "confirmTrash": "Are you sure you want to delete this exhibition?"
   },
 
+  "categoryModal": {
+    "searchPlaceholder": "Search categories",
+    "newCategoryPlaceholder": "Enter new category name",
+    "selectedCategories": "Selected Categories",
+    "availableCategories": "Available Categories"
+  },
+
+  "filter": {
+    "filterBy": "Filter by",
+    "sortBy": "Sort by",
+    "apply": "Apply",
+    "alphabetical": "Alphabetical",
+    "updatedDate": "Updated Date"
+  },
+
+  "alphabetical": "Alphabetical",
+  "updatedDate": "Updated Date",
+  "failedToDeleteCategory": "Failed to delete category: ",
+  "categories": "Categories",
+
   "confirmPublish": "Are you sure you want to publish this exhibition?",
   "editExhibition": "Edit Exhibition",
   "status": "Status",

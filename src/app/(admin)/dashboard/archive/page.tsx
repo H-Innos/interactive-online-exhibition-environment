@@ -1,25 +1,84 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import SearchBar from "~/app/_components/search-bar";
 import { useTranslation } from "react-i18next";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import { ArchiveCard } from "~/components/ExhibitionCard/cards";
+import FilterDropdown from "~/components/filter-dropdown";
+import type { Exhibition as BaseExhibition } from "~/lib/types/entities";
+
+type Exhibition = BaseExhibition & {
+  categories?: Array<{ id: number; name: string }>;
+};
 
 export default function ArchivePage() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterOption, setFilterOption] = useState<string>("updatedDate");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
   const {
     data: archivedExhibitions,
     isLoading,
     error,
   } = api.exhibition.getArchived.useQuery();
 
-  const filteredExhibitions =
-    archivedExhibitions?.filter((exhibition) =>
+  const { data: categories } = api.category.getAll.useQuery();
+  const safeCategories = categories ?? [];
+
+  const handleFilterChange = useCallback((option: string) => {
+    setFilterOption(option);
+  }, []);
+
+  const handleCategoryChange = useCallback((categories: string[]) => {
+    setSelectedCategories(categories);
+  }, []);
+
+  const filteredAndSortedArchived = useMemo(() => {
+    if (!archivedExhibitions) return [];
+
+    let filtered = archivedExhibitions.filter((exhibition) =>
       exhibition.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) ?? [];
+    );
+
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(
+        (draft: Exhibition) =>
+          draft.categories?.some((cat) =>
+            selectedCategories.includes(cat.name),
+          ) ?? false,
+      );
+    }
+
+    return filtered.sort((a: Exhibition, b: Exhibition) => {
+      switch (filterOption) {
+        case t("updatedDate"):
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case t("alphabetical"):
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+  }, [archivedExhibitions, searchTerm, selectedCategories, filterOption, t]);
+
+  const filterComponent = (
+    <FilterDropdown
+      filterOption={filterOption}
+      setFilterOption={handleFilterChange}
+      selectedCategories={selectedCategories}
+      setSelectedCategories={handleCategoryChange}
+      categories={safeCategories.map((cat) => ({
+        id: cat.id.toString(),
+        name: cat.name,
+      }))}
+      exhibitions={archivedExhibitions ?? []}
+    />
+  );
 
   return (
     <Suspense fallback={<div>{t("mainPage.loading")}</div>}>
@@ -36,16 +95,21 @@ export default function ArchivePage() {
             <div>{t("mainPage.loading")}</div>
           ) : error ? (
             <div>{t("mainPage.errorLoading")}</div>
-          ) : filteredExhibitions.length > 0 ? (
-            <PageableExhibitions
-              title={t("archive.title")}
-              exhibitions={filteredExhibitions}
-              CardComponent={(props) => <ArchiveCard {...props} />}
-            />
           ) : (
-            <div className="mt-8 text-center text-gray-500">
-              <p className="text-xl">No matching exhibitions found.</p>
-            </div>
+            <>
+              <PageableExhibitions
+                data-testid="exhibition-list"
+                title={t("archive.title")}
+                exhibitions={filteredAndSortedArchived}
+                CardComponent={(props) => <ArchiveCard {...props} />}
+                FilterComponent={filterComponent}
+              />
+              {filteredAndSortedArchived.length === 0 && (
+                <div className="mt-8 text-center text-gray-500">
+                  <p className="text-xl">No matching exhibitions found.</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

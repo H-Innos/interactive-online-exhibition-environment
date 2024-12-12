@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import { useTranslation } from "react-i18next";
 import SearchBar from "~/app/_components/search-bar";
 import { VisitorCard } from "~/components/ExhibitionCard/cards";
+import FilterDropdown from "~/components/filter-dropdown";
+import type { Exhibition } from "~/lib/types/entities";
 import NavBar from "~/components/navbar";
 
 interface MainPageProps {
@@ -20,11 +22,47 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
     isLoading,
   } = api.exhibition.getPublished.useQuery();
   const [searchTerm, setSearchTerm] = useState("");
-  const filteredExhibitions = exhibitions
-    ? exhibitions.filter((exhibition) =>
-        exhibition.name.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    : [];
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [filterOption, setFilterOption] = useState<string>("updatedDate");
+
+  const { data: categories = [] } = api.category.getAll.useQuery();
+
+  const handleFilterChange = useCallback((option: string) => {
+    setFilterOption(option);
+  }, []);
+
+  const handleCategoryChange = useCallback((categories: string[]) => {
+    setSelectedCategories(categories);
+  }, []);
+
+  const filteredAndSortedExhibitions = useMemo(() => {
+    if (!exhibitions) return [];
+
+    const filtered = exhibitions.filter((exhibition: Exhibition) => {
+      const nameMatch = exhibition.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const categoryMatch =
+        selectedCategories.length === 0 ||
+        exhibition.categories?.some((cat) =>
+          selectedCategories.includes(cat.name),
+        );
+      return nameMatch && (selectedCategories.length === 0 || categoryMatch);
+    });
+
+    return filtered.sort((a: Exhibition, b: Exhibition) => {
+      switch (filterOption) {
+        case t("updatedDate"):
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case t("alphabetical"):
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+  }, [exhibitions, searchTerm, selectedCategories, filterOption, t]);
 
   return (
     <>
@@ -43,13 +81,31 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
               <div>{t("mainPage.loading")}</div>
             ) : error ? (
               <div>{t("mainPage.errorLoading")}</div>
-            ) : filteredExhibitions.length > 0 ? (
-              <PageableExhibitions
-                title=""
-                exhibitions={filteredExhibitions}
-                CardComponent={(props) => <VisitorCard {...props} />}
-              />
             ) : (
+              <>
+                <PageableExhibitions
+                  title=""
+                  exhibitions={filteredAndSortedExhibitions}
+                  CardComponent={(props) => <VisitorCard {...props} />}
+                  FilterComponent={
+                    <FilterDropdown
+                      filterOption={filterOption}
+                      setFilterOption={handleFilterChange}
+                      selectedCategories={selectedCategories}
+                      setSelectedCategories={handleCategoryChange}
+                      categories={categories.map(
+                        (cat: { id: number | string; name: string }) => ({
+                          id: cat.id.toString(),
+                          name: cat.name,
+                        }),
+                      )}
+                      exhibitions={exhibitions}
+                    />
+                  }
+                />
+              </>
+            )}
+            {filteredAndSortedExhibitions.length === 0 && (
               <p className="text-center text-gray-500">
                 {t("mainPage.noExhibitions")}
               </p>

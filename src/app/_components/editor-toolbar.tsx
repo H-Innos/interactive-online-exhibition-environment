@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -7,7 +7,7 @@ import {
 } from "~/components/ui/tooltip";
 import { ColorPicker } from "~/components/color-picker";
 import { useTranslation } from "react-i18next";
-import { Save, Eye, FilePlus, Info, Check } from "lucide-react";
+import { Save, Eye, FilePlus, Info, Check, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   usePublishExhibition,
@@ -17,6 +17,8 @@ import CoverImage from "~/components/cover-image";
 import FileUploadButton from "~/components/file-upload-button";
 import type { Exhibition } from "~/lib/types/entities";
 import { configurations } from "~/lib/constants/config";
+import CategoryModal from "~/components/category-modal";
+import { api } from "~/trpc/react";
 
 interface ExhibitionToolbarProps {
   exhibition: Exhibition | null;
@@ -41,6 +43,69 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   const [localCoverUrl, setLocalCoverUrl] = useState<string | null>(
     exhibition?.exhibitionCoverUrl ?? exhibition?.thumbnailUrl ?? null,
   );
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    exhibition?.categories?.map((c) => c.name) ?? [],
+  );
+
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+
+  const addCategory = api.category.create.useMutation();
+  const deleteCategory = api.category.delete.useMutation();
+
+  useEffect(() => {
+    if (exhibition?.categories) {
+      setSelectedCategories(
+        exhibition.categories.map((category) => category.name),
+      );
+    }
+  }, [exhibition]);
+
+  useEffect(() => {
+    if (exhibition?.categories) {
+      setSelectedCategories(
+        exhibition.categories.map((category) => category.name),
+      );
+    }
+  }, [exhibition]);
+
+  const handleAddCategory = async (category: string) => {
+    if (!selectedCategories.includes(category)) {
+      setSelectedCategories([...selectedCategories, category]);
+      setIsDirty(true);
+
+      if (!availableCategories.includes(category)) {
+        try {
+          await addCategory.mutateAsync({ name: category });
+          setAvailableCategories([...availableCategories, category]);
+        } catch (error) {
+          console.error("Failed to add new category:", error);
+        }
+      }
+    }
+  };
+
+  const handleRemoveCategory = (category: string) => {
+    setSelectedCategories(selectedCategories.filter((c) => c !== category));
+    setIsDirty(true);
+  };
+
+  const handleDeleteCategory = async (category: string) => {
+    setAvailableCategories(availableCategories.filter((c) => c !== category));
+    setSelectedCategories(selectedCategories.filter((c) => c !== category));
+    setIsDirty(true);
+
+    try {
+      await deleteCategory.mutateAsync({ name: category });
+    } catch (error) {
+      alert(t("failedToDeleteCategory", { category }));
+      console.error("Failed to add new category:", error);
+      setAvailableCategories([...availableCategories, category]);
+      if (selectedCategories.includes(category)) {
+        setSelectedCategories([...selectedCategories, category]);
+      }
+    }
+  };
 
   const handlePositionChange = (newPosition: { x: number; y: number }) => {
     if (exhibition) {
@@ -95,6 +160,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
         thumbnailUrl: exhibition.thumbnailUrl ?? undefined,
         content: exhibition.content ?? undefined,
         backgroundColor: exhibition.backgroundColor ?? undefined,
+        categories: selectedCategories,
       };
 
       updateExhibition.mutate(exhibitionData, {
@@ -215,6 +281,22 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
+                onClick={() => setIsCategoryModalOpen(true)}
+                data-testid="categories-button"
+              >
+                <Tag className="h-5 w-5 text-black" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t("categories")}</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
                 data-testid="save-editor-changes"
                 type="button"
                 className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-300 bg-white hover:bg-gray-100"
@@ -257,6 +339,19 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
                 configurations.DEFAULT_EXHIBITION_COVER_PLACEMENT,
             }}
             onPositionChange={handlePositionChange}
+          />
+        )}
+
+        {isCategoryModalOpen && (
+          <CategoryModal
+            isOpen={isCategoryModalOpen}
+            onClose={() => setIsCategoryModalOpen(false)}
+            categories={availableCategories}
+            selectedCategories={selectedCategories}
+            onCategorySelect={handleAddCategory}
+            onCategoryDeselect={handleRemoveCategory}
+            onAddCategory={handleAddCategory}
+            onDeleteCategory={handleDeleteCategory}
           />
         )}
       </div>
