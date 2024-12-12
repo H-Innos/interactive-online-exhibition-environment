@@ -148,6 +148,16 @@
     "availableCategories": "Saadaval kategooriad"
   },
 
+  "contributors": {
+    "exhibitionContributors": "Näituse koostajad",
+    "contributors": "Koostajad",
+    "role": "Roll",
+    "names": "Nimed",
+    "rolePlaceholder": "Roll (näiteks, Autor)",
+    "namesPlaceholder": "Koostajate nimed",
+    "addContributor": "Lisa koostaja"
+  },
+
   "filter": {
     "filterBy": "Filtreeri",
     "sortBy": "Sorteeri",

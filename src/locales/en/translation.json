@@ -149,6 +149,16 @@
     "availableCategories": "Available Categories"
   },
 
+  "contributors": {
+    "exhibitionContributors": "Exhibition Contributors",
+    "contributors": "Contributors",
+    "role": "Role",
+    "names": "Names",
+    "rolePlaceholder": "Role (e.g., Author)",
+    "namesPlaceholder": "Contributors' names",
+    "addContributor": "Add Contributor"
+  },
+
   "filter": {
     "filterBy": "Filter by",
     "sortBy": "Sort by",

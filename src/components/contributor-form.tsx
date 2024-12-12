@@ -8,6 +8,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import type { Exhibition, Contributor } from "~/lib/types/entities";
 import { useUpdateExhibition } from "~/hooks/exhibition-actions";
+import { useTranslation } from "react-i18next";
 
 type ContributorFormProps = {
   exhibition: Exhibition;
@@ -18,6 +19,7 @@ const ContributorForm: React.FC<ContributorFormProps> = ({
   exhibition,
   onSave,
 }) => {
+  const { t } = useTranslation();
   const [contributors, setContributors] = useState<Contributor[]>(
     exhibition.contributors?.length !== 0
       ? exhibition.contributors
@@ -67,14 +69,16 @@ const ContributorForm: React.FC<ContributorFormProps> = ({
       onSubmit={handleSave}
       className="mx-auto max-w-2xl space-y-6 rounded-lg bg-background p-6 shadow"
     >
-      <h1 className="mb-4 text-2xl font-bold">Exhibiton Contributors</h1>
+      <h1 className="mb-4 text-2xl font-bold">
+        {t("contributors.exhibitionContributors")}
+      </h1>
       <div className="space-y-4">
         {contributors.map((contributor, index) => (
           <div key={index} className="flex items-center space-x-2">
             <div className="grid flex-grow grid-cols-2 gap-2">
               <div>
                 <Label htmlFor={`role-${index}`} className="sr-only">
-                  Role
+                  {t("contributors.role")}
                 </Label>
                 <Input
                   id={`role-${index}`}
@@ -82,12 +86,12 @@ const ContributorForm: React.FC<ContributorFormProps> = ({
                   onChange={(e) =>
                     updateContributor(index, "role", e.target.value)
                   }
-                  placeholder="Role (e.g., Director)"
+                  placeholder={t("contributors.rolePlaceholder")}
                 />
               </div>
               <div>
                 <Label htmlFor={`name-${index}`} className="sr-only">
-                  Name
+                  {t("contributors.names")}
                 </Label>
                 <Input
                   id={`name-${index}`}
@@ -95,7 +99,7 @@ const ContributorForm: React.FC<ContributorFormProps> = ({
                   onChange={(e) =>
                     updateContributor(index, "names", e.target.value)
                   }
-                  placeholder="Contributor's name"
+                  placeholder={t("contributors.namesPlaceholder")}
                 />
               </div>
             </div>
@@ -115,11 +119,11 @@ const ContributorForm: React.FC<ContributorFormProps> = ({
       <div className="flex justify-between">
         <Button type="button" onClick={addContributorField} variant="outline">
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add Contributor
+          {t("contributors.addContributor")}
         </Button>
         <Button type="submit">
           <Save className="mr-2 h-4 w-4" />
-          Save Contributors
+          {t("saveChanges")}
         </Button>
       </div>
     </form>

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import ContributorForm from "./contributor-form";
 import { ExhibitionDataForm } from "~/app/_components/exhibition-data-form";
 import type { Exhibition } from "~/lib/types/entities";
+import { useTranslation } from "react-i18next";
 
 type ExhibitionTabsProps = {
   exhibition: Exhibition;
@@ -15,6 +16,7 @@ const ExhibitionTabs: React.FC<ExhibitionTabsProps> = ({
   exhibition,
   onSave,
 }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("details");
 
   return (
@@ -24,8 +26,10 @@ const ExhibitionTabs: React.FC<ExhibitionTabsProps> = ({
       className="mx-auto w-full max-w-4xl"
     >
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="details">Exhibition Details</TabsTrigger>
-        <TabsTrigger value="contributors">Contributors</TabsTrigger>
+        <TabsTrigger value="details">{t("exhibitionDetails")}</TabsTrigger>
+        <TabsTrigger value="contributors">
+          {t("contributors.contributors")}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="details">
         <ExhibitionDataForm exhibition={exhibition} onSave={onSave} />
