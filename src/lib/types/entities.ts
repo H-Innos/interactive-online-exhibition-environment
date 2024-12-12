@@ -2,17 +2,19 @@ export type Exhibition = {
   id: number;
   name: string;
   description: string | null;
+  status: ExhibitionStatus;
+  createdAt: Date;
+  updatedAt: Date | null;
   thumbnailUrl: string | null;
+  exhibitionCoverUrl: string | null;
   coverImagePositionX: number;
   coverImagePositionY: number;
   content: string | null;
-  status: "draft" | "published" | "archived" | "trashed";
-  createdAt: Date | string;
-  updatedAt: Date | null;
   backgroundColor: string | null;
-  exhibitionCoverUrl: string | null;
-  categories?: { id: number; name: string }[];
+  categories: Category[];
 };
+
+export type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
 
 export type Answer = {
   id: number;
@@ -34,4 +36,14 @@ export type Quiz = {
   exhibitionId: number;
   title: string;
   questions: Question[];
+};
+
+export type ExhibitionFromDB = Omit<Exhibition, "categories" | "status"> & {
+  status: string;
+  exhibitionCategories: { category: Category }[];
+};
+
+export type Category = {
+  id: number;
+  name: string;
 };

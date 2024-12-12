@@ -43,7 +43,7 @@ const Dashboard = () => {
           name: cat.name,
         }),
       )}
-      exhibitions={publishedExhibitions || []}
+      exhibitions={publishedExhibitions ?? []}
     />
   );
 

@@ -45,19 +45,21 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
   );
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    exhibition?.categories?.map((c) => c.name) || [],
+    exhibition?.categories?.map((c) => c.name) ?? [],
   );
+
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
 
-  const { data: categoriesData } = api.category.getAll.useQuery();
   const addCategory = api.category.create.useMutation();
   const deleteCategory = api.category.delete.useMutation();
 
   useEffect(() => {
-    if (categoriesData) {
-      setAvailableCategories(categoriesData.map((category) => category.name));
+    if (exhibition?.categories) {
+      setSelectedCategories(
+        exhibition.categories.map((category) => category.name),
+      );
     }
-  }, [categoriesData]);
+  }, [exhibition]);
 
   useEffect(() => {
     if (exhibition?.categories) {
@@ -97,6 +99,7 @@ const ExhibitionToolbar: React.FC<ExhibitionToolbarProps> = ({
       await deleteCategory.mutateAsync({ name: category });
     } catch (error) {
       alert(t("failedToDeleteCategory", { category }));
+      console.error("Failed to add new category:", error);
       setAvailableCategories([...availableCategories, category]);
       if (selectedCategories.includes(category)) {
         setSelectedCategories([...selectedCategories, category]);

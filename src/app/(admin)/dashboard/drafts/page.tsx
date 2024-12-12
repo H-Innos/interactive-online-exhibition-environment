@@ -7,7 +7,11 @@ import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
 import { useTranslation } from "react-i18next";
 import { DraftCard } from "~/components/ExhibitionCard/cards";
 import FilterDropdown from "~/components/filter-dropdown";
-import { Exhibition } from "~/lib/types/entities";
+import type { Exhibition as BaseExhibition } from "~/lib/types/entities";
+
+type Exhibition = BaseExhibition & {
+  categories?: Array<{ id: number; name: string }>;
+};
 
 const DraftsPage = () => {
   const { t } = useTranslation();
@@ -45,8 +49,8 @@ const DraftsPage = () => {
 
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(
-        (draft) =>
-          draft.categories?.some((cat: { id: number; name: string }) =>
+        (draft: Exhibition) =>
+          draft.categories?.some((cat) =>
             selectedCategories.includes(cat.name),
           ) ?? false,
       );
@@ -64,7 +68,7 @@ const DraftsPage = () => {
           return 0;
       }
     });
-  }, [drafts, selectedCategories, filterOption]);
+  }, [drafts, selectedCategories, filterOption, t]);
 
   return (
     <Suspense fallback={<div>{t("dashboard.loading")}</div>}>

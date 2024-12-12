@@ -6,6 +6,13 @@ import {
   categories,
 } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
+import {
+  type Exhibition,
+  type Category,
+  type ExhibitionStatus,
+  type ExhibitionFromDB,
+} from "~/lib/types/entities";
+//import { Category } from '~/lib/types/entities';
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
@@ -18,7 +25,7 @@ export const exhibitionRouter = createTRPCRouter({
         categories: z.array(z.string()).optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }): Promise<Exhibition> => {
       const newExhibition = await ctx.db
         .insert(exhibitions)
         .values({
@@ -26,12 +33,15 @@ export const exhibitionRouter = createTRPCRouter({
           description: input.description ?? "",
           thumbnailUrl: input.thumbnailUrl ?? "",
           exhibitionCoverUrl: input.exhibitionCoverUrl ?? "",
+          status: "draft",
         })
         .returning();
       const createdExhibition = newExhibition[0];
       if (!createdExhibition) {
         throw new Error("Failed to create exhibition");
       }
+
+      let associatedCategories: Category[] = [];
 
       if (input.categories && input.categories.length > 0) {
         const existingCategories = await ctx.db.query.categories.findMany({
@@ -61,9 +71,16 @@ export const exhibitionRouter = createTRPCRouter({
             categoryId: category.id,
           })),
         );
+        associatedCategories = allCategories;
       }
 
-      return createdExhibition;
+      const fullExhibition: Exhibition = {
+        ...createdExhibition,
+        categories: associatedCategories,
+        status: assertExhibitionStatus(createdExhibition.status),
+      };
+
+      return fullExhibition;
     }),
 
   update: publicProcedure
@@ -102,7 +119,6 @@ export const exhibitionRouter = createTRPCRouter({
             .delete(exhibitionCategories)
             .where(eq(exhibitionCategories.exhibitionId, input.id));
 
-          // Get existing categories
           const existingCategories = await ctx.db.query.categories.findMany({
             where: (categories, { inArray }) =>
               input.categories
@@ -318,7 +334,7 @@ export const exhibitionRouter = createTRPCRouter({
     });
 
     // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return (allExhibitions ?? []).map((exhibition) => ({
+    return allExhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
       categories: transformExhibitionCategories(exhibition),
@@ -338,17 +354,8 @@ export const exhibitionRouter = createTRPCRouter({
           },
         },
       });
-
       if (!exhibition) return null;
-
-      // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-      return exhibition
-        ? {
-            ...exhibition,
-            status: assertExhibitionStatus(exhibition.status),
-            categories: transformExhibitionCategories(exhibition),
-          }
-        : null;
+      return transformExhibition(exhibition as ExhibitionFromDB);
     }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
@@ -379,7 +386,7 @@ export const exhibitionRouter = createTRPCRouter({
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition),
+      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
     }));
   }),
 
@@ -400,7 +407,7 @@ export const exhibitionRouter = createTRPCRouter({
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition),
+      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
     }));
   }),
 
@@ -420,7 +427,7 @@ export const exhibitionRouter = createTRPCRouter({
     return exhibitions.map((exhibition) => ({
       ...exhibition,
       status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition),
+      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
     }));
   }),
 
@@ -438,7 +445,7 @@ export const exhibitionRouter = createTRPCRouter({
 });
 
 // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
+//type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
 
 function assertExhibitionStatus(status: string): ExhibitionStatus {
   if (
@@ -447,15 +454,21 @@ function assertExhibitionStatus(status: string): ExhibitionStatus {
     status === "archived" ||
     status === "trashed"
   ) {
-    return status as ExhibitionStatus;
+    return status;
   }
-  throw new Error("Invalid exhibition status");
+  throw new Error(`Invalid exhibition status: ${status}`);
 }
 
-function transformExhibitionCategories(exhibition: any) {
-  if (!exhibition.exhibitionCategories) return [];
-  return exhibition.exhibitionCategories.map((ec: any) => ({
-    id: ec.category.id,
-    name: ec.category.name,
-  }));
+const transformExhibitionCategories = (
+  exhibition: ExhibitionFromDB,
+): Category[] => {
+  return exhibition.exhibitionCategories?.map((ec) => ec.category) ?? [];
+};
+
+function transformExhibition(exhibition: ExhibitionFromDB): Exhibition {
+  return {
+    ...exhibition,
+    status: assertExhibitionStatus(exhibition.status),
+    categories: exhibition.exhibitionCategories.map((ec) => ec.category),
+  };
 }

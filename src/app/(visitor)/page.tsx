@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import SearchBar from "~/app/_components/search-bar";
 import { VisitorCard } from "~/components/ExhibitionCard/cards";
 import FilterDropdown from "~/components/filter-dropdown";
-import { Exhibition } from "~/lib/types/entities";
+import type { Exhibition } from "~/lib/types/entities";
 import NavBar from "~/components/navbar";
 
 interface MainPageProps {
@@ -44,11 +44,9 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
         .includes(searchTerm.toLowerCase());
       const categoryMatch =
         selectedCategories.length === 0 ||
-        (exhibition.categories &&
-          exhibition.categories.some((cat) =>
-            selectedCategories.includes(cat.name),
-          ));
-
+        exhibition.categories?.some((cat) =>
+          selectedCategories.includes(cat.name),
+        );
       return nameMatch && (selectedCategories.length === 0 || categoryMatch);
     });
 
@@ -64,7 +62,7 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
           return 0;
       }
     });
-  }, [exhibitions, searchTerm, selectedCategories, filterOption]);
+  }, [exhibitions, searchTerm, selectedCategories, filterOption, t]);
 
   return (
     <>

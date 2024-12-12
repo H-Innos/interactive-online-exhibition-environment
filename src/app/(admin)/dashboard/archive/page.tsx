@@ -7,7 +7,11 @@ import { useTranslation } from "react-i18next";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import { ArchiveCard } from "~/components/ExhibitionCard/cards";
 import FilterDropdown from "~/components/filter-dropdown";
-import { Exhibition } from "~/lib/types/entities";
+import type { Exhibition as BaseExhibition } from "~/lib/types/entities";
+
+type Exhibition = BaseExhibition & {
+  categories?: Array<{ id: number; name: string }>;
+};
 
 export default function ArchivePage() {
   const { t } = useTranslation();
@@ -21,7 +25,8 @@ export default function ArchivePage() {
     error,
   } = api.exhibition.getArchived.useQuery();
 
-  const { data: categories = [] } = api.category.getAll.useQuery();
+  const { data: categories } = api.category.getAll.useQuery();
+  const safeCategories = categories ?? [];
 
   const handleFilterChange = useCallback((option: string) => {
     setFilterOption(option);
@@ -40,8 +45,8 @@ export default function ArchivePage() {
 
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(
-        (draft) =>
-          draft.categories?.some((cat: { id: number; name: string }) =>
+        (draft: Exhibition) =>
+          draft.categories?.some((cat) =>
             selectedCategories.includes(cat.name),
           ) ?? false,
       );
@@ -59,7 +64,7 @@ export default function ArchivePage() {
           return 0;
       }
     });
-  }, [archivedExhibitions, searchTerm, selectedCategories, filterOption]);
+  }, [archivedExhibitions, searchTerm, selectedCategories, filterOption, t]);
 
   const filterComponent = (
     <FilterDropdown
@@ -67,13 +72,11 @@ export default function ArchivePage() {
       setFilterOption={handleFilterChange}
       selectedCategories={selectedCategories}
       setSelectedCategories={handleCategoryChange}
-      categories={categories.map(
-        (cat: { id: number | string; name: string }) => ({
-          id: cat.id.toString(),
-          name: cat.name,
-        }),
-      )}
-      exhibitions={archivedExhibitions || []}
+      categories={safeCategories.map((cat) => ({
+        id: cat.id.toString(),
+        name: cat.name,
+      }))}
+      exhibitions={archivedExhibitions ?? []}
     />
   );
 
