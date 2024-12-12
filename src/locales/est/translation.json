@@ -97,7 +97,12 @@
     "activities": "Tegevused",
     "saveChanges": "Salvesta muudatused",
     "addQuestion": "Lisa küsimus",
-    "editQuizTitle": "Muuda viktoriini"
+    "editQuizTitle": "Muuda viktoriini",
+    "scoreMessage": "Sinu tulemus on {{score}} / {{totalQuestions}}.",
+    "scorePercentage": "{{percentage}}%",
+    "result": "Tulemus",
+    "retakeQuiz": "Tee test uuesti",
+    "finishQuiz": "Finish Quiz"
   },
 
   "toasts": {
@@ -135,6 +140,26 @@
     "confirmArchive": "Kas oled kindel, et soovid selle näituse arhiveerida?",
     "confirmUnarchive": "Kas oled kindel, et soovid selle näituse arhiivist eemaldada?"
   },
+
+  "categoryModal": {
+    "searchPlaceholder": "Otsi kategooriaid",
+    "newCategoryPlaceholder": "Sisesta uue kategooria nimi",
+    "selectedCategories": "Valitud kategooriad",
+    "availableCategories": "Saadaval kategooriad"
+  },
+
+  "filter": {
+    "filterBy": "Filtreeri",
+    "sortBy": "Sorteeri",
+    "apply": "Rakenda",
+    "alphabetical": "Tähestikuline",
+    "updatedDate": "Uuendamise kuupäev"
+  },
+
+  "alphabetical": "Tähestikuline",
+  "updatedDate": "Uuendamise kuupäev",
+  "failedToDeleteCategory": "Kategooria kustutamine ebaõnnestus: {{category}}",
+  "categories": "Kategooriad",
 
   "confirmPublish": "Kas oled kindel, et soovid selle näituse avalikuks teha?",
   "editExhibition": "Muuda näitust",

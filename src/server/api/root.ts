@@ -2,6 +2,7 @@ import { exhibitionRouter } from "~/server/api/routers/exhibitions";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { quizRouter } from "./routers/quizzes";
 import { pdfRouter } from "./routers/pdf";
+import { categoryRouter } from "./routers/categories";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   exhibition: exhibitionRouter,
   quiz: quizRouter,
   pdf: pdfRouter,
+  category: categoryRouter,
 });
 
 // export type definition of API

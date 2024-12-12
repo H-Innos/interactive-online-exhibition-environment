@@ -1,21 +1,62 @@
 "use client";
 
+import { Suspense, useState, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import { PublishedCard } from "~/components/ExhibitionCard/cards";
 import PageableExhibitions from "~/app/_components/pageable-cards";
 import { useTranslation } from "react-i18next";
-import { Suspense } from "react";
-import { useRouter } from "next/navigation";
+import FilterDropdown from "~/components/filter-dropdown";
+import type { Exhibition } from "~/lib/types/entities";
 
 const PublishedPage = () => {
   const { t } = useTranslation();
-  const router = useRouter();
+  const [filterOption, setFilterOption] = useState<string>("updatedDate");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const {
     data: publishedExhibitions,
     error,
     isLoading,
   } = api.exhibition.getPublished.useQuery();
+
+  const { data: categories = [] } = api.category.getAll.useQuery();
+
+  const handleFilterChange = useCallback((option: string) => {
+    setFilterOption(option);
+  }, []);
+
+  const handleCategoryChange = useCallback((categories: string[]) => {
+    setSelectedCategories(categories);
+  }, []);
+
+  const filteredAndSortedPublished = useMemo(() => {
+    if (!publishedExhibitions) return [];
+
+    let filtered = publishedExhibitions;
+
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(
+        (exhibition: Exhibition) =>
+          exhibition.categories?.some((cat) =>
+            selectedCategories.includes(cat.name),
+          ) ?? false,
+      );
+    }
+
+    return filtered.sort((a: Exhibition, b: Exhibition) => {
+      switch (filterOption) {
+        case "updatedDate":
+          return (
+            new Date(b.updatedAt ?? b.createdAt).getTime() -
+            new Date(a.updatedAt ?? a.createdAt).getTime()
+          );
+        case "alphabetical":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+  }, [publishedExhibitions, selectedCategories, filterOption]);
 
   return (
     <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
@@ -31,11 +72,27 @@ const PublishedPage = () => {
         ) : error ? (
           <div>{t("dashboard.errorLoading")}</div>
         ) : (
-          publishedExhibitions && (
+          filteredAndSortedPublished && (
             <PageableExhibitions
+              data-testid="exhibition-list"
               title=""
-              exhibitions={publishedExhibitions}
+              exhibitions={filteredAndSortedPublished}
               CardComponent={(props) => <PublishedCard {...props} />}
+              FilterComponent={
+                <FilterDropdown
+                  filterOption={filterOption}
+                  setFilterOption={handleFilterChange}
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={handleCategoryChange}
+                  categories={categories.map(
+                    (cat: { id: number | string; name: string }) => ({
+                      id: cat.id.toString(),
+                      name: cat.name,
+                    }),
+                  )}
+                  exhibitions={publishedExhibitions}
+                />
+              }
             />
           )
         )}

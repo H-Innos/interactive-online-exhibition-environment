@@ -17,12 +17,14 @@ interface PageableExhibitionsProps {
   title: string;
   exhibitions: Exhibition[];
   CardComponent: React.FC<{ exhibition: Exhibition }>;
+  FilterComponent: React.ReactNode;
 }
 
 const PageableExhibitions = ({
   title,
   exhibitions,
   CardComponent,
+  FilterComponent,
 }: PageableExhibitionsProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -48,24 +50,30 @@ const PageableExhibitions = ({
     <div className="mb-10">
       <div className="mb-5 flex items-center justify-between">
         <h1 className="text-neutral text-2xl font-bold">{title}</h1>
-        <Select
-          value={exhibitionsPerPage.toString()}
-          onValueChange={handlePerPageChange}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Exhibitions per page" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="12">{t("perPage", { count: 12 })}</SelectItem>
-            <SelectItem value="24">{t("perPage", { count: 24 })}</SelectItem>
-            <SelectItem value="36">{t("perPage", { count: 36 })}</SelectItem>
-            <SelectItem value="48">{t("perPage", { count: 48 })}</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center space-x-2">
+          <Select
+            value={exhibitionsPerPage.toString()}
+            onValueChange={handlePerPageChange}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Exhibitions per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="12">{t("perPage", { count: 12 })}</SelectItem>
+              <SelectItem value="24">{t("perPage", { count: 24 })}</SelectItem>
+              <SelectItem value="36">{t("perPage", { count: 36 })}</SelectItem>
+              <SelectItem value="48">{t("perPage", { count: 48 })}</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="w-[180px]">{FilterComponent}</div>
+        </div>
       </div>
 
       <div className="relative">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          data-testid="exhibition-list"
+        >
           {currentExhibitions.map((exhibition) => (
             <CardComponent key={exhibition.id} exhibition={exhibition} />
           ))}

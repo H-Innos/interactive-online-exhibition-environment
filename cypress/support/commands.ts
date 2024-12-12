@@ -31,7 +31,7 @@ export function login() {
       cy.get(selectors.passwordInput).type("12345678");
 
       cy.intercept("POST", "/").as("firstRequest");
-      cy.get(selectors.loginButton).click();
+      cy.get(selectors.loginButton).click({ force: true });
       cy.wait("@firstRequest");
     }
   });
@@ -90,6 +90,7 @@ export function unpublishExhibition(exhibitionTitle: string) {
   cy.visit("/dashboard");
   cy.get(selectors.exhibitionCard(exhibitionTitle))
     .first()
+    .scrollIntoView()
     .within(() => {
       cy.get(selectors.optionsButton)
         .should("be.visible")

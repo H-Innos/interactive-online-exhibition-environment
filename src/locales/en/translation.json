@@ -96,7 +96,12 @@
     "activities": "Activities",
     "saveChanges": "Save Changes",
     "addQuestion": "Add Question",
-    "editQuizTitle": "Edit Quiz"
+    "editQuizTitle": "Edit Quiz",
+    "scoreMessage": "Your score is {{score}} out of {{totalQuestions}}.",
+    "scorePercentage": "{{percentage}}%",
+    "result": "Result",
+    "retakeQuiz": "Retake Quiz",
+    "finishQuiz": "Finish Quiz"
   },
 
   "toasts": {
@@ -135,6 +140,26 @@
     "confirmUnarchive": "Are you sure you want to unarchive this exhibition?",
     "confirmTrash": "Are you sure you want to delete this exhibition?"
   },
+
+  "categoryModal": {
+    "searchPlaceholder": "Search categories",
+    "newCategoryPlaceholder": "Enter new category name",
+    "selectedCategories": "Selected Categories",
+    "availableCategories": "Available Categories"
+  },
+
+  "filter": {
+    "filterBy": "Filter by",
+    "sortBy": "Sort by",
+    "apply": "Apply",
+    "alphabetical": "Alphabetical",
+    "updatedDate": "Updated Date"
+  },
+
+  "alphabetical": "Alphabetical",
+  "updatedDate": "Updated Date",
+  "failedToDeleteCategory": "Failed to delete category: ",
+  "categories": "Categories",
 
   "confirmPublish": "Are you sure you want to publish this exhibition?",
   "editExhibition": "Edit Exhibition",
