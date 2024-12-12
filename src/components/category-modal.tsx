@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
+  categories: string[];
   selectedCategories: string[];
   onCategorySelect: (category: string) => void;
   onCategoryDeselect: (category: string) => void;
@@ -60,7 +61,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
       !localCategories.some((cat) => cat.name === newCategory)
     ) {
       try {
-        await onAddCategory(newCategory);
+        onAddCategory(newCategory);
         await refetch();
         setNewCategory("");
         toast.success(`Category "${newCategory}" added successfully`);
@@ -75,7 +76,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
 
   const handleDeleteCategory = async (categoryName: string) => {
     try {
-      await onDeleteCategory(categoryName);
+      onDeleteCategory(categoryName);
       await refetch();
       toast.success(`Category "${categoryName}" deleted successfully`);
     } catch (error) {
@@ -160,7 +161,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                 {selectedCategories.includes(category.name) ? (
                   <X
                     className="ml-1 cursor-pointer text-gray-500"
-                    data-testid={`deselect-category-${category}`}
+                    data-testid={`deselect-category-${category.name}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCategoryClick(category.name);
@@ -169,10 +170,10 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                 ) : (
                   <X
                     className="ml-1 cursor-pointer text-red-500"
-                    data-testid={`delete-category-${category}`}
+                    data-testid={`delete-category-${category.name}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteCategory(category.name);
+                      void handleDeleteCategory(category.name);
                     }}
                   />
                 )}
