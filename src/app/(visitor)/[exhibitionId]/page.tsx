@@ -10,6 +10,7 @@ import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
 import "~/styles/colors.css";
 import { configurations } from "~/lib/constants/config";
+import ContributorsSection from "~/components/contributors-section";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -99,6 +100,8 @@ const ExhibitionViewPage: React.FC = () => {
             className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
           />
         </div>
+
+        <ContributorsSection contributors={exhibition.contributors} />
       </div>
     </div>
   );

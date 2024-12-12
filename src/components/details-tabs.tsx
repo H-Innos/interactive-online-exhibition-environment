@@ -11,7 +11,7 @@ type ExhibitionTabsProps = {
 };
 
 const ExhibitionTabs: React.FC<ExhibitionTabsProps> = ({ exhibition }) => {
-  const [activeTab, setActiveTab] = useState("contributors");
+  const [activeTab, setActiveTab] = useState("details");
 
   return (
     <Tabs
