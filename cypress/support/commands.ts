@@ -90,6 +90,7 @@ export function unpublishExhibition(exhibitionTitle: string) {
   cy.visit("/dashboard");
   cy.get(selectors.exhibitionCard(exhibitionTitle))
     .first()
+    .scrollIntoView()
     .within(() => {
       cy.get(selectors.optionsButton)
         .should("be.visible")
