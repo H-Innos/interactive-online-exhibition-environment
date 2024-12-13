@@ -63,7 +63,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   onChange,
   bgColor,
 }) => {
-  const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [isFontModalOpen, setFontModalOpen] = useState(false);

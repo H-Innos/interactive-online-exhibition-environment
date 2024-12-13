@@ -55,7 +55,7 @@ const Dashboard = () => {
           return 0;
       }
     });
-  }, [publishedExhibitions, selectedCategories, filterOption, t]);
+  }, [publishedExhibitions, selectedCategories, filterOption]);
 
   const filterComponent = (
     <FilterDropdown
