@@ -44,7 +44,7 @@ const ExhibitionEditorPage = () => {
     };
   }, [isPreviewModalOpen, isDetailsModalOpen]);
 
-  function handleEditorChange(updatedContent: string) {
+  async function handleEditorChange(updatedContent: string) {
     const validHTMLContent = convertToValidHTML(updatedContent);
     setEditorState((prevState) => {
       if (!prevState) return null;
