@@ -1,12 +1,19 @@
 "use client";
 
+import { ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
-import { VisitorCard } from "~/components/ExhibitionCard/cards";
+import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { CardSkeleton, VisitorCard } from "~/components/ExhibitionCard/cards";
 import NavBar from "~/components/navbar";
-import type { Exhibition } from "~/lib/types/entities";
+import { Button } from "~/components/ui/button";
+import { isEmpty } from "~/lib/utils/helpers";
+import { api } from "~/trpc/react";
 
 const MainPage = ({}) => {
-  const featuredExhibition: Exhibition[] = [];
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { data: featuredExhibitions } = api.exhibition.getFeatured.useQuery();
 
   return (
     <>
@@ -20,17 +27,34 @@ const MainPage = ({}) => {
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <h2 className="px-4 text-center text-4xl font-bold text-white">
-            University of Tartu Library exhibitions
+            {t("pageTitle")}
           </h2>
         </div>
       </div>
-      <div
-        className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-        data-testid="exhibition-list"
-      >
-        {featuredExhibition.map((exhibition) => (
-          <VisitorCard key={exhibition.id} exhibition={exhibition} />
-        ))}
+
+      <section className="flex w-full justify-center bg-secondary p-4 text-lg">
+        <p>{t("welcomeText")}</p>
+      </section>
+
+      <div className="flex w-full justify-center p-4">
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {isEmpty(featuredExhibitions)
+            ? Array.from({ length: 4 }, (_, index) => (
+                <CardSkeleton key={index} />
+              ))
+            : featuredExhibitions?.map((exhibition) => (
+                <VisitorCard key={exhibition.id} exhibition={exhibition} />
+              ))}
+        </div>
+      </div>
+      <div className="flex w-full justify-end p-4">
+        <Button
+          variant="outline"
+          onClick={() => router.push("/all")}
+          className="mr-10"
+        >
+          {t("allExhibitions")} <ArrowRightIcon />
+        </Button>
       </div>
     </>
   );
