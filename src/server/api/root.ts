@@ -1,7 +1,6 @@
 import { exhibitionRouter } from "~/server/api/routers/exhibitions";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { quizRouter } from "./routers/quizzes";
-import { pdfRouter } from "./routers/pdf";
 import { categoryRouter } from "./routers/categories";
 
 /**
@@ -12,7 +11,6 @@ import { categoryRouter } from "./routers/categories";
 export const appRouter = createTRPCRouter({
   exhibition: exhibitionRouter,
   quiz: quizRouter,
-  pdf: pdfRouter,
   category: categoryRouter,
 });
 

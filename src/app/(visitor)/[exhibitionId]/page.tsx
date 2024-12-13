@@ -14,6 +14,15 @@ import { Button } from "~/components/ui/button";
 import { Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useBlockNote } from "@blocknote/react";
+import {
+  PDFExporter,
+  pdfDefaultSchemaMappings,
+} from "@blocknote/xl-pdf-exporter";
+import * as ReactPDF from "@react-pdf/renderer"; // Import react-pdf
+import { pdf } from "@react-pdf/renderer";
+
+import { BlockNoteSchema } from "@blocknote/core";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -33,39 +42,70 @@ const ExhibitionViewPage: React.FC = () => {
   }, [data]);
 
   const [isDownloading, setIsDownloading] = useState(false);
-  const downloadExhibitionPDF = api.pdf.generateExhibitionPDF.useMutation();
 
-  function handleDownloadPDF(exhibitionId: number) {
+  // Initializing Blocknote editor
+  const editor = useBlockNote({
+    initialContent: (() => {
+      if (exhibition?.content) {
+        try {
+          return JSON.parse(exhibition.content);
+        } catch (error) {
+          console.error("Error parsing exhibition content:", error);
+          console.log("Raw content:", exhibition.content);
+          return undefined;
+        }
+      }
+      return undefined;
+    })(),
+  });
+
+  const handleDownloadPDF = async () => {
+    console.log("Starting PDF download for exhibition:", id);
     setIsDownloading(true);
-    downloadExhibitionPDF.mutate(
-      { exhibitionId },
-      {
-        onSuccess: (data) => {
-          try {
-            const blob = new Blob([Buffer.from(data.pdfBuffer, "base64")], {
-              type: "application/pdf",
-            });
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = data.fileName;
-            link.click();
-            window.URL.revokeObjectURL(link.href);
-            setIsDownloading(false);
-            toast.success("PDF downloaded successfully");
-          } catch (error) {
-            console.error("Error creating PDF blob:", error);
-            toast.error("Failed to create PDF download");
-            setIsDownloading(false);
-          }
-        },
-        onError: (error) => {
-          console.error("Error downloading PDF:", error);
-          toast.error("Failed to generate PDF");
+    try {
+      if (exhibition?.content && editor) {
+        // Create the PDFExporter instance
+        const exporter = new PDFExporter(
+          editor.schema,
+          pdfDefaultSchemaMappings,
+        );
+
+        // Convert the blocks to a react-pdf document
+        const pdfDocument = await exporter.toReactPDFDocument(editor.document);
+        if (!pdfDocument) {
+          console.error("Failed to generate valid PDF document.");
+          toast.error(t("Error generating PDF document."));
           setIsDownloading(false);
-        },
-      },
-    );
-  }
+          return;
+        }
+        if (!editor.document) {
+          console.error("Editor document is empty.");
+          toast.error(t("No content available for the PDF."));
+          setIsDownloading(false);
+          return;
+        }
+        // Generate a blob from the PDF document
+        const blob = await pdf(pdfDocument).toBlob();
+
+        // Create a download link
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${exhibition.name.replace(/\s+/g, "_")}_exhibition.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        setIsDownloading(false);
+        toast.success(t("PDF downloaded successfully"));
+      }
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      setIsDownloading(false);
+      toast.error(t("Error generating PDF"));
+    }
+  };
 
   if (isLoading) {
     return (
@@ -121,6 +161,11 @@ const ExhibitionViewPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col p-4">
+        <Button onClick={handleDownloadPDF} disabled={isDownloading}>
+          {isDownloading
+            ? t("Generating PDF...")
+            : t("Download Exhibition PDF")}
+        </Button>
         {quizzes && quizzes.length > 0 && (
           <div className="mb-4 self-end">
             <QuizDropdown
@@ -139,12 +184,6 @@ const ExhibitionViewPage: React.FC = () => {
             className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
           />
         </div>
-        <Button
-          onClick={() => handleDownloadPDF(exhibition.id)}
-          disabled={isDownloading}
-        >
-          {isDownloading ? "Downloading..." : "Download Exhibition PDF"}
-        </Button>
       </div>
     </div>
   );

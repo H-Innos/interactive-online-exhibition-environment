@@ -12,7 +12,6 @@ import {
   type ExhibitionStatus,
   type ExhibitionFromDB,
 } from "~/lib/types/entities";
-//import { Category } from '~/lib/types/entities';
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
@@ -442,6 +441,46 @@ export const exhibitionRouter = createTRPCRouter({
       status: assertExhibitionStatus(exhibition.status),
     }));
   }),
+
+  downloadPDF: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq, and }) =>
+          and(
+            eq(exhibitions.id, input.id),
+            eq(exhibitions.status, "published"),
+          ),
+        columns: {
+          id: true,
+          name: true,
+          description: true,
+          content: true,
+          thumbnailUrl: true,
+          exhibitionCoverUrl: true,
+          coverImagePositionX: true,
+          coverImagePositionY: true,
+          backgroundColor: true,
+          createdAt: true,
+          updatedAt: true,
+          status: true,
+        },
+      });
+
+      if (!exhibition) {
+        throw new Error("Published exhibition not found");
+      }
+      const exhibitionWithStatus = {
+        ...exhibition,
+        status: assertExhibitionStatus(exhibition.status),
+        isPublished: exhibition.status === "published",
+        isArchived: exhibition.status === "archived",
+      };
+
+      return {
+        fileName: `exhibition_${exhibition.id}.pdf`,
+      };
+    }),
 });
 
 // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
