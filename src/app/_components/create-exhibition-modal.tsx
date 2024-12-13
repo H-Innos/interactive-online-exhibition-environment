@@ -91,7 +91,7 @@ const CreateExhibitionModal: React.FC<CreateExhibitionModalProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
       data-testid="create-exhibition-modal"
     >
-      <div className="w-full max-w-lg rounded-lg bg-primary-light p-6">
+      <div className="w-full max-w-lg rounded-lg bg-secondary p-6">
         <h2 className="mb-4 text-2xl font-semibold text-primary-dark">
           {t("createExhibition.title")}
         </h2>
