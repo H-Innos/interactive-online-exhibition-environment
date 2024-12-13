@@ -23,10 +23,12 @@ import { useTranslation } from "react-i18next";
 
 interface ExhibitionDataFormProps {
   exhibition: Exhibition;
+  onSave: () => void;
 }
 
 export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   exhibition,
+  onSave,
 }) => {
   const { t } = useTranslation();
   const [coverImageDataUrl, setcoverImageDataUrl] = useState(
@@ -51,6 +53,7 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   const updateExhibition = useUpdateExhibition();
 
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
+    onSave();
     const thumbnailUrl = await uploadImage(coverImageDataUrl);
     if (!thumbnailUrl) return;
 

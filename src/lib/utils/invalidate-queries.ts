@@ -9,6 +9,5 @@ export const invalidateExhibitionQueries = async (
     utils.exhibition.getArchived.invalidate(),
     utils.exhibition.getAll.invalidate(),
     utils.exhibition.getOne.invalidate(),
-    utils.exhibition.getLatest.invalidate(),
   ]);
 };

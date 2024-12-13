@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { type InferSelectModel, relations, sql } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -65,6 +65,7 @@ export const exhibitions = createTable("post", {
   backgroundColor: varchar("background_color", { length: 7 }).default(
     "#FFFFFF",
   ),
+  contributors: text("contributors").default(""),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -72,6 +73,8 @@ export const exhibitions = createTable("post", {
     () => new Date(),
   ),
 });
+
+export type ExhibitionDBSchema = InferSelectModel<typeof exhibitions>;
 
 export const categories = createTable("category", {
   id: serial("id").primaryKey(),
