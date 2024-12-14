@@ -58,8 +58,18 @@
   },
 
   "pagination": {
-    "previous": "Eelmine",
-    "next": "Järgmine"
+    "previous": " ",
+    "next": " "
+  },
+  "footer": {
+    "logoAlt": "Logo",
+    "contactTitle": "Kontaktandmed",
+    "universityName": "Tartu Ülikooli raamatukogu",
+    "addressLine1": "W. Struve 1",
+    "addressLine2": "50091 Tartu, EST",
+    "email": "library@ut.ee",
+    "mapPinAlt": "Map Pin",
+    "mapLink": "Tartu Ülikooli hooned kaardil"
   },
 
   "trash": {

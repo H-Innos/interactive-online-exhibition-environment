@@ -14,12 +14,12 @@ import {
   type ExhibitionFormSchema,
 } from "~/lib/types/schemas";
 import { configurations } from "~/lib/constants/config";
-import { type Exhibition } from "../../lib/types/entities";
 import { useUpdateExhibition } from "~/hooks/exhibition-actions";
 import { uploadImage } from "~/lib/utils/image-uploader";
 import RemovableImage from "~/components/removable-image";
 import FileUploadButton from "~/components/file-upload-button";
 import { useTranslation } from "react-i18next";
+import { Exhibition } from "~/lib/types/entities";
 
 interface ExhibitionDataFormProps {
   exhibition: Exhibition;
@@ -31,15 +31,12 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
   onSave,
 }) => {
   const { t } = useTranslation();
-  const [coverImageDataUrl, setcoverImageDataUrl] = useState(
-    exhibition.thumbnailUrl ?? "",
-  );
+  const [coverImage, setCoverImage] = useState(exhibition.thumbnailUrl ?? "");
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm<ExhibitionFormSchema>({
     defaultValues: {
@@ -54,56 +51,46 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
 
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
     onSave();
-    const thumbnailUrl = await uploadImage(coverImageDataUrl);
+    const thumbnailUrl = await uploadImage(coverImage);
     if (!thumbnailUrl) return;
 
     updateExhibition.mutate({
       id: exhibition.id,
       name: data.title,
       description: data.description,
-      thumbnailUrl: thumbnailUrl,
+      thumbnailUrl,
     });
   };
 
   const handleThumbnailChange = (file: File) => {
     const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const previewUrl = reader.result as string;
-      setcoverImageDataUrl(previewUrl);
+    reader.onload = () => {
+      setCoverImage(reader.result as string);
       setValue("coverImage", file);
     };
     reader.readAsDataURL(file);
   };
 
   const handleThumbnailDelete = () => {
-    setcoverImageDataUrl("");
+    setCoverImage("");
     setValue("coverImage", undefined);
   };
 
-  const watchedFields = watch();
-
   return (
-    <Card className="md:w-100 w-full overflow-auto">
+    <Card className="md:w-100 w-full">
       <CardHeader className="sticky top-0 border-b bg-background">
-        <div className="flex items-center justify-between">
-          <CardTitle>{t("exhibitionDetails")}</CardTitle>
-        </div>
+        <CardTitle>{t("exhibitionDetails")}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 p-4 md:p-6">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-2">
+      <CardContent className="p-4 md:p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
             <Label htmlFor="title">{t("title")}</Label>
             <Input id="title" {...register("title")} />
-            <p className="h-5 text-sm">
-              {errors.title ? (
-                <span className="text-red-500">{errors.title.message}</span>
-              ) : (
-                <span>&nbsp;</span>
-              )}
-            </p>
+            {errors.title && (
+              <p className="text-sm text-red-500">{errors.title.message}</p>
+            )}
           </div>
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="description">{t("description")}</Label>
             <Textarea
               id="description"
@@ -112,52 +99,40 @@ export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
               maxLength={configurations.MAX_DESCRIPTION_LENGTH}
               placeholder={t("descriptionPlaceholder")}
             />
-            <p className="mt-1 text-xs text-gray-500">
-              {watchedFields.description.length ?? 0}/
+            <p className="text-xs text-gray-500">
+              {watch("description")?.length ?? 0}/
               {configurations.MAX_DESCRIPTION_LENGTH} {t("characters")}
             </p>
-            <p className="h-5 text-sm">
-              {errors.description ? (
-                <span className="text-red-500">
-                  {errors.description.message}
-                </span>
-              ) : (
-                <span>&nbsp;</span>
-              )}
-            </p>
+            {errors.description && (
+              <p className="text-sm text-red-500">
+                {errors.description.message}
+              </p>
+            )}
           </div>
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="thumbnail">{t("thumbnail")}</Label>
-            <div className="flex flex-col items-start space-y-2">
-              <RemovableImage
-                src={
-                  coverImageDataUrl || configurations.DEFAULT_COVER_IMAGE_URL
-                }
-                alt={t("thumbnail")}
-                className="h-32 w-32 md:h-48 md:w-48"
-                onDelete={handleThumbnailDelete}
-              />
-              <FileUploadButton
-                onFileSelect={handleThumbnailChange}
-                accept="image/*"
-                disabled={isSubmitting}
-              />
-            </div>
-            <p className="h-5 text-sm">
-              {errors.coverImage ? (
-                <span className="text-red-500">
-                  {errors.coverImage.message}
-                </span>
-              ) : (
-                <span>&nbsp;</span>
-              )}
-            </p>
+            <RemovableImage
+              src={coverImage || configurations.DEFAULT_COVER_IMAGE_URL}
+              alt={t("thumbnail")}
+              className="mb-4 h-32 w-32 md:h-48 md:w-48"
+              onDelete={handleThumbnailDelete}
+            />
+            <FileUploadButton
+              onFileSelect={handleThumbnailChange}
+              accept="image/*"
+              disabled={isSubmitting}
+            />
+            {errors.coverImage && (
+              <p className="text-sm text-red-500">
+                {errors.coverImage.message}
+              </p>
+            )}
           </div>
           <Button
             type="submit"
             variant="outline"
             disabled={isSubmitting}
-            className="mt-4 w-full bg-gray-300"
+            className="w-full"
           >
             <Save className="mr-2 h-4 w-4" />
             {t("saveChanges")}

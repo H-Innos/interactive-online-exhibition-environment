@@ -50,12 +50,12 @@ const PageableExhibitions = ({
     <div className="mb-10">
       <div className="mb-5 flex items-center justify-between">
         <h1 className="text-neutral text-2xl font-bold">{title}</h1>
-        <div className="flex items-center space-x-2">
+        <div className="ml-4 flex items-center space-x-2">
           <Select
             value={exhibitionsPerPage.toString()}
             onValueChange={handlePerPageChange}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Exhibitions per page" />
             </SelectTrigger>
             <SelectContent>

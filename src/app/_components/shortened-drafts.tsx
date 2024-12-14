@@ -46,13 +46,13 @@ const DraftExhibitions = () => {
         <div className="pointer-events-none absolute right-[-50px] top-0 h-full w-1/4 bg-gradient-to-l from-white to-transparent"></div>
       )}
 
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 transform">
+      <div className="mt-4 flex justify-center md:absolute md:right-0 md:top-1/2 md:-translate-y-1/2 md:transform">
         <button
           onClick={handleViewAll}
           className="group flex items-center text-black"
           data-testid="view-all-button"
         >
-          <span className="text-4xl text-black">〉</span>
+          <span className="rotate-90 text-4xl text-black md:rotate-0">〉</span>
         </button>
       </div>
     </div>
