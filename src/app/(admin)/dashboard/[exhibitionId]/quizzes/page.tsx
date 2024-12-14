@@ -60,17 +60,19 @@ const QuizzesPage = () => {
 
   return (
     <main className="flex flex-col gap-4 p-4 md:flex-row">
-      <div className="mt-12 flex items-center">
+      <div className="mt-4 flex items-center md:mt-12">
         <button
           onClick={() => router.push(`/dashboard/${id}`)}
-          className="mb-10 mr-4 rounded-md text-4xl text-black transition duration-300 hover:text-gray-500"
+          className="mb-4 mr-4 rounded-md text-2xl text-black transition duration-300 hover:text-gray-500 md:mb-10 md:text-4xl"
         >
           ❬
         </button>
       </div>
       <Card className="w-full md:w-1/3">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>{t("quizzes.quizzes")}</CardTitle>
+          <CardTitle className="text-lg md:text-xl">
+            {t("quizzes.quizzes")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {error && <div>{t("quizzes.errorLoading")}</div>}
@@ -116,7 +118,7 @@ const QuizzesPage = () => {
       </Card>
       <Card className="w-full md:w-2/3">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>
+          <CardTitle className="text-lg md:text-xl">
             {isEditable
               ? t("quizzes.editQuizTitle", { title: selectedQuiz?.title })
               : t("quizzes.quizPreview")}
@@ -142,7 +144,7 @@ const QuizzesPage = () => {
               quizId={selectedQuiz?.id}
             />
           ) : (
-            <div className="flex min-h-screen w-full items-center justify-center">
+            <div className="flex min-h-[200px] w-full items-center justify-center">
               {t("quizzes.noQuizSelected")}
             </div>
           )}

@@ -9,7 +9,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const isDetailPage = /^\/dashboard\/\d+$/.test(pathname);
   return (
     <div className="flex min-h-screen">
-      {!isDetailPage && <ExhibitionManagerSidebar />}
+      {!isDetailPage && (
+        <div className="hidden md:block">
+          <ExhibitionManagerSidebar />
+        </div>
+      )}
       <main className="m-0 flex-grow p-4">{children}</main>
     </div>
   );

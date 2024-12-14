@@ -123,7 +123,7 @@ ExhibitionCard.ImageAlternative = function ExhibitionImageAlternative() {
   return (
     <Image
       src={exhibition.thumbnailUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
-      alt={exhibition.name || "Cover image"}
+      alt={exhibition.name || "Thumbnail"}
       width={400}
       height={200}
       className="h-48 w-full object-cover"
