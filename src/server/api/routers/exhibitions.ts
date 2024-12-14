@@ -4,14 +4,17 @@ import {
   exhibitions,
   exhibitionCategories,
   categories,
+  type ExhibitionDBSchema,
 } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
-import {
-  type Exhibition,
-  type Category,
-  type ExhibitionStatus,
-  type ExhibitionFromDB,
+import type {
+  Exhibition,
+  Category,
+  ExhibitionStatus,
+  Contributor,
 } from "~/lib/types/entities";
+import { type DrizzleClient } from "~/server/db";
+import { PgColumn } from "drizzle-orm/pg-core";
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
@@ -77,6 +80,7 @@ export const exhibitionRouter = createTRPCRouter({
         ...createdExhibition,
         categories: associatedCategories,
         status: assertExhibitionStatus(createdExhibition.status),
+        contributors: [],
       };
 
       return fullExhibition;
@@ -95,6 +99,9 @@ export const exhibitionRouter = createTRPCRouter({
         content: z.string().optional(),
         backgroundColor: z.string().optional(),
         categories: z.array(z.string()).optional(),
+        contributors: z
+          .array(z.object({ role: z.string(), names: z.string() }))
+          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -110,6 +117,7 @@ export const exhibitionRouter = createTRPCRouter({
             coverImagePositionY: input.coverImagePositionY,
             content: input.content,
             backgroundColor: input.backgroundColor,
+            contributors: JSON.stringify(input.contributors),
           })
           .where(eq(exhibitions.id, input.id));
 
@@ -320,172 +328,161 @@ export const exhibitionRouter = createTRPCRouter({
       return unarchivedExhibition[0];
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    const allExhibitions = await ctx.db.query.exhibitions.findMany({
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-      with: {
-        exhibitionCategories: {
-          with: {
-            category: true,
-          },
-        },
-      },
-    });
+  featureExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
 
-    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return allExhibitions.map((exhibition) => ({
-      ...exhibition,
-      status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition),
-    }));
+      if (!exhibition) {
+        throw new Error("Exhibition not found");
+      }
+
+      const featuredExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ isFeatured: true })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      return featuredExhibition[0];
+    }),
+
+  unfeatureExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibitionToUnfeature = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!exhibitionToUnfeature) {
+        throw new Error("Exhibition not found");
+      }
+
+      const unfeaturedExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ isFeatured: false })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      return unfeaturedExhibition[0];
+    }),
+
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    const allExhibitions = await getExhibitions(ctx.db);
+
+    return allExhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
 
   getOne: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const exhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
-        with: {
-          exhibitionCategories: {
-            with: {
-              category: true,
-            },
-          },
-        },
-      });
-      if (!exhibition) return null;
-      return transformExhibition(exhibition as ExhibitionFromDB);
+      const exhibition = await getExhibition(ctx.db, input.id);
+      return mapExhibition(exhibition);
     }),
 
-  getLatest: publicProcedure.query(async ({ ctx }) => {
-    const exhibition = await ctx.db.query.exhibitions.findFirst({
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-    });
-
-    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return exhibition
-      ? { ...exhibition, status: assertExhibitionStatus(exhibition.status) }
-      : null;
-  }),
-
   getDrafts: publicProcedure.query(async ({ ctx }) => {
-    const exhibitions = await ctx.db.query.exhibitions.findMany({
-      where: (exhibitions, { eq }) => eq(exhibitions.status, "draft"),
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-      with: {
-        exhibitionCategories: {
-          with: {
-            category: true,
-          },
-        },
-      },
-    });
-
-    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return exhibitions.map((exhibition) => ({
-      ...exhibition,
-      status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
-    }));
+    const exhibitions = await getExhibitions(ctx.db, "status", "draft");
+    return exhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
 
   getPublished: publicProcedure.query(async ({ ctx }) => {
-    const exhibitions = await ctx.db.query.exhibitions.findMany({
-      where: (exhibitions, { eq }) => eq(exhibitions.status, "published"),
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-      with: {
-        exhibitionCategories: {
-          with: {
-            category: true,
-          },
-        },
-      },
-    });
+    const exhibitions = await getExhibitions(ctx.db, "status", "published");
 
-    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return exhibitions.map((exhibition) => ({
-      ...exhibition,
-      status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
-    }));
+    return exhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
 
   getArchived: publicProcedure.query(async ({ ctx }) => {
-    const exhibitions = await ctx.db.query.exhibitions.findMany({
-      where: (exhibitions, { eq }) => eq(exhibitions.status, "archived"),
-      with: {
-        exhibitionCategories: {
-          with: {
-            category: true,
-          },
-        },
-      },
-    });
+    const exhibitions = await getExhibitions(ctx.db, "status", "archived");
 
-    // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
-    return exhibitions.map((exhibition) => ({
-      ...exhibition,
-      status: assertExhibitionStatus(exhibition.status),
-      categories: transformExhibitionCategories(exhibition as ExhibitionFromDB),
-    }));
+    return exhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
 
   getTrashed: publicProcedure.query(async ({ ctx }) => {
-    const exhibitions = await ctx.db.query.exhibitions.findMany({
-      where: (exhibitions, { eq }) => eq(exhibitions.status, "trashed"),
-      orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
-    });
-
-    return exhibitions.map((exhibition) => ({
-      ...exhibition,
-      status: assertExhibitionStatus(exhibition.status),
-    }));
+    const exhibitions = await getExhibitions(ctx.db, "status", "trashed");
+    return exhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
 
-  downloadPDF: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ ctx, input }) => {
-      const exhibition = await ctx.db.query.exhibitions.findFirst({
-        where: (exhibitions, { eq, and }) =>
-          and(
-            eq(exhibitions.id, input.id),
-            eq(exhibitions.status, "published"),
-          ),
-        columns: {
-          id: true,
-          name: true,
-          description: true,
-          content: true,
-          thumbnailUrl: true,
-          exhibitionCoverUrl: true,
-          coverImagePositionX: true,
-          coverImagePositionY: true,
-          backgroundColor: true,
-          createdAt: true,
-          updatedAt: true,
-          status: true,
-        },
-      });
-
-      if (!exhibition) {
-        throw new Error("Published exhibition not found");
-      }
-      const exhibitionWithStatus = {
-        ...exhibition,
-        status: assertExhibitionStatus(exhibition.status),
-        isPublished: exhibition.status === "published",
-        isArchived: exhibition.status === "archived",
-      };
-
-      return {
-        fileName: `exhibition_${exhibition.id}.pdf`,
-      };
-    }),
+  getFeatured: publicProcedure.query(async ({ ctx }) => {
+    const exhibitions = await getExhibitions(ctx.db, "isFeatured", true);
+    return exhibitions.map((exhibition) => mapExhibition(exhibition));
+  }),
 });
+
+async function getExhibitions<K extends keyof ExhibitionDBSchema>(
+  db: DrizzleClient,
+  column?: K,
+  value?: ExhibitionDBSchema[K],
+): Promise<ExhibitionFromDB[]> {
+  const fullExhibitions = await db.query.exhibitions.findMany({
+    where:
+      column && value
+        ? (
+            exhibitions: {
+              [key in keyof ExhibitionDBSchema]: PgColumn;
+            },
+            { eq },
+          ) => eq(exhibitions[column], value)
+        : undefined,
+    orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
+    with: {
+      quizzes: {
+        with: {
+          questions: {
+            with: {
+              answers: true,
+            },
+          },
+        },
+      },
+      exhibitionCategories: {
+        with: {
+          category: true,
+        },
+      },
+    },
+  });
+
+  return fullExhibitions;
+}
+
+async function getExhibition(db: DrizzleClient, id: number) {
+  const exhibition = await db.query.exhibitions.findFirst({
+    where: (exhibitions, { eq }) => eq(exhibitions.id, id),
+    with: {
+      quizzes: {
+        with: {
+          questions: {
+            with: {
+              answers: true,
+            },
+          },
+        },
+      },
+      exhibitionCategories: {
+        with: {
+          category: true,
+        },
+      },
+    },
+  });
+  if (!exhibition) throw new Error("Exhibition not found");
+  return exhibition;
+}
+
+type ExhibitionFromDB = Awaited<ReturnType<typeof getExhibition>>;
+
+function mapExhibition(exhibition: ExhibitionFromDB): Exhibition {
+  return {
+    ...exhibition,
+    status: assertExhibitionStatus(exhibition.status),
+    categories: exhibition.exhibitionCategories.map((ec) => ec.category),
+    contributors: assertContributors(exhibition.contributors),
+  };
+}
 
 // TEMPORARY to ensure type safety, "status" in db is currently stored as a string not an enum
 //type ExhibitionStatus = "draft" | "published" | "archived" | "trashed";
-
 function assertExhibitionStatus(status: string): ExhibitionStatus {
   if (
     status === "draft" ||
@@ -498,16 +495,20 @@ function assertExhibitionStatus(status: string): ExhibitionStatus {
   throw new Error(`Invalid exhibition status: ${status}`);
 }
 
-const transformExhibitionCategories = (
-  exhibition: ExhibitionFromDB,
-): Category[] => {
-  return exhibition.exhibitionCategories?.map((ec) => ec.category) ?? [];
-};
+function assertContributors(contributorsJson: string | null): Contributor[] {
+  if (contributorsJson === null || contributorsJson === undefined) {
+    return [];
+  }
 
-function transformExhibition(exhibition: ExhibitionFromDB): Exhibition {
-  return {
-    ...exhibition,
-    status: assertExhibitionStatus(exhibition.status),
-    categories: exhibition.exhibitionCategories.map((ec) => ec.category),
-  };
+  if (contributorsJson.trim() === "") {
+    return [];
+  }
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const parsedData: Contributor[] = JSON.parse(contributorsJson);
+    return parsedData;
+  } catch (error) {
+    console.error("Error parsing contributors JSON:", error);
+    return [];
+  }
 }

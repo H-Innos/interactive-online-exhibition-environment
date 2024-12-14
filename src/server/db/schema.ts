@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { type InferSelectModel, relations, sql } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -58,13 +58,13 @@ export const exhibitions = createTable("post", {
   ),
   coverImagePositionX: integer("cover_image_position_x").default(50).notNull(),
   coverImagePositionY: integer("cover_image_position_y").default(50).notNull(),
-  isPublished: boolean("is_published").default(false).notNull(), // DO NOT USE THIS FIELD, USE "status" INSTEAD, (remove when database is fixed)
-  isArchived: boolean("is_archived").default(false).notNull(), // DO NOT USE THIS FIELD, USE "status" INSTEAD, (remove when database is fixed)
+  isFeatured: boolean("is_featured").default(false).notNull(),
   content: text("content").default(""),
   status: varchar("status", { length: 20 }).default("draft").notNull(),
   backgroundColor: varchar("background_color", { length: 7 }).default(
     "#FFFFFF",
   ),
+  contributors: text("contributors").default(""),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -72,6 +72,8 @@ export const exhibitions = createTable("post", {
     () => new Date(),
   ),
 });
+
+export type ExhibitionDBSchema = InferSelectModel<typeof exhibitions>;
 
 export const categories = createTable("category", {
   id: serial("id").primaryKey(),

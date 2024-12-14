@@ -6,7 +6,7 @@ import { AspectRatio } from "~/components/ui/aspect-ratio";
 import { cn } from "~/lib/utils";
 import type { Exhibition } from "~/lib/types/entities";
 import { configurations } from "~/lib/constants/config";
-import { formatDate } from "~/lib/utils/formatter";
+import { formatDate } from "~/lib/utils/helpers";
 import { ExhibitionActionsDropdown } from "./exhibition-actions-dropdown";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -49,7 +49,7 @@ const ExhibitionCard = ({
       <ErrorBoundary fallback={<div>Error loading exhibition.</div>}>
         <div
           className={cn(
-            "group relative max-w-sm cursor-pointer overflow-hidden bg-card text-card-foreground shadow-lg transition-shadow hover:shadow-xl",
+            "group relative max-w-sm cursor-pointer overflow-hidden bg-card text-card-foreground shadow-md transition-shadow hover:shadow-xl",
             className,
           )}
           onClick={handleClick}
@@ -72,7 +72,7 @@ ExhibitionCard.Description = function ExhibitionCardDescription({
 }: DefaultProps) {
   const { exhibition } = useExhibitionCardContext();
   return (
-    <p className={cn("break-words text-sm text-foreground", className)}>
+    <p className={cn("break-words text-base text-foreground", className)}>
       {exhibition.description}
     </p>
   );
@@ -83,7 +83,7 @@ ExhibitionCard.Date = function ExhibitionCardDate({ className }: DefaultProps) {
   return (
     <p
       className={cn(
-        "break-words pb-2 text-sm text-foreground text-gray-500",
+        "break-words pb-2 text-base text-foreground text-gray-500",
         className,
       )}
     >
@@ -97,7 +97,7 @@ ExhibitionCard.Title = function ExhibitionCardTitle({
 }: DefaultProps) {
   const { exhibition } = useExhibitionCardContext();
   return (
-    <h2 className={cn("break-words text-xl font-bold", className)}>
+    <h2 className={cn("break-words text-2xl font-bold", className)}>
       {exhibition.name}
     </h2>
   );
@@ -123,7 +123,7 @@ ExhibitionCard.ImageAlternative = function ExhibitionImageAlternative() {
   return (
     <Image
       src={exhibition.thumbnailUrl ?? configurations.DEFAULT_COVER_IMAGE_URL}
-      alt={exhibition.name || "Cover image"}
+      alt={exhibition.name || "Thumbnail"}
       width={400}
       height={200}
       className="h-48 w-full object-cover"

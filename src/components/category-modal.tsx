@@ -93,11 +93,11 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-96 rounded-lg bg-white p-4 shadow-lg">
+      <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-lg sm:w-96">
         <button
           data-testid="close-category-modal"
           onClick={onClose}
-          className="mb-4 text-right"
+          className="mb-4 text-right text-gray-600 hover:text-black"
         >
           Close
         </button>
@@ -106,7 +106,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           placeholder={t("categoryModal.searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="mb-4 w-full rounded border p-2"
+          className="mb-4 w-full rounded border p-2 focus:border-blue-500 focus:outline-none"
         />
         <div className="mb-4 flex">
           <input
@@ -115,18 +115,20 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             placeholder={t("categoryModal.newCategoryPlaceholder")}
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            className="flex-grow rounded border p-2"
+            className="flex-grow rounded border p-2 focus:border-blue-500 focus:outline-none"
           />
           <button
             data-testid="add-category-button"
             onClick={handleAddCategory}
-            className="ml-2 rounded bg-blue-500 p-2 text-white"
+            className="ml-2 rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
           >
             Add
           </button>
         </div>
         <div className="mb-4">
-          <h3 className="mb-2">{t("categoryModal.selectedCategories")}</h3>
+          <h3 className="mb-2 font-semibold">
+            {t("categoryModal.selectedCategories")}
+          </h3>
           <div className="flex flex-wrap gap-2">
             {selectedCategories.map((category) => (
               <span
@@ -135,7 +137,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
               >
                 {category}
                 <X
-                  className="ml-1 cursor-pointer text-gray-500"
+                  className="ml-1 cursor-pointer text-gray-500 hover:text-gray-700"
                   onClick={() => handleCategoryClick(category)}
                 />
               </span>
@@ -143,7 +145,9 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
           </div>
         </div>
         <div>
-          <h3 className="mb-2">{t("categoryModal.availableCategories")}</h3>
+          <h3 className="mb-2 font-semibold">
+            {t("categoryModal.availableCategories")}
+          </h3>
           <div className="flex flex-wrap gap-2" data-testid="category-list">
             {filteredCategories.map((category) => (
               <span
@@ -152,7 +156,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                   selectedCategories.includes(category.name)
                     ? "bg-blue-200"
                     : "bg-gray-200"
-                }`}
+                } hover:bg-gray-300`}
                 data-testid={`category-item-${category.name}`}
               >
                 <span onClick={() => handleCategoryClick(category.name)}>
@@ -160,7 +164,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                 </span>
                 {selectedCategories.includes(category.name) ? (
                   <X
-                    className="ml-1 cursor-pointer text-gray-500"
+                    className="ml-1 cursor-pointer text-gray-500 hover:text-gray-700"
                     data-testid={`deselect-category-${category.name}`}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -169,7 +173,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
                   />
                 ) : (
                   <X
-                    className="ml-1 cursor-pointer text-red-500"
+                    className="ml-1 cursor-pointer text-red-500 hover:text-red-700"
                     data-testid={`delete-category-${category.name}`}
                     onClick={(e) => {
                       e.stopPropagation();

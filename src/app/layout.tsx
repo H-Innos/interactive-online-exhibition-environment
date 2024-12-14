@@ -10,7 +10,7 @@ import { getSession } from "~/lib/session";
 import { SessionProvider } from "~/lib/contexts/SessionProvider";
 
 export const metadata: Metadata = {
-  title: "UTLib näitused",
+  title: "UTLib Näitused",
   description: "",
 };
 
@@ -22,11 +22,12 @@ export default async function RootLayout({
   const session = await getSession();
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
+      <body className="bg-white">
         <SessionProvider session={session}>
           <TRPCReactProvider>
             <Header />
             <main>{children}</main>
+            <div className="h-20 bg-gradient-to-b from-transparent to-gray-100"></div>
             <Footer />
             <Toaster />
           </TRPCReactProvider>

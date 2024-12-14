@@ -1,4 +1,7 @@
 {
+  "pageTitle": "Tartu Ülikooli raamatukogu näitused",
+  "welcomeText": "Tere tulemast Tartu Ülikooli raamatukogu virtuaalsesse näituste keskkonda.",
+  "home": "Koduleht",
   "allExhibitions": "Kõik näitused",
   "dashboardNav": "Töölaud",
   "login": "Logi sisse",
@@ -55,8 +58,18 @@
   },
 
   "pagination": {
-    "previous": "Eelmine",
-    "next": "Järgmine"
+    "previous": " ",
+    "next": " "
+  },
+  "footer": {
+    "logoAlt": "Logo",
+    "contactTitle": "Kontaktandmed",
+    "universityName": "Tartu Ülikooli raamatukogu",
+    "addressLine1": "W. Struve 1",
+    "addressLine2": "50091 Tartu, EST",
+    "email": "library@ut.ee",
+    "mapPinAlt": "Map Pin",
+    "mapLink": "Tartu Ülikooli hooned kaardil"
   },
 
   "trash": {
@@ -122,6 +135,10 @@
     "exhibitionUnpublished": "Näitus viidud tagasi mustanditesse.",
     "exhibitionArchived": "Näitus arhiveeritud.",
     "exhibitionUnarchived": "Näitus arhiivist eemaldatud.",
+    "exhibitionFeatured": "Näitus lisatud esilehele.",
+    "exhibitionUnFeatured": "Näitus eemaldatud esilehelt.",
+    "failedFeatureExhibition": "Näituse esilehele lisamine ebaõnnestus: {{message}}",
+    "failedUnFeatureExhibition": "Näituse esilehelt eemaldamine ebaõnnestus: {{message}}",
     "quizCreated": "Viktoriin loodud.",
     "quizDeleted": "Viktoriin kustutatud",
     "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte.",
@@ -148,6 +165,16 @@
     "availableCategories": "Saadaval kategooriad"
   },
 
+  "contributors": {
+    "exhibitionContributors": "Näituse koostajad",
+    "contributors": "Koostajad",
+    "role": "Roll",
+    "names": "Nimed",
+    "rolePlaceholder": "Roll (näiteks, Autor)",
+    "namesPlaceholder": "Koostajate nimed",
+    "addContributor": "Lisa koostaja"
+  },
+
   "filter": {
     "filterBy": "Filtreeri",
     "sortBy": "Sorteeri",
@@ -162,6 +189,8 @@
   "categories": "Kategooriad",
 
   "confirmPublish": "Kas oled kindel, et soovid selle näituse avalikuks teha?",
+  "confirmFeature": "Kas oled kindel, et soovid selle näituse esilehele lisada?",
+  "confirmUnFeature": "Kas oled kindel, et soovid selle näituse esilehelt eemaldada?",
   "editExhibition": "Muuda näitust",
   "status": "Staatus",
   "saving": "Salvestamine...",
@@ -173,7 +202,9 @@
   "preview": "Eelvaade",
   "createQuiz": "Loo Test",
   "publishing": "Avaldamine...",
-  "publish": "Avalda",
+  "publish": "Avalikusta",
+  "feature": "Näita esilehel",
+  "unFeature": "Eemalda esilehelt",
   "exhibitionDetails": "Näituse üksikasjad",
   "title": "Pealkiri",
   "description": "Kirjeldus",

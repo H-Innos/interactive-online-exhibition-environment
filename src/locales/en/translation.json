@@ -1,4 +1,7 @@
 {
+  "pageTitle": "University of Tartu Library exhibitions",
+  "welcomeText": " Welcome to the Tartu University Library virtual exhibition environment.",
+  "home": "Home",
   "allExhibitions": "All exhibitions",
   "dashboardNav": "Dashboard",
   "login": "Log In",
@@ -34,7 +37,8 @@
     "errorLoadingDrafts": "Error loading drafts.",
     "errorLoadingRecent": "Error loading recently exhibitions.",
     "loadingRecent": "Loading recently published exhibitions.",
-    "published": "Published Exhibitions"
+    "published": "Published Exhibitions",
+    "noExhibitions": "There are currently no exhibitions"
   },
 
   "mainPage": {
@@ -57,6 +61,17 @@
   "pagination": {
     "previous": "Previous",
     "next": "Next"
+  },
+
+  "footer": {
+    "logoAlt": "Footer Logo",
+    "contactTitle": "Contact Information",
+    "universityName": "University of Tartu Library",
+    "addressLine1": "W. Struve 1",
+    "addressLine2": "50091 Tartu, EST",
+    "email": "library@ut.ee",
+    "mapPinAlt": "Map Pin",
+    "mapLink": "Map of UT Buildings"
   },
 
   "trash": {
@@ -121,6 +136,10 @@
     "exhibitionUnpublished": "Exhibition moved back to drafts!",
     "exhibitionArchived": "Exhibition archived successfully!",
     "exhibitionUnarchived": "Exhibition unarchived successfully!",
+    "exhibitionFeatured": "Exhibition successfully featured on the front page!",
+    "exhibitionUnFeatured": "Exhibition successfully removed from the front page!",
+    "failedFeatureExhibition": "Failed to feature exhibition: {{message}}",
+    "failedUnFeatureExhibition": "Failed to remove exhibition from front page: {{message}}",
     "quizCreated": "Quiz created successfully!",
     "quizDeleted": "Quiz deleted successfully!",
     "failedInvalidateCache": "Error updating page content. Please refresh the page.",
@@ -148,6 +167,16 @@
     "availableCategories": "Available Categories"
   },
 
+  "contributors": {
+    "exhibitionContributors": "Exhibition Contributors",
+    "contributors": "Contributors",
+    "role": "Role",
+    "names": "Names",
+    "rolePlaceholder": "Role (e.g., Author)",
+    "namesPlaceholder": "Contributors' names",
+    "addContributor": "Add Contributor"
+  },
+
   "filter": {
     "filterBy": "Filter by",
     "sortBy": "Sort by",
@@ -162,6 +191,8 @@
   "categories": "Categories",
 
   "confirmPublish": "Are you sure you want to publish this exhibition?",
+  "confirmFeature": "Are you sure you want to feature this exhibition on the front page?",
+  "confirmUnFeature": "Are you sure you want to remove this exhibition from the front page?",
   "editExhibition": "Edit Exhibition",
   "status": "Status",
   "saving": "Saving...",
@@ -174,6 +205,8 @@
   "createQuiz": "Create Quiz",
   "publishing": "Publishing...",
   "publish": "Publish",
+  "feature": "Feature on front page",
+  "unFeature": "Remove from front page",
   "exhibitionDetails": "Exhibition Details",
   "title": "Title",
   "description": "Description",

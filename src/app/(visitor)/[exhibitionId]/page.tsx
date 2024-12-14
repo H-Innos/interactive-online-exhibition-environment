@@ -23,6 +23,9 @@ import * as ReactPDF from "@react-pdf/renderer"; // Import react-pdf
 import { pdf } from "@react-pdf/renderer";
 
 import { BlockNoteSchema } from "@blocknote/core";
+import ContributorsSection from "~/components/contributors-section";
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import "photoswipe/style.css";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
@@ -39,7 +42,31 @@ const ExhibitionViewPage: React.FC = () => {
     if (data) {
       setExhibition(data);
     }
-  }, [data]);
+
+    if (exhibition) {
+      // Set image sizes after they've been rendered (for lightbox)
+      document.querySelectorAll("a.gallery-img").forEach((link) => {
+        const img = link.querySelector("img");
+        if (img) {
+          img.onload = (e) => {
+            link.setAttribute("data-pswp-width", img.naturalWidth.toString());
+            link.setAttribute("data-pswp-height", img.naturalHeight.toString());
+          };
+        }
+      });
+
+      const lightbox = new PhotoSwipeLightbox({
+        gallery: "#editor-content",
+        children: "a.gallery-img",
+        pswpModule: () => import("photoswipe"),
+      });
+      lightbox.init();
+
+      return () => {
+        lightbox.destroy();
+      };
+    }
+  }, [exhibition, data]);
 
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -184,6 +211,8 @@ const ExhibitionViewPage: React.FC = () => {
             className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
           />
         </div>
+
+        <ContributorsSection contributors={exhibition.contributors} />
       </div>
     </div>
   );

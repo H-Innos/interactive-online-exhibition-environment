@@ -16,12 +16,20 @@ export function convertToValidHTML(htmlString: string | undefined): string {
     const oldFile = div.querySelector("p:not(.bn-file-caption)");
 
     if (oldImg) {
+      const newLink = document.createElement("a");
+      newLink.href = dataUrl;
+
+      newLink.setAttribute("class", "gallery-img");
+      newLink.setAttribute("data-pswp-src", dataUrl); // PhotoSwipe source
+
       const newImg = document.createElement("img");
       for (const attribute of oldImg.attributes) {
         newImg.setAttribute(attribute.name, attribute.value);
       }
       newImg.src = dataUrl;
-      oldImg.replaceWith(newImg);
+
+      newLink.appendChild(newImg);
+      oldImg.replaceWith(newLink);
     }
 
     if (oldAudio) {
@@ -47,22 +55,6 @@ export function convertToValidHTML(htmlString: string | undefined): string {
       oldFile.replaceWith(newFile);
     }
   });
-
-  // const bgColorSpans = doc.querySelectorAll("span");
-  // bgColorSpans.forEach((el) => {
-  //   const colorName = el.getAttribute("data-background-color");
-  //   if (!colorName) return;
-
-  //   el.setAttribute("style", "background-color: " + colorName + ";");
-  // });
-
-  // const textColorSpans = doc.querySelectorAll("span");
-  // textColorSpans.forEach((el) => {
-  //   const colorName = el.getAttribute("data-text-color");
-  //   if (!colorName) return;
-
-  //   el.setAttribute("style", "color: " + colorName + ";");
-  // });
 
   return doc.documentElement.outerHTML;
 }
