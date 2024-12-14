@@ -70,12 +70,14 @@ const Header = () => {
               EST
             </button>
             <div className="block sm:hidden">
-              {isMenuOpen && <SlideInMenu />}
               <div
                 onClick={toggleMenu}
                 className="cursor-pointer text-text-dark"
-              ></div>
+              >
+                <SlideInMenu />
+              </div>
             </div>
+
             {session ? (
               <Button
                 onClick={async () => await logout()}

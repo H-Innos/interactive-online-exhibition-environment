@@ -8,13 +8,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isDetailPage = /^\/dashboard(\/\d+|\/archive\/\d+)$/.test(pathname);
   return (
-    <div className="flex min-h-screen">
+    <div className="flex">
       {!isDetailPage && (
         <div className="hidden md:block">
           <ExhibitionManagerSidebar />
         </div>
       )}
-      <main className="m-0 flex-grow p-4">{children}</main>
+      <main className="flex-grow">{children}</main>
     </div>
   );
 }

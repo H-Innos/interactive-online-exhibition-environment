@@ -63,6 +63,17 @@
     "next": "Next"
   },
 
+  "footer": {
+    "logoAlt": "Footer Logo",
+    "contactTitle": "Contact Information",
+    "universityName": "University of Tartu Library",
+    "addressLine1": "W. Struve 1",
+    "addressLine2": "50091 Tartu, EST",
+    "email": "library@ut.ee",
+    "mapPinAlt": "Map Pin",
+    "mapLink": "Map of UT Buildings"
+  },
+
   "trash": {
     "permanentDelete": "Delete permanently",
     "restore": "Restore",

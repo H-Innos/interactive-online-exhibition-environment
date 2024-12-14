@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
-import { ExhibitionDataForm } from "~/app/_components/exhibition-data-form";
 import ExhibitionContentEditor from "~/app/_components/exhibition-content-editor";
 import type { Exhibition } from "~/lib/types/entities";
 import { useWarnIfUnsavedChanges } from "~/hooks/useWarnIfUnsavedChanges";

@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="relative w-full bg-white py-6 text-primary-dark">
       <div className="absolute inset-x-0 top-0 -z-10 h-10 bg-gradient-to-b from-gray-200 to-white"></div>
@@ -12,7 +15,7 @@ const Footer = () => {
       >
         <Image
           src="/logos/ut-blue.svg"
-          alt="Footer Logo"
+          alt={t("footer.logoAlt")}
           width={120}
           height={120}
           className="object-contain"
@@ -20,17 +23,17 @@ const Footer = () => {
       </div>
       <div className="container mx-auto mt-28 grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="text-center md:pl-0 md:text-left">
-          <h3 className="mb-1 text-base font-bold">Contact Information</h3>
-          <p className="text-sm">
-            University of Tartu Library
+          <h3 className="text-md mb-1 font-bold">{t("footer.contactTitle")}</h3>
+          <p className="text-md">
+            {t("footer.universityName")}
             <br />
-            W. Struve 1
+            {t("footer.addressLine1")}
             <br />
-            50091 Tartu, EST
+            {t("footer.addressLine2")}
           </p>
           <p>
-            <a href="mailto:library@ut.ee" className="text-sm hover:underline">
-              library@ut.ee
+            <a href="mailto:library@ut.ee" className="text-md hover:underline">
+              {t("footer.email")}
             </a>
           </p>
         </div>
@@ -38,18 +41,17 @@ const Footer = () => {
           <div className="flex flex-col items-center">
             <Image
               src="/logos/pins.svg"
-              alt="Map Pin"
-              width={30}
-              height={30}
-              className="mb-1"
+              alt={t("footer.mapPinAlt")}
+              width={44}
+              height={44}
             />
             <a
               href="https://virtualtour.ut.ee/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-base font-bold hover:underline"
+              className="mt-2 text-xl hover:underline"
             >
-              Map of UT Buildings
+              {t("footer.mapLink")}
             </a>
           </div>
         </div>

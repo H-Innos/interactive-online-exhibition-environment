@@ -81,7 +81,7 @@ export default function ArchivePage() {
 
   return (
     <Suspense fallback={<div>{t("mainPage.loading")}</div>}>
-      <div className="flex min-h-screen flex-col items-center bg-white py-8">
+      <div className="flex min-h-screen w-screen flex-col items-center overflow-x-hidden bg-white py-8">
         <div className="mb-6 flex w-full justify-center px-4 sm:justify-end">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>

@@ -72,7 +72,7 @@ const ContributorForm: React.FC<ContributorFormProps> = ({
       <h1 className="mb-4 text-2xl font-bold">
         {t("contributors.exhibitionContributors")}
       </h1>
-      <div className="space-y-4">
+      <div className="max-h-[500px] space-y-4 overflow-y-auto">
         {contributors.map((contributor, index) => (
           <div key={index} className="flex items-center space-x-2">
             <div className="grid flex-grow grid-cols-2 gap-2">

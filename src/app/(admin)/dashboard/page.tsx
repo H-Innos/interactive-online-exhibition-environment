@@ -75,7 +75,7 @@ const Dashboard = () => {
 
   return (
     <Suspense fallback={<div className="p-4">{t("dashboard.loading")}</div>}>
-      <div className="min-h-screen max-w-full overflow-x-hidden px-0 sm:px-8">
+      <div className="min-h-screen w-screen overflow-x-hidden px-4 sm:px-8">
         <h1 className="mb-2 mt-8 text-2xl font-bold sm:text-3xl">
           {t("dashboard.title")}
         </h1>
