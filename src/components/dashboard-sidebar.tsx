@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   LayoutDashboard,
@@ -58,7 +56,10 @@ export function ExhibitionManagerSidebar() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <Sidebar collapsible="icon" className="sticky w-64 border-r shadow">
+      <Sidebar
+        collapsible="icon"
+        className="sticky w-64 overflow-hidden border-r"
+      >
         <SidebarHeader className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
             <h2 className="mr-2 text-lg font-semibold text-black group-data-[collapsible=icon]:hidden">
@@ -100,6 +101,7 @@ export function ExhibitionManagerSidebar() {
             ))}
           </SidebarMenu>
         </SidebarContent>
+        <div className="pointer-events-none absolute bottom-0 left-0 h-16 w-full bg-gradient-to-t from-white via-white/50 to-transparent" />
       </Sidebar>
     </SidebarProvider>
   );

@@ -75,11 +75,9 @@ const Dashboard = () => {
 
   return (
     <Suspense fallback={<div className="p-4">{t("dashboard.loading")}</div>}>
-      <div className="min-h-screen w-screen overflow-x-hidden px-4 sm:px-8">
-        <h1 className="mb-2 mt-8 text-2xl font-bold sm:text-3xl">
-          {t("dashboard.title")}
-        </h1>
-        <h2 className="mb-6 text-lg text-gray-500 sm:text-xl">
+      <div className="min-h-screen max-w-full overflow-x-hidden p-8">
+        <h1 className="mb-2 text-3xl font-bold">{t("dashboard.title")}</h1>
+        <h2 className="mb-6 text-xl text-gray-500">
           {t("dashboard.manageExhibitions")}
         </h2>
 
@@ -87,7 +85,7 @@ const Dashboard = () => {
 
         {currentPage === 1 && (
           <>
-            <h1 className="text-neutral mb-5 text-xl font-bold sm:text-2xl">
+            <h1 className="text-neutral mb-5 text-2xl font-bold">
               {t("dashboard.drafts")}
             </h1>
             <ShortenedDrafts />
