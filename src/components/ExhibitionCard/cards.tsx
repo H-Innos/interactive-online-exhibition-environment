@@ -2,10 +2,12 @@ import { type Exhibition } from "~/lib/types/entities";
 import { ExhibitionCard } from "./exhibition-card";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 
 type CardProps = {
   exhibition: Exhibition;
-};
+} & Partial<Pick<React.HtmlHTMLAttributes<HTMLDivElement>, "className">>;
 
 export const DraftCard: React.FC<CardProps> = ({ exhibition }) => {
   const router = useRouter();
@@ -46,6 +48,7 @@ export const PublishedCard: React.FC<CardProps> = ({ exhibition }) => {
           <ExhibitionCard.Dropdown.Edit />
           <ExhibitionCard.Dropdown.Archive />
           <ExhibitionCard.Dropdown.Unpublish />
+          <ExhibitionCard.Dropdown.Feature />
           <ExhibitionCard.Dropdown.Trash />
         </ExhibitionCard.Dropdown>
       </ExhibitionCard.Header>
@@ -79,14 +82,18 @@ export const ArchiveCard: React.FC<CardProps> = ({ exhibition }) => {
   );
 };
 
-export const VisitorCard: React.FC<CardProps> = ({ exhibition }) => {
+export const VisitorCard: React.FC<CardProps> = ({ exhibition, className }) => {
   const router = useRouter();
   const handleClick = (id: number) => {
     router.push(`/${id}`);
   };
 
   return (
-    <ExhibitionCard exhibition={exhibition} onClick={handleClick}>
+    <ExhibitionCard
+      exhibition={exhibition}
+      onClick={handleClick}
+      className={className}
+    >
       <ExhibitionCard.ImageAlternative />
       <ExhibitionCard.Content>
         <ExhibitionCard.Title />
@@ -94,5 +101,19 @@ export const VisitorCard: React.FC<CardProps> = ({ exhibition }) => {
         <ExhibitionCard.Description />
       </ExhibitionCard.Content>
     </ExhibitionCard>
+  );
+};
+
+export const CardSkeleton = () => {
+  return (
+    <Card className="mx-auto w-full max-w-sm border-r-0">
+      <CardHeader className="p-0">
+        <Skeleton className="h-48 w-full" />
+      </CardHeader>
+      <CardContent className="space-y-2 p-4">
+        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-4 w-4/6" />
+      </CardContent>
+    </Card>
   );
 };

@@ -11,6 +11,8 @@ import {
   useUnpublishExhibition,
   useTrashExhibition,
   useRestoreExhibition,
+  useFeatureExhibition,
+  useUnFeatureExhibition,
 } from "~/hooks/exhibition-actions";
 import {
   DropdownMenu,
@@ -69,9 +71,14 @@ ExhibitionActionsDropdown.View = function ExhibitionActionsDropdownView() {
   const { t } = useTranslation();
   const router = useRouter();
 
+  const path =
+    exhibition.status === "archived"
+      ? `/dashboard/archive/${exhibition.id}`
+      : `${exhibition.id}`;
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/${exhibition.id}`);
+    router.push(path);
   };
 
   return (
@@ -266,6 +273,44 @@ ExhibitionActionsDropdown.PermanentDelete =
         disabled={exhibition.status !== "trashed"}
       >
         {t("permanentDelete")}
+      </DropdownMenuItem>
+    );
+  };
+
+ExhibitionActionsDropdown.Feature =
+  function ExhibitionActionsDropdownFeature() {
+    const { exhibition } = useExhibitionActionsDropdownContext();
+    const { t } = useTranslation();
+    const featureExhibition = useFeatureExhibition();
+    const unfeatureExhibition = useUnFeatureExhibition();
+
+    const handleFeature = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (window.confirm(t("confirmFeature"))) {
+        featureExhibition.mutate({ id: exhibition.id });
+      }
+    };
+
+    const handleUnFeature = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (window.confirm(t("confirmUnFeature"))) {
+        unfeatureExhibition.mutate({ id: exhibition.id });
+      }
+    };
+
+    const handleClick = exhibition.isFeatured ? handleUnFeature : handleFeature;
+
+    return (
+      <DropdownMenuItem
+        data-testid="select-feature-exhibition"
+        onClick={handleClick}
+        disabled={
+          exhibition.status !== "published" ||
+          featureExhibition.isPending ||
+          unfeatureExhibition.isPending
+        }
+      >
+        {exhibition.isFeatured ? t("unFeature") : t("feature")}
       </DropdownMenuItem>
     );
   };

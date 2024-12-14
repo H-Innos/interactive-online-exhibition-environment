@@ -3,6 +3,7 @@ export type Exhibition = {
   name: string;
   description: string | null;
   status: ExhibitionStatus;
+  isFeatured: boolean;
   createdAt: Date;
   updatedAt: Date | null;
   thumbnailUrl: string | null;

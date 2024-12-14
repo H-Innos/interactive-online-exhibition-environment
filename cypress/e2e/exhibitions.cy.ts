@@ -23,7 +23,7 @@ describe("All Exhibitions Page", () => {
 
   beforeEach(() => {
     login();
-    cy.visit("/");
+    cy.visit("/all");
   });
 
   it("should display the All Exhibitions page heading", () => {

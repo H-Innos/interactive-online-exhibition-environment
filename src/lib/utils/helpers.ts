@@ -8,3 +8,7 @@ export function formatDate(date: Date | null): string {
     day: "numeric",
   });
 }
+
+export function isEmpty<T>(array: T[] | null | undefined): boolean {
+  return !array || array.length === 0;
+}

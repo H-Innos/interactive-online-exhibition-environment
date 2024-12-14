@@ -6,7 +6,7 @@ import { AspectRatio } from "~/components/ui/aspect-ratio";
 import { cn } from "~/lib/utils";
 import type { Exhibition } from "~/lib/types/entities";
 import { configurations } from "~/lib/constants/config";
-import { formatDate } from "~/lib/utils/formatter";
+import { formatDate } from "~/lib/utils/helpers";
 import { ExhibitionActionsDropdown } from "./exhibition-actions-dropdown";
 import { ErrorBoundary } from "react-error-boundary";
 

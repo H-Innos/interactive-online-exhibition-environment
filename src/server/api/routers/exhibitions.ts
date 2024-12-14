@@ -14,6 +14,7 @@ import type {
   Contributor,
 } from "~/lib/types/entities";
 import { type DrizzleClient } from "~/server/db";
+import { PgColumn } from "drizzle-orm/pg-core";
 //import { Category } from '~/lib/types/entities';
 
 export const exhibitionRouter = createTRPCRouter({
@@ -328,6 +329,46 @@ export const exhibitionRouter = createTRPCRouter({
       return unarchivedExhibition[0];
     }),
 
+  featureExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibition = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!exhibition) {
+        throw new Error("Exhibition not found");
+      }
+
+      const featuredExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ isFeatured: true })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      return featuredExhibition[0];
+    }),
+
+  unfeatureExhibition: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const exhibitionToUnfeature = await ctx.db.query.exhibitions.findFirst({
+        where: (exhibitions, { eq }) => eq(exhibitions.id, input.id),
+      });
+
+      if (!exhibitionToUnfeature) {
+        throw new Error("Exhibition not found");
+      }
+
+      const unfeaturedExhibition = await ctx.db
+        .update(exhibitions)
+        .set({ isFeatured: false })
+        .where(eq(exhibitions.id, input.id))
+        .returning();
+
+      return unfeaturedExhibition[0];
+    }),
+
   getAll: publicProcedure.query(async ({ ctx }) => {
     const allExhibitions = await getExhibitions(ctx.db);
 
@@ -362,16 +403,28 @@ export const exhibitionRouter = createTRPCRouter({
     const exhibitions = await getExhibitions(ctx.db, "status", "trashed");
     return exhibitions.map((exhibition) => mapExhibition(exhibition));
   }),
+
+  getFeatured: publicProcedure.query(async ({ ctx }) => {
+    const exhibitions = await getExhibitions(ctx.db, "isFeatured", true);
+    return exhibitions.map((exhibition) => mapExhibition(exhibition));
+  }),
 });
 
-async function getExhibitions(
+async function getExhibitions<K extends keyof ExhibitionDBSchema>(
   db: DrizzleClient,
-  column?: keyof ExhibitionDBSchema,
-  value?: string,
+  column?: K,
+  value?: ExhibitionDBSchema[K],
 ): Promise<ExhibitionFromDB[]> {
   const fullExhibitions = await db.query.exhibitions.findMany({
-    where: (exhibitions, { eq }) =>
-      column && value ? eq(exhibitions[column], value) : undefined,
+    where:
+      column && value
+        ? (
+            exhibitions: {
+              [key in keyof ExhibitionDBSchema]: PgColumn;
+            },
+            { eq },
+          ) => eq(exhibitions[column], value)
+        : undefined,
     orderBy: (exhibitions, { desc }) => [desc(exhibitions.createdAt)],
     with: {
       quizzes: {
