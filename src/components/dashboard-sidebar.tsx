@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Archive,
   List,
+  Home,
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -29,7 +30,8 @@ export function ExhibitionManagerSidebar() {
   const { t } = useTranslation();
 
   const mainNavItems = [
-    { name: t("allExhibitions"), icon: List, href: "/" },
+    { name: t("home"), icon: Home, href: "/" },
+    { name: t("allExhibitions"), icon: List, href: "/all" },
     { name: t("dashboard2"), icon: LayoutDashboard, href: "/dashboard" },
     { name: t("trash2"), icon: Trash2, href: "/dashboard/trash" },
   ];

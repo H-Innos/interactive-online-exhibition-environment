@@ -40,7 +40,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="relative h-28 w-full overflow-hidden bg-background_dark text-text-dark">
+      <header className="relative h-28 w-full overflow-hidden bg-secondary text-text-dark">
         <div className="relative flex h-full items-center justify-between px-4 sm:px-8">
           <div className="absolute inset-y-0 left-0 z-0 w-4/5 origin-bottom-left skew-x-[15deg] bg-[#2C5696] transition-all duration-300 sm:w-1/2 lg:w-[32%]"></div>
 
