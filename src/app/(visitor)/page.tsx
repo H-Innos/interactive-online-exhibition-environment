@@ -30,14 +30,19 @@ const MainPage = ({}) => {
             {t("pageTitle")}
           </h2>
         </div>
+        <div className="absolute bottom-8 left-12">
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/all")}
+            className="border border-white text-white"
+          >
+            {t("allExhibitions")} <ArrowRightIcon />
+          </Button>
+        </div>
       </div>
 
-      <section className="flex w-full justify-center bg-secondary p-4 text-lg">
-        <p>{t("welcomeText")}</p>
-      </section>
-
-      <div className="flex w-full justify-center p-4">
-        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="flex w-full justify-center p-12">
+        <div className="max-w-screen-xxl grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {isEmpty(featuredExhibitions)
             ? Array.from({ length: 4 }, (_, index) => (
                 <CardSkeleton key={index} />
@@ -46,15 +51,6 @@ const MainPage = ({}) => {
                 <VisitorCard key={exhibition.id} exhibition={exhibition} />
               ))}
         </div>
-      </div>
-      <div className="flex w-full justify-end p-4">
-        <Button
-          variant="outline"
-          onClick={() => router.push("/all")}
-          className="mr-10"
-        >
-          {t("allExhibitions")} <ArrowRightIcon />
-        </Button>
       </div>
     </>
   );
