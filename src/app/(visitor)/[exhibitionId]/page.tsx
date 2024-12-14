@@ -14,15 +14,9 @@ import { Button } from "~/components/ui/button";
 import { Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useBlockNote } from "@blocknote/react";
-import {
-  PDFExporter,
-  pdfDefaultSchemaMappings,
-} from "@blocknote/xl-pdf-exporter";
-import * as ReactPDF from "@react-pdf/renderer"; // Import react-pdf
 import { pdf } from "@react-pdf/renderer";
+import { generatePDFContent } from "~/lib/utils/pdfUtils";
 
-import { BlockNoteSchema } from "@blocknote/core";
 import ContributorsSection from "~/components/contributors-section";
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/style.css";
@@ -40,10 +34,13 @@ const ExhibitionViewPage: React.FC = () => {
 
   useEffect(() => {
     if (data) {
+      console.log("API Response:", data);
       setExhibition(data);
     }
 
     if (exhibition) {
+      console.log("Exhibition:", exhibition);
+
       // Set image sizes after they've been rendered (for lightbox)
       document.querySelectorAll("a.gallery-img").forEach((link) => {
         const img = link.querySelector("img");
@@ -70,51 +67,19 @@ const ExhibitionViewPage: React.FC = () => {
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Initializing Blocknote editor
-  const editor = useBlockNote({
-    initialContent: (() => {
-      if (exhibition?.content) {
-        try {
-          return JSON.parse(exhibition.content);
-        } catch (error) {
-          console.error("Error parsing exhibition content:", error);
-          console.log("Raw content:", exhibition.content);
-          return undefined;
-        }
-      }
-      return undefined;
-    })(),
-  });
-
   const handleDownloadPDF = async () => {
-    console.log("Starting PDF download for exhibition:", id);
     setIsDownloading(true);
     try {
-      if (exhibition?.content && editor) {
-        // Create the PDFExporter instance
-        const exporter = new PDFExporter(
-          editor.schema,
-          pdfDefaultSchemaMappings,
-        );
+      if (exhibition?.content) {
+        console.log("Generating PDF for content:", exhibition.content);
 
-        // Convert the blocks to a react-pdf document
-        const pdfDocument = await exporter.toReactPDFDocument(editor.document);
-        if (!pdfDocument) {
-          console.error("Failed to generate valid PDF document.");
-          toast.error(t("Error generating PDF document."));
-          setIsDownloading(false);
-          return;
-        }
-        if (!editor.document) {
-          console.error("Editor document is empty.");
-          toast.error(t("No content available for the PDF."));
-          setIsDownloading(false);
-          return;
-        }
-        // Generate a blob from the PDF document
-        const blob = await pdf(pdfDocument).toBlob();
+        // Generate the PDF document from the content
+        const pdfContent = generatePDFContent(exhibition.content);
 
-        // Create a download link
+        // Convert the React-PDF document to a Blob
+        const blob = await pdf(pdfContent).toBlob();
+
+        // Trigger download
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -124,13 +89,15 @@ const ExhibitionViewPage: React.FC = () => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        setIsDownloading(false);
-        toast.success(t("PDF downloaded successfully"));
+        toast.success("PDF downloaded successfully");
+      } else {
+        throw new Error("Exhibition content is missing or invalid.");
       }
     } catch (error) {
       console.error("Error generating PDF:", error);
+      toast.error("Error generating PDF");
+    } finally {
       setIsDownloading(false);
-      toast.error(t("Error generating PDF"));
     }
   };
 
