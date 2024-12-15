@@ -233,5 +233,6 @@
   "exhibitionManager": "Exhibition Manager",
   "fileUpload": "Upload File",
   "chooseCoverImage": "Cover Image:",
-  "perPage": "{{count}} per page"
+  "perPage": "{{count}} per page",
+  "downloadExhibitionPDF": "Download Exhibition PDF"
 }

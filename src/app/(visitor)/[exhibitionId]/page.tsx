@@ -16,8 +16,13 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { pdf } from "@react-pdf/renderer";
 import { generatePDFContent } from "~/lib/utils/pdfUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
-import ContributorsSection from "~/components/contributors-section";
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/style.css";
 
@@ -39,8 +44,6 @@ const ExhibitionViewPage: React.FC = () => {
     }
 
     if (exhibition) {
-      console.log("Exhibition:", exhibition);
-
       // Set image sizes after they've been rendered (for lightbox)
       document.querySelectorAll("a.gallery-img").forEach((link) => {
         const img = link.querySelector("img");
@@ -70,11 +73,22 @@ const ExhibitionViewPage: React.FC = () => {
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
     try {
-      if (exhibition?.content) {
-        console.log("Generating PDF for content:", exhibition.content);
+      if (exhibition) {
+        // Normalize fields for compatibility
+        const normalizedExhibition = {
+          ...exhibition,
+          description: exhibition.description || "No description available.",
+          updatedAt: exhibition.updatedAt
+            ? new Date(exhibition.updatedAt).toLocaleDateString()
+            : "Date not available",
+          createdAt: exhibition.createdAt
+            ? new Date(exhibition.createdAt).toLocaleDateString()
+            : "Date not available",
+          content: exhibition.content || "No content available.",
+        };
 
-        // Generate the PDF document from the content
-        const pdfContent = generatePDFContent(exhibition.content);
+        // Generate the PDF document
+        const pdfContent = generatePDFContent(normalizedExhibition);
 
         // Convert the React-PDF document to a Blob
         const blob = await pdf(pdfContent).toBlob();
@@ -83,15 +97,15 @@ const ExhibitionViewPage: React.FC = () => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${exhibition.name.replace(/\s+/g, "_")}_exhibition.pdf`;
+        link.download = `${exhibition.name?.replace(/\s+/g, "_") || "Untitled_Exhibition"}.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
-        toast.success("PDF downloaded successfully");
+        toast.success("PDF downloaded started");
       } else {
-        throw new Error("Exhibition content is missing or invalid.");
+        throw new Error("Exhibition data is missing or invalid.");
       }
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -155,22 +169,39 @@ const ExhibitionViewPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col p-4">
-        <Button onClick={handleDownloadPDF} disabled={isDownloading}>
-          {isDownloading
-            ? t("Generating PDF...")
-            : t("Download Exhibition PDF")}
-        </Button>
-        {quizzes && quizzes.length > 0 && (
-          <div className="mb-4 self-end">
+        <div className="mb-4 flex items-center justify-end">
+          {quizzes && quizzes.length > 0 && (
             <QuizDropdown
               quizzes={quizzes}
               onQuizSelect={(quizId: number) => {
                 router.push(`${id}/quizzes/${quizId}`);
               }}
             />
-          </div>
-        )}
+          )}
 
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloading}
+                  aria-label={t("downloadExhibitionPDF")}
+                  className="ml-2 h-12 w-12 p-2"
+                  variant="outline"
+                >
+                  {isDownloading ? (
+                    <span className="animate-spin text-lg">⌛</span>
+                  ) : (
+                    <Download className="h-6 w-6" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("downloadExhibitionPDF")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="flex-1">
           <div
             id="editor-content"
@@ -178,8 +209,6 @@ const ExhibitionViewPage: React.FC = () => {
             className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
           />
         </div>
-
-        <ContributorsSection contributors={exhibition.contributors} />
       </div>
     </div>
   );

@@ -231,5 +231,6 @@
   "exhibitionManager": "Näituste haldamine",
   "fileUpload": "Lae fail üles",
   "chooseCoverImage": "Taustapilt: ",
-  "perPage": "{{count}} näitust lehel"
+  "perPage": "{{count}} näitust lehel",
+  "downloadExhibitionPDF": "Lae alla PDF-failina"
 }
