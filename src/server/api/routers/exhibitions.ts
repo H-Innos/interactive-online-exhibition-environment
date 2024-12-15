@@ -15,7 +15,6 @@ import type {
 } from "~/lib/types/entities";
 import { type DrizzleClient } from "~/server/db";
 import { PgColumn } from "drizzle-orm/pg-core";
-//import { Category } from '~/lib/types/entities';
 
 export const exhibitionRouter = createTRPCRouter({
   create: publicProcedure
