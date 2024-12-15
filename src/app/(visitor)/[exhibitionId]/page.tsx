@@ -10,11 +10,27 @@ import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
 import "~/styles/colors.css";
 import { configurations } from "~/lib/constants/config";
+import { Button } from "~/components/ui/button";
+import { Download } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import { pdf } from "@react-pdf/renderer";
+import { generatePDFContent } from "~/lib/utils/pdfUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+
+import PhotoSwipeLightbox from "photoswipe/lightbox";
+import "photoswipe/style.css";
 
 const ExhibitionViewPage: React.FC = () => {
   const id = useExhibitionIdFromParams();
   const router = useRouter();
   const [exhibition, setExhibition] = useState<Exhibition | null>(null);
+  const { t } = useTranslation();
 
   const { data, error, isLoading } = api.exhibition.getOne.useQuery({ id: id });
   const { data: quizzes } = api.quiz.getAllByExhibitionId.useQuery({
@@ -25,7 +41,78 @@ const ExhibitionViewPage: React.FC = () => {
     if (data) {
       setExhibition(data);
     }
-  }, [data]);
+
+    if (exhibition) {
+      // Set image sizes after they've been rendered (for lightbox)
+      document.querySelectorAll("a.gallery-img").forEach((link) => {
+        const img = link.querySelector("img");
+        if (img) {
+          img.onload = (e) => {
+            link.setAttribute("data-pswp-width", img.naturalWidth.toString());
+            link.setAttribute("data-pswp-height", img.naturalHeight.toString());
+          };
+        }
+      });
+
+      const lightbox = new PhotoSwipeLightbox({
+        gallery: "#editor-content",
+        children: "a.gallery-img",
+        pswpModule: () => import("photoswipe"),
+      });
+      lightbox.init();
+
+      return () => {
+        lightbox.destroy();
+      };
+    }
+  }, [exhibition, data]);
+
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    try {
+      if (exhibition) {
+        // Normalize fields for compatibility
+        const normalizedExhibition = {
+          ...exhibition,
+          description: exhibition.description || "No description available.",
+          updatedAt: exhibition.updatedAt
+            ? new Date(exhibition.updatedAt).toLocaleDateString()
+            : "Date not available",
+          createdAt: exhibition.createdAt
+            ? new Date(exhibition.createdAt).toLocaleDateString()
+            : "Date not available",
+          content: exhibition.content || "No content available.",
+        };
+
+        // Generate the PDF document
+        const pdfContent = generatePDFContent(normalizedExhibition);
+
+        // Convert the React-PDF document to a Blob
+        const blob = await pdf(pdfContent).toBlob();
+
+        // Trigger download
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${exhibition.name?.replace(/\s+/g, "_") || "Untitled_Exhibition"}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast.success("PDF downloaded started");
+      } else {
+        throw new Error("Exhibition data is missing or invalid.");
+      }
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Error generating PDF");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -81,17 +168,39 @@ const ExhibitionViewPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col p-4">
-        {quizzes && quizzes.length > 0 && (
-          <div className="mb-4 self-end">
+        <div className="mb-4 flex items-center justify-end">
+          {quizzes && quizzes.length > 0 && (
             <QuizDropdown
               quizzes={quizzes}
               onQuizSelect={(quizId: number) => {
                 router.push(`${id}/quizzes/${quizId}`);
               }}
             />
-          </div>
-        )}
+          )}
 
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloading}
+                  aria-label={t("downloadExhibitionPDF")}
+                  className="ml-2 h-12 w-12 p-2"
+                  variant="outline"
+                >
+                  {isDownloading ? (
+                    <span className="animate-spin text-lg">⌛</span>
+                  ) : (
+                    <Download className="h-6 w-6" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("downloadExhibitionPDF")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="flex-1">
           <div
             id="editor-content"
