@@ -77,14 +77,14 @@ const ExhibitionViewPage: React.FC = () => {
         // Normalize fields for compatibility
         const normalizedExhibition = {
           ...exhibition,
-          description: exhibition.description || "No description available.",
+          description: exhibition.description ?? "No description available.",
           updatedAt: exhibition.updatedAt
             ? new Date(exhibition.updatedAt).toLocaleDateString()
             : "Date not available",
           createdAt: exhibition.createdAt
             ? new Date(exhibition.createdAt).toLocaleDateString()
             : "Date not available",
-          content: exhibition.content || "No content available.",
+          content: exhibition.content ?? "No content available.",
         };
 
         // Generate the PDF document
