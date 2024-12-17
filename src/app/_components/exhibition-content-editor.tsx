@@ -52,17 +52,12 @@ interface ExhibitionContentEditorProps {
   bgColor: string;
 }
 
-type GroupType = "Heading" | "Media" | "Other";
-
-interface SuggestionItem {
-  group: GroupType;
-}
-
 const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
   initialContent,
   onChange,
   bgColor,
 }) => {
+  const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [isFontModalOpen, setFontModalOpen] = useState(false);
@@ -114,7 +109,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
         background: bgColor,
       },
       highlights: {
-        gray: { text: "#F5F5F5", background: "#B8B8B8" }, // Neutral gray tones
+        gray: { text: "#808080", background: "#d3d3d3" }, // Neutral gray tones
         brown: { text: "#654321", background: "#a0522d" }, // Rich brown tones
         red: { text: "#ff0000", background: "#ff0000" }, // Vibrant red
         orange: { text: "#ff8c00", background: "#ffe5b4" }, // Bright orange
@@ -145,7 +140,7 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
       });
     },
     aliases: ["pdf"],
-    group: "Media",
+    group: "Other",
     icon: <RiFilePdfFill />,
     subtext: "PDF file with interactive preview window",
   });
@@ -154,43 +149,6 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
     setFontModalOpen(false);
     editor.addStyles({
       font: fontName,
-    });
-  };
-
-  useEffect(() => {
-    if (editor) {
-      const getInitBlocks = async () => {
-        const parsedBlocks = await editor.tryParseHTMLToBlocks(initialContent);
-        editor.replaceBlocks(editor.document, parsedBlocks);
-      };
-      void getInitBlocks();
-      setIsLayoutReady(true);
-    }
-    return () => setIsLayoutReady(false);
-  }, [editor, initialContent]);
-
-  const reorderSuggestions = (
-    defaultItems: ReturnType<typeof getDefaultReactSlashMenuItems>,
-    additionalItems: ReturnType<typeof getMultiColumnSlashMenuItems>,
-    customItems: SuggestionItem[],
-  ) => {
-    const groupedItems = [
-      ...combineByGroup(defaultItems, additionalItems, customItems),
-    ];
-
-    return groupedItems.sort((a, b) => {
-      const order: Record<GroupType, number> = {
-        Heading: 1,
-        Media: 2,
-        Other: 3,
-      };
-
-      const aGroup = order[a.group as GroupType] ?? Number.MAX_SAFE_INTEGER;
-      const bGroup = order[b.group as GroupType] ?? Number.MAX_SAFE_INTEGER;
-
-      if (aGroup < bGroup) return -1;
-      if (aGroup > bGroup) return 1;
-      return 0;
     });
   };
 
@@ -225,14 +183,14 @@ const ExhibitionContentEditor: React.FC<ExhibitionContentEditorProps> = ({
                   triggerCharacter={"/"}
                   getItems={async (query: string) =>
                     filterSuggestionItems(
-                      reorderSuggestions(
-                        getDefaultReactSlashMenuItems(editor),
-                        getMultiColumnSlashMenuItems(editor),
-                        [
-                          // @ts-expect-error: xl multi-column breaks previous typing, incompatible
-                          insertPDF(editor),
-                        ],
-                      ),
+                      [
+                        ...combineByGroup(
+                          getDefaultReactSlashMenuItems(editor),
+                          getMultiColumnSlashMenuItems(editor),
+                        ),
+                        // @ts-expect-error: xl multi-column breaks previous typing, incompatible
+                        insertPDF(editor),
+                      ],
                       query,
                     )
                   }

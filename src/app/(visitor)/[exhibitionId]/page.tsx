@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { pdf } from "@react-pdf/renderer";
 import { generatePDFContent } from "~/lib/utils/pdfUtils";
+import ContributorsSection from "~/components/contributors-section";
 import {
   Tooltip,
   TooltipContent,
@@ -209,6 +210,7 @@ const ExhibitionViewPage: React.FC = () => {
             className="blocknote-content max-w-full break-words text-sm sm:text-base lg:text-lg"
           />
         </div>
+        <ContributorsSection contributors={exhibition.contributors} />
       </div>
     </div>
   );
