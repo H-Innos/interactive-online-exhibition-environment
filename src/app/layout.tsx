@@ -26,8 +26,10 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <TRPCReactProvider>
             <Header />
-            <main>{children}</main>
-            <div className="h-20 bg-gradient-to-b from-transparent to-gray-100"></div>
+            <div className="relative">
+              <main>{children}</main>
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-b from-transparent to-gray-100"></div>
+            </div>
             <Footer />
             <Toaster />
           </TRPCReactProvider>

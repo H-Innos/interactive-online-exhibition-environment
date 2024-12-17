@@ -97,9 +97,9 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
         <button
           data-testid="close-category-modal"
           onClick={onClose}
-          className="mb-4 text-right text-gray-600 hover:text-black"
+          className="mb-4 text-gray-600 hover:text-black"
         >
-          Close
+          <X className="h-6 w-6" />
         </button>
         <input
           type="text"
