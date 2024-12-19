@@ -20,22 +20,19 @@ Because exhibition space in libraries is limited and some materials must be stor
 ### For visitors
 
 - User-friendly Interface: A website that works smoothly on desktops, tablets and mobile devices.
-- Exhibition Overview: An attractive home page displaying all available exhibitions with the ability to filter and search by categories, topics or keywords.
-- Interactive Content: High-resolution images, embedded videos, audio explanations and 3D models improve the visitor experience.
-- Educational Tools: Interactive quizzes, questionnaires and educational games related to the content of the exhibition.
-- Multilingual Support: Content is available in both Estonian and English to reach a wider audience.
-- Feedback Opportunity: Visitors can leave comments or feedback that encourages community engagement.
-- Additional materials: Possibility to download guides or additional materials to consume the exhibitions content offline.
+- Exhibition Overview: An attractive home page displaying all available exhibitions with the ability to filter by categories and search by title.
+- Interactive Content: High-resolution images, embedded videos, files and audio explanations improve the visitor experience.
+- Educational Tools: Interactive quizzes related to the content of the exhibition.
+- Multilingual Support: The page is available in both Estonian and English to reach a wider audience.
+- Additional materials: Possibility to download guides to consume the exhibitions content offline.
 
 ### For librarians
 
-- Content Management Desktop: Secure access to a simple tools to create new exhibitions and edit them.
+- Content Management Dashboard: Simple tools to create new exhibitions and edit them.
 - Easy Media Upload: Ability to upload images, videos, PDFs and other materials.
 - Drag-and-Drop Interface: Easy to use content placement mechanism.
-- Customizable Templates: A selection of different templates to easily customize the look and feel of exhibitions.
-- Adding Metadata: Tagging exhibition items with important data such as title, author, date and material.
-- Scheduling and Drafts: Ability to save exhibitions as drafts and schedule them to be published in the future.
-- Educational Content Creation: Tools to add quizzes, games and interactive elements without programming.
+- Drafts: Ability to keep exhibitions as drafts and archive them to be saved privately.
+- Educational Content Creation: Tools to add quizzes without programming.
 
 ## Local development
 
