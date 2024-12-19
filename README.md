@@ -20,19 +20,33 @@ Because exhibition space in libraries is limited and some materials must be stor
 ### For visitors
 
 - User-friendly Interface: A website that works smoothly on desktops, tablets and mobile devices.
-- Exhibition Overview: An attractive home page displaying all available exhibitions with the ability to filter by categories and search by title.
-- Interactive Content: High-resolution images, embedded videos, files and audio explanations improve the visitor experience.
-- Educational Tools: Interactive quizzes related to the content of the exhibition.
-- Multilingual Support: The page is available in both Estonian and English to reach a wider audience.
-- Additional materials: Possibility to download guides to consume the exhibitions content offline.
+- Exhibition Overview: An attractive home page displaying all available exhibitions with the ability to filter and search by categories, topics or keywords.
+- Interactive Content: High-resolution images, embedded videos, audio explanations and 3D models improve the visitor experience.
+- Educational Tools: Interactive quizzes, questionnaires and educational games related to the content of the exhibition.
+- Multilingual Support: Content is available in both Estonian and English to reach a wider audience.
+- Feedback Opportunity: Visitors can leave comments or feedback that encourages community engagement.
+- Additional materials: Possibility to download guides or additional materials to consume the exhibitions content offline.
 
 ### For librarians
 
-- Content Management Dashboard: Simple tools to create new exhibitions and edit them.
+- Content Management Desktop: Secure access to a simple tools to create new exhibitions and edit them.
 - Easy Media Upload: Ability to upload images, videos, PDFs and other materials.
 - Drag-and-Drop Interface: Easy to use content placement mechanism.
-- Drafts: Ability to keep exhibitions as drafts and archive them to be saved privately.
-- Educational Content Creation: Tools to add quizzes without programming.
+- Customizable Templates: A selection of different templates to easily customize the look and feel of exhibitions.
+- Adding Metadata: Tagging exhibition items with important data such as title, author, date and material.
+- Scheduling and Drafts: Ability to save exhibitions as drafts and schedule them to be published in the future.
+- Educational Content Creation: Tools to add quizzes, games and interactive elements without programming.
+
+### Exhibition Editor Guide
+1. Use the + symbol or type / to add content to the page or drag and drop images, videos etc.
+2. Select text to change its style (font, color etc).
+3. Don't forget to save the exhibition from time to time to prevent any content getting lost.
+4. You can change the title, description, thumbnail and contributors with the Details button in the toolbar.
+5. Only drafts can be edited. To edit a published or archived exhibition, you first have to make it back into a draft.
+6. Quizzes can be added with the Create Quiz button in the toolbar and are linked with the specific exhibition.
+7. Use the Preview button to see the current state of the exhibition. Make sure to save the exhibition before so it reflects the correct content.
+8. You can upload and readjust the cover image in the toolbar. This is separate from the thumbnail.
+
 
 ## Local development
 
@@ -51,3 +65,8 @@ POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local-db
 7.  If this is your first time starting the database, or you have modified the `src/server/db/schema.ts` file, run `pnpm db:push` to update the database schema.
 8.  Run `pnpm dev` and the application will be accessible at http://localhost:3000.
 9.  Run `pnpm db:down` to stop the database.
+
+## Future development
+1. Adding gallery and flipbook components. These were started by us and the corresponding branches can be found under Code -> Branches.
+2. Implement the university login to authorize librarians correctly. Make drafts user specific and track user actions for creating and modifying exhibitions.
+3. Change the current media storage from Cloudinary to a bigger solution to handle more data.
