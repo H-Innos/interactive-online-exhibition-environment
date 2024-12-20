@@ -1,3 +1,5 @@
+import { create } from "node_modules/cypress/types/lodash";
+
 export const selectors = {
   newExhibitionButton: 'button:contains("New Exhibition")',
   createButton: 'button:contains("Create")',
@@ -28,4 +30,14 @@ export const selectors = {
   emailInput: '[data-testid="email-input"]:visible',
   passwordInput: '[data-testid="password-input"]:visible',
   userExistsToast: ':contains("User already exists")',
+
+  // Quiz
+  createQuizButton: '[data-testid="create-quiz"]',
+  newQuizButton: '[data-testid="new-quiz"]',
+  quizTitleInput: '[data-testid="quiz-title-input"]',
+  questionInput: '[data-testid="question-text-input"]',
+  answerInput: '[data-testid="answer-input"]',
+  saveQuizChangesButton: '[data-testid="save-quiz-changes-button"]',
+  answerCheckbox: '[data-testid="answer-checkbox"]',
+  activitiesDropdown: '[data-testid="activities-dropdown-button"]',
 };

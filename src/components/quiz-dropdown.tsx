@@ -55,7 +55,11 @@ export function QuizDropdown({
         onMouseLeave={handleMouseLeave}
       >
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="text-md h-12 w-72">
+          <Button
+            variant="outline"
+            className="text-md h-12 w-72"
+            data-testid="activities-dropdown-button"
+          >
             {t("quizzes.activities")}
             <ChevronDown className="ml-2 h-5 w-5 opacity-50" />
           </Button>

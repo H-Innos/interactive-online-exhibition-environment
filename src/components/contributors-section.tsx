@@ -12,7 +12,7 @@ export default function ContributorsSection({
     return null;
   }
   return (
-    <section className="mx-auto mt-16 w-full max-w-4xl px-4">
+    <section className="mx-auto mt-16 w-full max-w-4xl px-4 pb-10">
       <hr className="mb-8 border-t border-gray-200" aria-hidden="true" />
       <div className="space-y-6">
         {contributors.map((contributor, index) => (

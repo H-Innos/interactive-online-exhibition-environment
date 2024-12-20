@@ -170,7 +170,7 @@ const CancelButton = ({ onClick }: { onClick: () => void }) => {
 const NewQuizButton = ({ onClick }: { onClick: () => void }) => {
   const { t } = useTranslation();
   return (
-    <Button onClick={onClick}>
+    <Button onClick={onClick} data-testid="new-quiz">
       {" "}
       <>
         <Plus className="h-4 w-4" />

@@ -202,7 +202,7 @@ export const exhibitionRouter = createTRPCRouter({
 
       const trashedExhibition = await ctx.db
         .update(exhibitions)
-        .set({ status: "trashed" })
+        .set({ status: "trashed", isFeatured: false })
         .where(eq(exhibitions.id, input.id))
         .returning();
 
@@ -278,6 +278,7 @@ export const exhibitionRouter = createTRPCRouter({
         .update(exhibitions)
         .set({
           status: "draft",
+          isFeatured: false,
         })
         .where(eq(exhibitions.id, input.id))
         .returning();
@@ -297,7 +298,7 @@ export const exhibitionRouter = createTRPCRouter({
       }
       const archivedExhibition = await ctx.db
         .update(exhibitions)
-        .set({ status: "archived" })
+        .set({ status: "archived", isFeatured: false })
         .where(eq(exhibitions.id, input.id))
         .returning();
 
