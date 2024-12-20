@@ -104,6 +104,7 @@ export function QuestionCreator({
               placeholder={t("quizzes.questionTextPlaceholder")}
               required
               readOnly={disabled}
+              data-testid="question-text-input"
             />
           </div>
 
@@ -160,12 +161,12 @@ export function QuestionCreator({
                   disabled={disabled}
                 />
                 <Input
-                  data-testid="answer-input"
                   value={answer.text}
                   onChange={(e) => updateAnswer(index, e.target.value)}
                   placeholder={`${t("quizzes.answer")} ${index + 1}`}
                   required
                   readOnly={disabled}
+                  data-testid="answer-input"
                 />
                 {question.answers.length > 2 && (
                   <Button

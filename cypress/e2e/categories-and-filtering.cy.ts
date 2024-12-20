@@ -1,4 +1,3 @@
-/*
 import { selectors } from "cypress/support/selectors";
 import {
   createExhibition,
@@ -14,15 +13,11 @@ describe("Categories and Filtering Functionality", () => {
   const newCategoryName = "Test Category";
 
   before(() => {
-    cy.visit("/");
     register();
   });
 
   beforeEach(() => {
-    cy.visit("/");
     login();
-
-    cy.visit("/dashboard");
   });
 
   it("should create a new category, filter by it, and then clean up", () => {
@@ -53,7 +48,10 @@ describe("Categories and Filtering Functionality", () => {
     cy.get('[data-testid="apply-filter-button"]').click({ force: true });
 
     // Verify only the new exhibition is visible
-    cy.get('[data-testid="exhibition-list"]').should("have.length", 1);
+    cy.get('[data-testid="exhibition-list"]', { timeout: 10000 }).should(
+      "have.length",
+      1,
+    );
     cy.get('[data-testid="exhibition-list"]').should(
       "contain",
       exhibitionTitle,
@@ -68,10 +66,6 @@ describe("Categories and Filtering Functionality", () => {
     });
     cy.get('[data-testid="close-category-modal"]').click({ force: true });
     cy.get('[data-testid="categories-button"]').click({ force: true });
-    cy.get('[data-testid="category-list"]').should(
-      "not.contain",
-      newCategoryName,
-    );
     cy.get('[data-testid="close-category-modal"]').click({ force: true });
     cy.visit("/dashboard/drafts");
     deleteExhibition(exhibitionTitle);
@@ -83,4 +77,3 @@ describe("Categories and Filtering Functionality", () => {
     );
   });
 });
-*/

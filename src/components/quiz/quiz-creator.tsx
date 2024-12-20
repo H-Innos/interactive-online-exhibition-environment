@@ -114,6 +114,7 @@ export default function QuizCreator({
                 placeholder={t("quizzes.titlePlaceholder")}
                 required
                 readOnly={disabled}
+                data-testid="quiz-title-input"
               />
             </CardTitle>
           </CardHeader>
@@ -135,7 +136,11 @@ export default function QuizCreator({
                 <Plus className="mr-2 h-4 w-4" />
                 {t("quizzes.addQuestion")}
               </Button>
-              <Button type="submit" disabled={disabled}>
+              <Button
+                type="submit"
+                disabled={disabled}
+                data-testid="save-quiz-changes-button"
+              >
                 {isEditMode
                   ? t("quizzes.saveChanges")
                   : t("quizzes.createQuiz")}

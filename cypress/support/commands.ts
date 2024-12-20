@@ -110,6 +110,7 @@ export function deleteExhibition(title: string) {
   cy.visit("/dashboard/drafts");
   cy.get(selectors.exhibitionCard(title))
     .first()
+    .scrollIntoView()
     .should("be.visible")
     .within(() => {
       cy.get(selectors.optionsButton)
@@ -157,6 +158,19 @@ export function unarchiveExhibition(exhibitionTitle: string) {
   cy.get(selectors.dropdownMenu).should("be.visible");
   clickDropdownMenuItem("Unarchive");
   cy.wait("@unarchiveRequest").then((interception) => {
+    expect(interception.response?.statusCode).to.eq(200);
+  });
+}
+
+export function featureExhibition(exhibitionTitle: string) {
+  cy.intercept("POST", "/api/trpc/**").as("featureRequest");
+
+  cy.visit("/dashboard");
+  openExhibitionDropdown(exhibitionTitle);
+
+  cy.get(selectors.dropdownMenu).should("be.visible");
+  clickDropdownMenuItem("Feature on front page");
+  cy.wait("@featureRequest").then((interception) => {
     expect(interception.response?.statusCode).to.eq(200);
   });
 }
