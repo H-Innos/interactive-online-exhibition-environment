@@ -1,4 +1,5 @@
-import React from 'react';
+import { t } from "i18next";
+import React from "react";
 
 interface SearchBarProps {
   value: string;
@@ -7,16 +8,17 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ value, onChange }) => {
   return (
-    <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto px-4">
+    <div className="mx-auto w-full max-w-xs px-4 sm:max-w-sm md:max-w-md lg:max-w-lg">
       <input
         type="text"
-        placeholder="Search exhibitions..."
+        placeholder={t("searchExhibitionsPlaceholder")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
   );
 };
+
 
 export default SearchBar;

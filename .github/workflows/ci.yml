@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      POSTGRES_URL: postgres://postgres:postgres@localhost:5432/exhibitions
+      POSTGRES_URL: postgres://postgres:postgres@localhost:5432/local-db
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -39,41 +39,25 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: exhibitions
+          POSTGRES_DB: local-db
         options: >-
-          --health-cmd "pg_isready -U postgres -d exhibitions"
+          --health-cmd "pg_isready -U postgres -d local-db"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
     env:
-      POSTGRES_URL: postgres://postgres:postgres@postgres:5432/exhibitions
+      POSTGRES_URL: postgres://postgres:postgres@postgres:5432/local-db
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
-      - name: Prepare test database
-        run: |
-          pnpm db:migrate
-          pnpm db:push
-          node --input-type=module <<'JS'
-          import postgres from 'postgres';
-
-          const sql = postgres(process.env.POSTGRES_URL);
-          try {
-            await sql`
-              INSERT INTO "interactive-online-exhibition-environment_post"
-                (name, description, status)
-              VALUES ('Test Published Exhibition', 'Cypress fixture', 'published')
-            `;
-          } finally {
-            await sql.end();
-          }
-          JS
+      - run: pnpm db:push
+      - run: pnpm build
       - uses: cypress-io/github-action@v7
         with:
           install: false
           browser: ${{ matrix.browser }}
-          start: pnpm dev
+          start: pnpm start
           wait-on: http://localhost:3000
           wait-on-timeout: 120
 

@@ -1,22 +1,33 @@
 import { z } from "zod";
 import { configurations } from "~/lib/constants/config";
 
-const thumbnailSchema = z
+const coverImageSchema = z
   .instanceof(File)
   .refine((file) => file.size <= configurations.MAX_FILE_SIZE_BYTES, {
     message: `The file size exceeds the maximum allowed size of ${configurations.MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB.`,
   })
-  .refine((file) => file.type.startsWith('image/'), {
-    message: 'The file must be an image.',
+  .refine((file) => file.type.startsWith("image/"), {
+    message: "The file must be an image.",
   });
 
 export const exhibitionFormSchema = z.object({
-  title: z.string().min(1, { message: 'Title must not be empty.' }),
-  description: z.string().max(configurations.MAX_DESCRIPTION_LENGTH, { message: `Description must not exceed ${configurations.MAX_DESCRIPTION_LENGTH} characters.` }),
-  thumbnail: thumbnailSchema.optional(),
+  title: z.string().min(1, { message: "Title must not be empty." }),
+  description: z.string().max(configurations.MAX_DESCRIPTION_LENGTH, {
+    message: `Description must not exceed ${configurations.MAX_DESCRIPTION_LENGTH} characters.`,
+  }),
+  coverImage: coverImageSchema.optional(),
 });
-  
-export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>; 
+
+export type ExhibitionFormSchema = z.infer<typeof exhibitionFormSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" }),
+});
+
+export type LoginFormSchema = z.infer<typeof loginSchema>;
 
 export const createAnswerSchema = z.object({
   id: z.number().optional(),
@@ -32,20 +43,17 @@ export const createQuestionSchema = z.object({
   text: z.string().min(1, { message: "Question text is required." }),
   imageUrl: z.string().nullable(),
   quizId: z.number().optional(),
-  answers: z.array(createAnswerSchema).min(2, { message: "At least two answers are required." }),
+  answers: z
+    .array(createAnswerSchema)
+    .min(2, { message: "At least two answers are required." }),
 });
 
 export type CreateQuestionDTO = z.infer<typeof createQuestionSchema>;
 
 export const createQuizSchema = z.object({
-  id: z
-    .number()
-    .optional(),
-  title: z
-    .string()
-    .min(1, { message: "Quiz title is required." }),
-  exhibitionId: z
-    .number(),
+  id: z.number().optional(),
+  title: z.string().min(1, { message: "Quiz title is required." }),
+  exhibitionId: z.number(),
   questions: z
     .array(createQuestionSchema)
     .min(1, { message: "At least one question is required." }),

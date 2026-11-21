@@ -1,164 +1,144 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { Label } from "~/components/ui/label";
-import { PenSquare, Save, X } from 'lucide-react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { exhibitionFormSchema, type ExhibitionFormSchema } from '~/lib/types/schemas';
-import { configurations } from '~/lib/constants/config';
-import { type Exhibition } from '../../lib/types/entities';
-import { useUpdateExhibition } from '~/hooks/exhibition-actions';
-import { uploadImage } from '~/lib/utils/image-uploader';
-import RemovableImage from '~/components/removable-image';
-import FileUploadButton from '~/components/file-upload-button';
-import { useTranslation } from 'react-i18next';
+import { Save } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  exhibitionFormSchema,
+  type ExhibitionFormSchema,
+} from "~/lib/types/schemas";
+import { configurations } from "~/lib/constants/config";
+import { useUpdateExhibition } from "~/hooks/exhibition-actions";
+import { uploadImage } from "~/lib/utils/image-uploader";
+import RemovableImage from "~/components/removable-image";
+import FileUploadButton from "~/components/file-upload-button";
+import { useTranslation } from "react-i18next";
+import { Exhibition } from "~/lib/types/entities";
 
 interface ExhibitionDataFormProps {
   exhibition: Exhibition;
+  onSave: () => void;
 }
 
-export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({ exhibition }) => {
+export const ExhibitionDataForm: React.FC<ExhibitionDataFormProps> = ({
+  exhibition,
+  onSave,
+}) => {
   const { t } = useTranslation();
-  const [isEditing, setIsEditing] = useState(false);
-  const [thumbnailDataUrl, setThumbnailDataUrl] = useState(exhibition.coverImageUrl ?? "");
+  const [coverImage, setCoverImage] = useState(exhibition.thumbnailUrl ?? "");
   const {
-    register, 
-    handleSubmit, 
+    register,
+    handleSubmit,
     setValue,
     watch,
-    reset,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
   } = useForm<ExhibitionFormSchema>({
     defaultValues: {
       title: exhibition.name,
       description: exhibition.description ?? "",
-      thumbnail: undefined
+      coverImage: undefined,
     },
-    resolver: zodResolver(exhibitionFormSchema)
+    resolver: zodResolver(exhibitionFormSchema),
   });
 
   const updateExhibition = useUpdateExhibition();
 
-  const handleEditToggle = () => {
-    setIsEditing((isEditing) => !isEditing);
-    setThumbnailDataUrl(exhibition.coverImageUrl ?? "");
-    reset();
-  };
-
   const onSubmit: SubmitHandler<ExhibitionFormSchema> = async (data) => {
-    const thumbnailUrl = await uploadImage(thumbnailDataUrl);
+    onSave();
+    const thumbnailUrl = await uploadImage(coverImage);
     if (!thumbnailUrl) return;
 
     updateExhibition.mutate({
       id: exhibition.id,
       name: data.title,
       description: data.description,
-      coverImageUrl: thumbnailUrl
+      thumbnailUrl,
     });
-    setIsEditing(false);
   };
 
   const handleThumbnailChange = (file: File) => {
     const reader = new FileReader();
-
-    reader.onloadend = () => {
-      const previewUrl = reader.result as string;
-      setThumbnailDataUrl(previewUrl);
-      setValue("thumbnail", file);
+    reader.onload = () => {
+      setCoverImage(reader.result as string);
+      setValue("coverImage", file);
     };
     reader.readAsDataURL(file);
   };
 
   const handleThumbnailDelete = () => {
-    setThumbnailDataUrl("");
-    setValue("thumbnail", undefined);
+    setCoverImage("");
+    setValue("coverImage", undefined);
   };
-  
-  const watchedFields = watch();
 
   return (
-    <Card className="w-full md:w-100 overflow-auto">
-      <CardHeader className="sticky top-0 bg-background border-b">
-        <div className="flex items-center justify-between">
-          <CardTitle>{t('exhibitionDetails')}</CardTitle>
-          <Button onClick={handleEditToggle} variant="outline" size="sm" className="w-32 h-10">
-            {isEditing ? (
-              <>
-                <X className="mr-2 h-4 w-4" />
-                {t('cancel')}
-              </>
-            ) : (
-              <>
-                <PenSquare className="mr-2 h-4 w-4" />
-                {t('edit')}
-              </>
-            )}
-          </Button>
-        </div>
+    <Card className="md:w-100 w-full">
+      <CardHeader className="sticky top-0 border-b bg-background">
+        <CardTitle>{t("exhibitionDetails")}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6 p-6">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-2">
-            <Label htmlFor="title">{t('title')}</Label>
-            <Input
-              id="title"
-              {...register("title")}
-              readOnly={!isEditing}
-            />
-            <p className="text-sm h-5">
-              {errors.title ? <span className="text-red-500">{errors.title.message}</span> : <span>&nbsp;</span>}
-            </p>
+      <CardContent className="p-4 md:p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <Label htmlFor="title">{t("title")}</Label>
+            <Input id="title" {...register("title")} />
+            {errors.title && (
+              <p className="text-sm text-red-500">{errors.title.message}</p>
+            )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">{t('description')}</Label>
+          <div>
+            <Label htmlFor="description">{t("description")}</Label>
             <Textarea
               id="description"
               {...register("description")}
-              readOnly={!isEditing}
               rows={4}
               maxLength={configurations.MAX_DESCRIPTION_LENGTH}
-              placeholder={t('descriptionPlaceholder')}
+              placeholder={t("descriptionPlaceholder")}
             />
-            <p className="text-xs text-gray-500 mt-1">{watchedFields.description.length ?? 0}/{configurations.MAX_DESCRIPTION_LENGTH} {t('characters')}</p>
-            <p className="text-sm h-5">
-              {errors.description ? <span className="text-red-500">{errors.description.message}</span> : <span>&nbsp;</span>}
+            <p className="text-xs text-gray-500">
+              {watch("description")?.length ?? 0}/
+              {configurations.MAX_DESCRIPTION_LENGTH} {t("characters")}
             </p>
+            {errors.description && (
+              <p className="text-sm text-red-500">
+                {errors.description.message}
+              </p>
+            )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="thumbnail">{t('thumbnail')}</Label>
-            <div className="flex flex-col items-start space-y-2">
-              <RemovableImage
-                src={thumbnailDataUrl || configurations.DEFAULT_COVER_IMAGE_URL}
-                alt={t('thumbnail')}
-                className="w-48 h-48"
-                onDelete={isEditing ? handleThumbnailDelete : undefined}
-              />
-              <FileUploadButton
-                onFileSelect={handleThumbnailChange}
-                accept='image/*'
-                disabled={isSubmitting || !isEditing}
-              />
-            </div>
-            <p className="text-sm h-5">
-              {errors.thumbnail ? <span className="text-red-500">{errors.thumbnail.message}</span> : <span>&nbsp;</span>}
-            </p>
+          <div>
+            <Label htmlFor="thumbnail">{t("thumbnail")}</Label>
+            <RemovableImage
+              src={coverImage || configurations.DEFAULT_COVER_IMAGE_URL}
+              alt={t("thumbnail")}
+              className="mb-4 h-32 w-32 md:h-48 md:w-48"
+              onDelete={handleThumbnailDelete}
+            />
+            <FileUploadButton
+              onFileSelect={handleThumbnailChange}
+              accept="image/*"
+              disabled={isSubmitting}
+            />
+            {errors.coverImage && (
+              <p className="text-sm text-red-500">
+                {errors.coverImage.message}
+              </p>
+            )}
           </div>
           <Button
             type="submit"
             variant="outline"
-            disabled={isSubmitting || !isEditing}
-            className="w-full mt-4"
+            disabled={isSubmitting}
+            className="w-full"
           >
             <Save className="mr-2 h-4 w-4" />
-            {t('saveChanges')}
+            {t("saveChanges")}
           </Button>
         </form>
       </CardContent>
     </Card>
   );
-}
+};

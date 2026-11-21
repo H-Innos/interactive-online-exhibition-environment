@@ -1,8 +1,13 @@
 {
+  "pageTitle": "Tartu Ülikooli raamatukogu näitused",
+  "welcomeText": "Tere tulemast Tartu Ülikooli raamatukogu virtuaalsesse näituste keskkonda.",
+  "home": "Koduleht",
   "allExhibitions": "Kõik näitused",
   "dashboardNav": "Töölaud",
   "login": "Logi sisse",
-  
+  "logout": "Logi välja",
+  "signup": "Loo kasutaja",
+
   "createExhibition": {
     "title": "Loo uus näitus",
     "nameLabel": "Pealkiri",
@@ -19,7 +24,7 @@
     "fileSizeExceeds": "Faili suurus ületab lubatud maksimaalse suuruse {{maxSize}} MB.",
     "newExhibition": "Uus näitus"
   },
-  
+
   "dashboard": {
     "title": "Töölaud",
     "manageExhibitions": "Halda näitusi",
@@ -27,7 +32,12 @@
     "errorLoading": "Viga näituste laadimisel.",
     "drafts": "Mustandid",
     "publishedExhibitions": "Avaldatud näitused",
-    "allDrafts": "Kõik mustandid"
+    "allDrafts": "Kõik mustandid",
+    "recentExhibitions": "Hiljuti avaldatud näitused",
+    "errorLoadingDrafts": "Viga mustandite laadimisel.",
+    "errorLoadingRecent": "Viga viimati avaldatud näituste laadimisel.",
+    "loadingRecent": "Viimati avaldatud näituste laadimine...",
+    "published": "Avalikud näitused"
   },
 
   "mainPage": {
@@ -46,16 +56,38 @@
     "logIn": "Logi sisse",
     "language": "Keel"
   },
-  
+
   "pagination": {
-    "previous": "Eelmine",
-    "next": "Järgmine"
+    "previous": " ",
+    "next": " "
+  },
+  "footer": {
+    "logoAlt": "Logo",
+    "contactTitle": "Kontaktandmed",
+    "universityName": "Tartu Ülikooli raamatukogu",
+    "addressLine1": "W. Struve 1",
+    "addressLine2": "50091 Tartu, EST",
+    "email": "library@ut.ee",
+    "mapPinAlt": "Map Pin",
+    "mapLink": "Tartu Ülikooli hooned kaardil"
+  },
+
+  "trash": {
+    "permanentDelete": "Kustuta jäädavalt",
+    "restore": "Taasta",
+    "title": "Prügikast",
+    "manageTrashedExhibitions": "Kustutatud näitused",
+    "loading": "Laadimine...",
+    "noTrashedExhibitions": "Kustutatud näitusi pole saadaval.",
+    "confirmTrash": "Oled kindel, et soovid seda näitust kustutada?",
+    "confirmPermanentDelete": "Oled kindel, et soovid seda näitust jäädavalt kustutada?",
+    "confirmRestore": "Oled kindel, et soovid seda näitust taastada?"
   },
 
   "quizzes": {
     "quizzes": "Viktoriinid",
     "errorLoading": "Viga viktoriinide laadimisel.",
-    "noQuizzes": "Hetkel ei ole ühtegi viktoriini.",
+    "noQuizzes": "Hetkel ei ole ühtegi viktoriini selle näituse jaoks.",
     "quizPreview": "Viktoriini eelvaade",
     "noQuizSelected": "Muutmiseka valige viktoriin",
     "newQuiz": "Uus viktoriin",
@@ -75,7 +107,15 @@
     "partiallyCorrect": "Osaliselt õige.",
     "correctAnswers": "Õiged vastused on: ",
     "correctAnswer": "Õige vastus on ",
-    "activities": "Tegevused"
+    "activities": "Tegevused",
+    "saveChanges": "Salvesta muudatused",
+    "addQuestion": "Lisa küsimus",
+    "editQuizTitle": "Muuda viktoriini",
+    "scoreMessage": "Sinu tulemus on {{score}} / {{totalQuestions}}.",
+    "scorePercentage": "{{percentage}}%",
+    "result": "Tulemus",
+    "retakeQuiz": "Tee test uuesti",
+    "finishQuiz": "Finish Quiz"
   },
 
   "toasts": {
@@ -88,26 +128,69 @@
     "failedUnarchiveExhibition": "Arhiivist eemaldamine ebaõnnestus: {{message}}",
     "failedCreateQuiz": "Viktoriini loomine ebaõnnestus: {{message}}",
     "failedDeleteQuiz": "Viktoriini kustutamine ebaõnnestus: {{message}}",
-    "exhibitionDeleted": "Näitus kustutatud.",
+    "exhibitionTrashed": "Näitus kustutatud.",
+    "exhibitionDeleted": "Näitus jäädavalt kustutatud.",
     "exhibitionUpdated": "Näitus uuendatud.",
-    "exhibitionPublished": "Näitus avaldatud.", 
+    "exhibitionPublished": "Näitus avaldatud.",
     "exhibitionUnpublished": "Näitus viidud tagasi mustanditesse.",
     "exhibitionArchived": "Näitus arhiveeritud.",
     "exhibitionUnarchived": "Näitus arhiivist eemaldatud.",
+    "exhibitionFeatured": "Näitus lisatud esilehele.",
+    "exhibitionUnFeatured": "Näitus eemaldatud esilehelt.",
+    "failedFeatureExhibition": "Näituse esilehele lisamine ebaõnnestus: {{message}}",
+    "failedUnFeatureExhibition": "Näituse esilehelt eemaldamine ebaõnnestus: {{message}}",
     "quizCreated": "Viktoriin loodud.",
     "quizDeleted": "Viktoriin kustutatud",
-    "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte."
+    "failedInvalidateCache": "Viga lehe uuendamisel. Palun värskendage lehte.",
+    "exhibitionRestored": "Näitus taastatud!",
+    "failedRestoreExhibition": "Näitust ei saanud taastada: {{message}}",
+    "quizEdited": "Viktoriin muudetud.",
+    "failedEditQuiz": "Viktoriini ei õnnestunud muuta: {{message}}"
   },
 
-  "archive":{
+  "archive": {
     "title": "Arhiiv",
     "noExhibitionsFound": "Ühtegi sobivat näitust ei leitud.",
     "unarchive": "Mustandiks",
-    "view": "Avalda",
-    "now":"Arhiveeri"
+    "view": "Vaata",
+    "now": "Arhiveeri",
+    "confirmArchive": "Kas oled kindel, et soovid selle näituse arhiveerida?",
+    "confirmUnarchive": "Kas oled kindel, et soovid selle näituse arhiivist eemaldada?"
   },
-    
-  "confirmPublish": "Kas oled kindel, et tahad seda näitust avalikuks teha?",
+
+  "categoryModal": {
+    "searchPlaceholder": "Otsi kategooriaid",
+    "newCategoryPlaceholder": "Sisesta uue kategooria nimi",
+    "selectedCategories": "Valitud kategooriad",
+    "availableCategories": "Saadaval kategooriad"
+  },
+
+  "contributors": {
+    "exhibitionContributors": "Näituse koostajad",
+    "contributors": "Koostajad",
+    "role": "Roll",
+    "names": "Nimed",
+    "rolePlaceholder": "Roll (näiteks, Autor)",
+    "namesPlaceholder": "Koostajate nimed",
+    "addContributor": "Lisa koostaja"
+  },
+
+  "filter": {
+    "filterBy": "Filtreeri",
+    "sortBy": "Sorteeri",
+    "apply": "Rakenda",
+    "alphabetical": "Tähestikuline",
+    "updatedDate": "Uuendamise kuupäev"
+  },
+
+  "alphabetical": "Tähestikuline",
+  "updatedDate": "Uuendamise kuupäev",
+  "failedToDeleteCategory": "Kategooria kustutamine ebaõnnestus: {{category}}",
+  "categories": "Kategooriad",
+
+  "confirmPublish": "Kas oled kindel, et soovid selle näituse avalikuks teha?",
+  "confirmFeature": "Kas oled kindel, et soovid selle näituse esilehele lisada?",
+  "confirmUnFeature": "Kas oled kindel, et soovid selle näituse esilehelt eemaldada?",
   "editExhibition": "Muuda näitust",
   "status": "Staatus",
   "saving": "Salvestamine...",
@@ -116,10 +199,12 @@
   "uploadImage": "Laadi pilt üles",
   "imageUploaded": "Pilt üles laaditud",
   "saveChanges": "Salvesta",
-  "preview":"Eelvaade",
+  "preview": "Eelvaade",
   "createQuiz": "Loo Test",
   "publishing": "Avaldamine...",
-  "publish": "Avalda",
+  "publish": "Avalikusta",
+  "feature": "Näita esilehel",
+  "unFeature": "Eemalda esilehelt",
   "exhibitionDetails": "Näituse üksikasjad",
   "title": "Pealkiri",
   "description": "Kirjeldus",
@@ -131,7 +216,21 @@
   "characters": "tähemärki",
   "unpublish": "Mustandiks",
   "delete": "Kustuta",
-  "confirmDelete": "Kas olete kindel, et soovite selle näituse kustutada?",
-  "confirmUnpublish": "Kas olete kindel, et soovite selle näituse mustanditesse tagasi viia?",
-  "backToEditor": "Tagasi"
+  "confirmDelete": "Kas oled kindel, et soovid selle näituse kustutada?",
+  "confirmUnpublish": "Kas oled kindel, et soovid selle näituse mustanditesse tagasi viia?",
+  "backToEditor": "Tagasi",
+  "details": "Detailid",
+  "backgroundColor": "Taustavärv: ",
+  "close": "Sulge",
+  "searchExhibitionsPlaceholder": "Otsi näitusi...",
+  "dashboard2": "Töölaud",
+  "trash2": "Prügikast",
+  "archive2": "Arhiiv",
+  "drafts": "Mustandid",
+  "publishedExhibitions": "Avaldatud näitused",
+  "exhibitionManager": "Näituste haldamine",
+  "fileUpload": "Lae fail üles",
+  "chooseCoverImage": "Taustapilt: ",
+  "perPage": "{{count}} näitust lehel",
+  "downloadExhibitionPDF": "Lae alla PDF-failina"
 }

@@ -6,12 +6,12 @@ export function generateEmptyQuiz(exhibitionId: number): CreateQuizDTO {
     id: id,
     title: "",
     exhibitionId: exhibitionId,
-    questions: [generateEmptyQuestion(id)]
-  }
+    questions: [generateEmptyQuestion(id)],
+  };
 }
 
 export function generateId() {
-  return Date.now();
+  return Date.now() % 100;
 }
 
 export function generateEmptyQuestion(quizId: number) {
@@ -21,9 +21,9 @@ export function generateEmptyQuestion(quizId: number) {
     text: "",
     imageUrl: null,
     answers: [
-    {id: generateId(), text: "", isCorrect: false, questionId: questionId },
-    {id: generateId(), text: "", isCorrect: false, questionId: questionId },
+      { id: generateId(), text: "", isCorrect: false, questionId: questionId },
+      { id: generateId(), text: "", isCorrect: false, questionId: questionId },
     ],
     quizId: quizId,
-  }
+  };
 }

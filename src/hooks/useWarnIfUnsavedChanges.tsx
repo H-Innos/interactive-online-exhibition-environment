@@ -3,11 +3,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * source: https://github.com/vercel/next.js/discussions/50700
-*/
+ */
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { type NavigateOptions } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { type NavigateOptions } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
   const router = useRouter();
@@ -17,7 +17,6 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
     const targetUrl = (e.currentTarget as HTMLAnchorElement).href;
     const currentUrl = window.location.href;
     if (targetUrl !== currentUrl && window.onbeforeunload) {
-      
       //@ts-expect-error error expected
       const res = window.onbeforeunload();
       if (!res) e.preventDefault();
@@ -25,9 +24,12 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
   };
 
   const addAnchorListeners = () => {
-    const anchorElements = document.querySelectorAll('a[href]');
-    // @ts-expect-error error expected
-    anchorElements.forEach((anchor) => anchor.addEventListener('click', handleAnchorClick));
+    const anchorElements = document.querySelectorAll("a[href]");
+
+    anchorElements.forEach((anchor) =>
+      // @ts-expect-error error expected
+      anchor.addEventListener("click", handleAnchorClick),
+    );
   };
 
   useEffect(() => {
@@ -37,26 +39,29 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
 
     return () => {
       mutationObserver.disconnect();
-      const anchorElements = document.querySelectorAll('a[href]');
-      // @ts-expect-error error expected
-      anchorElements.forEach((anchor) => anchor.removeEventListener('click', handleAnchorClick));
+      const anchorElements = document.querySelectorAll("a[href]");
+
+      anchorElements.forEach((anchor) =>
+        // @ts-expect-error error expected
+        anchor.removeEventListener("click", handleAnchorClick),
+      );
     };
   }, []);
 
   useEffect(() => {
     const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      e.returnValue = ''; // required for Chrome
+      e.returnValue = ""; // required for Chrome
     };
 
     const handlePopState = (e: PopStateEvent) => {
       if (unsaved) {
         const confirmLeave = window.confirm(
-          'You have unsaved changes. Are you sure you want to leave?',
+          "You have unsaved changes. Are you sure you want to leave?",
         );
         if (!confirmLeave) {
           e.preventDefault();
-          window.history.pushState(null, '', window.location.href);
+          window.history.pushState(null, "", window.location.href);
         } else {
           router.back();
         }
@@ -64,17 +69,17 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
     };
 
     if (unsaved) {
-      window.history.pushState(null, '', window.location.href)  
-      window.addEventListener('beforeunload', beforeUnloadHandler);
-      window.addEventListener('popstate', handlePopState);
+      window.history.pushState(null, "", window.location.href);
+      window.addEventListener("beforeunload", beforeUnloadHandler);
+      window.addEventListener("popstate", handlePopState);
     } else {
-      window.removeEventListener('beforeunload', beforeUnloadHandler);
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+      window.removeEventListener("popstate", handlePopState);
     }
 
     return () => {
-      window.removeEventListener('beforeunload', beforeUnloadHandler);
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener("beforeunload", beforeUnloadHandler);
+      window.removeEventListener("popstate", handlePopState);
     };
   }, [unsaved, router]);
 
@@ -84,7 +89,7 @@ export const useWarnIfUnsavedChanges = (unsaved: boolean) => {
     router.push = (url: string, options?: NavigateOptions) => {
       if (unsaved) {
         const confirmLeave = window.confirm(
-          'You have unsaved changes. Are you sure you want to leave?',
+          "You have unsaved changes. Are you sure you want to leave?",
         );
         if (confirmLeave) originalPush(url, options);
       } else {
