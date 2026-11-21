@@ -1,69 +1,58 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { ArrowRightIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { CardSkeleton, VisitorCard } from "~/components/ExhibitionCard/cards";
+import NavBar from "~/components/navbar";
+import { Button } from "~/components/ui/button";
+import { isEmpty } from "~/lib/utils/helpers";
 import { api } from "~/trpc/react";
-import PageableExhibitions from "~/app/_components/pageable-cards";
-import VisitorExhibitionCard from "~/app/_components/exhibition-visitor-cards";
-import type { Exhibition } from "~/lib/types/entities";
-import { useTranslation } from 'react-i18next';
-import SearchBar from "~/app/_components/search-bar";
 
-interface MainPageProps {
-  searchParams: Record<string, string | string[] | undefined>;
-}
-
-const MainPage: React.FC<MainPageProps> = ({}) => {
+const MainPage = ({}) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
-  const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect(() => {
-    if (data) {
-      const publishedExhibitions = data.filter(
-        (exhibition: Exhibition) => exhibition.isPublished
-      );
-      setExhibitions(publishedExhibitions);
-    }
-  }, [data]);
-
-  const handleExhibitionClick = (id: number) => {
-    router.push(`/${id}`);
-  };
-
-  const filteredExhibitions = exhibitions.filter(exhibition =>
-    exhibition.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const { data: featuredExhibitions } = api.exhibition.getFeatured.useQuery();
 
   return (
-    <Suspense fallback={<div>{t('mainPage.loading')}</div>}>
-      <div className="bg-white min-h-screen flex flex-col items-center py-8">
-        <div className="w-full flex justify-center sm:justify-end mb-6 px-4">
-          <SearchBar value={searchTerm} onChange={setSearchTerm} />
+    <>
+      <NavBar />
+      <div className="relative mt-4 h-96 w-full overflow-hidden">
+        <Image
+          src="/logos/raamatukogu_fassaad.jpg"
+          alt="Raamatukogu Fassaad"
+          layout="fill"
+          objectFit="cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <h2 className="px-4 text-center text-4xl font-bold text-white">
+            {t("pageTitle")}
+          </h2>
         </div>
-        <div className="w-full px-2" style={{ maxWidth: "90%" }}>
-          <h1 className="text-3xl mb-8 text-neutral text-center">{t('mainPage.exploreExhibitions')}</h1>
-
-          {isLoading ? (
-            <div>{t('mainPage.loading')}</div>
-          ) : error ? (
-            <div>{t('mainPage.errorLoading')}</div>
-          ) : filteredExhibitions.length > 0 ? (
-            <PageableExhibitions
-              title=""
-              exhibitions={filteredExhibitions}
-              onExhibitionClick={handleExhibitionClick}
-              showFadeEffect={false}
-              CardComponent={(props) => <VisitorExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />}
-            />
-          ) : (
-            <p className="text-gray-500 text-center">{t('mainPage.noExhibitions')}</p>
-          )}
+        <div className="absolute bottom-8 left-12">
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/all")}
+            className="border border-white text-white"
+          >
+            {t("allExhibitions")} <ArrowRightIcon />
+          </Button>
         </div>
       </div>
-    </Suspense>
+
+      <div className="flex w-full justify-center p-12">
+        <div className="max-w-screen-xxl grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {isEmpty(featuredExhibitions)
+            ? Array.from({ length: 4 }, (_, index) => (
+                <CardSkeleton key={index} />
+              ))
+            : featuredExhibitions?.map((exhibition) => (
+                <VisitorCard key={exhibition.id} exhibition={exhibition} />
+              ))}
+        </div>
+      </div>
+    </>
   );
 };
 

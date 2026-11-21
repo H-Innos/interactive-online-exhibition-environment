@@ -1,65 +1,113 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
-import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
 import ShortenedDrafts from "~/app/_components/shortened-drafts";
-import type { Exhibition } from "~/lib/types/entities";
+import { PublishedCard } from "~/components/ExhibitionCard/cards";
+import FilterDropdown from "~/components/filter-dropdown";
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [drafts, setDrafts] = useState<Exhibition[]>([]);
-  const [publishedExhibitions, setPublishedExhibitions] = useState<Exhibition[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
+  const [filterOption, setFilterOption] = useState<string>("updatedDate");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
+  const {
+    data: publishedExhibitions,
+    error: errorPublished,
+    isLoading: publishedLoading,
+  } = api.exhibition.getPublished.useQuery();
 
-  useEffect(() => {
-    if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished));
-      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished));
-    }
-  }, [data]);
+  const { data: categories = [] } = api.category.getAll.useQuery();
 
-  const handleExhibitionClick = (id: number) => {
-    router.push(`/dashboard/${id}`);
-  };
+  const handleFilterChange = useCallback((option: string) => {
+    setFilterOption(option);
+  }, []);
+
+  const handleCategoryChange = useCallback((categories: string[]) => {
+    setSelectedCategories(categories);
+  }, []);
+
+  const filteredAndSortedExhibitions = useMemo(() => {
+    if (!publishedExhibitions) return [];
+
+    const filtered = publishedExhibitions.filter((exhibition) => {
+      const categoryMatch =
+        selectedCategories.length === 0 ||
+        exhibition.categories?.some((cat) =>
+          selectedCategories.includes(cat.name),
+        );
+      return categoryMatch;
+    });
+
+    return filtered.sort((a, b) => {
+      switch (filterOption) {
+        case "updatedDate":
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case "alphabetical":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+  }, [publishedExhibitions, selectedCategories, filterOption]);
+
+  const filterComponent = (
+    <FilterDropdown
+      filterOption={filterOption}
+      setFilterOption={handleFilterChange}
+      selectedCategories={selectedCategories}
+      setSelectedCategories={handleCategoryChange}
+      categories={categories.map(
+        (cat: { id: number | string; name: string }) => ({
+          id: cat.id.toString(),
+          name: cat.name,
+        }),
+      )}
+      exhibitions={publishedExhibitions ?? []}
+    />
+  );
 
   return (
-    <Suspense fallback={<div>{t('dashboard.loading')}</div>}>
-      <div className="text-text-dark min-h-screen px-4 sm:px-12 py-8 max-w-full overflow-x-hidden">
-        <h1 className="text-3xl font-bold mb-2 text-neutral">{t('dashboard.title')}</h1>
-        <h2 className="text-xl mb-6 text-gray-500">{t('dashboard.manageExhibitions')}</h2>
+    <Suspense fallback={<div className="p-4">{t("dashboard.loading")}</div>}>
+      <div className="min-h-screen max-w-full overflow-x-hidden p-8">
+        <h1 className="mb-2 text-3xl font-bold">{t("dashboard.title")}</h1>
+        <h2 className="mb-6 text-xl text-gray-500">
+          {t("dashboard.manageExhibitions")}
+        </h2>
 
         <CreateExhibitionButton />
 
-        {isLoading ? (
-          <div>{t('dashboard.loading')}</div>
-        ) : error ? (
-          <div>{t('dashboard.errorLoading')}</div>
+        {currentPage === 1 && (
+          <>
+            <h1 className="text-neutral mb-5 text-2xl font-bold">
+              {t("dashboard.drafts")}
+            </h1>
+            <ShortenedDrafts />
+          </>
+        )}
+
+        {publishedLoading ? (
+          <div>{t("dashboard.loading")}</div>
+        ) : errorPublished ? (
+          <div>{t("dashboard.errorLoading")}</div>
         ) : (
           <>
-            {currentPage === 1 && (
-              <>
-                <h1 className="text-2xl font-bold text-neutral mb-5">{t('dashboard.drafts')}</h1>
-                <ShortenedDrafts drafts={drafts} onExhibitionClick={handleExhibitionClick} />
-              </>
+            {filteredAndSortedExhibitions.length > 0 ? (
+              <PageableExhibitions
+                title={t("dashboard.publishedExhibitions")}
+                exhibitions={filteredAndSortedExhibitions}
+                CardComponent={(props) => <PublishedCard {...props} />}
+                FilterComponent={filterComponent}
+              />
+            ) : (
+              <p>{t("dashboard.noExhibitions")}</p>
             )}
-
-            <PageableExhibitions
-              title={t('dashboard.publishedExhibitions')}
-              exhibitions={publishedExhibitions}
-              onExhibitionClick={handleExhibitionClick}
-              showFadeEffect={false}
-              CardComponent={(props) => (
-                <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />
-              )}
-            />
           </>
         )}
       </div>

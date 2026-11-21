@@ -1,5 +1,4 @@
 import { type Config } from "drizzle-kit";
-
 import { env } from "~/env";
 
 export default {
@@ -9,4 +8,5 @@ export default {
     url: env.POSTGRES_URL,
   },
   tablesFilter: ["interactive-online-exhibition-environment_*"],
+  strict: false,
 } satisfies Config;

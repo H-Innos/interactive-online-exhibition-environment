@@ -1,127 +1,128 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
-import { ExhibitionDataForm } from '~/app/_components/exhibition-data-form';
-import ExhibitionContentEditor from '~/app/_components/exhibition-content-editor';
-import { usePublishExhibition, useUpdateExhibition } from '~/hooks/exhibition-actions';
-import type { Exhibition } from '~/lib/types/entities';
-import { useWarnIfUnsavedChanges } from '~/hooks/useWarnIfUnsavedChanges';
-import { useTranslation } from 'react-i18next';
-import { useExhibitionIdFromParams } from '~/hooks/useExhibitionIdFromParams';
-import ExhibitionPreviewModal from '~/app/_components/exhibition-preview-modal';
+import ExhibitionContentEditor from "~/app/_components/exhibition-content-editor";
+import type { Exhibition } from "~/lib/types/entities";
+import { useWarnIfUnsavedChanges } from "~/hooks/useWarnIfUnsavedChanges";
+import { useTranslation } from "react-i18next";
+import { useExhibitionIdFromParams } from "~/hooks/useExhibitionIdFromParams";
+import ExhibitionPreviewModal from "~/app/_components/exhibition-preview-modal";
+import ExhibitionToolbar from "~/app/_components/editor-toolbar";
+import { convertToValidHTML } from "~/lib/utils/exhibition-parser";
+import ExhibitionTabs from "~/components/details-tabs";
 
 const ExhibitionEditorPage = () => {
   const id = useExhibitionIdFromParams();
-  const [exhibition, setExhibition] = useState<Exhibition | null>(null);
-  const [editorContent, setEditorContent] = useState<string>();
+  const [editorState, setEditorState] = useState<Exhibition | null>(null);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const { data: exhibitionData } = api.exhibition.getOne.useQuery({ id: id });
 
-  const router = useRouter();
   useWarnIfUnsavedChanges(isDirty);
   const { t } = useTranslation();
 
   useEffect(() => {
     if (exhibitionData) {
-      setExhibition(exhibitionData);
-      setEditorContent(exhibitionData.content ?? "");
+      setEditorState({
+        ...exhibitionData,
+        content: exhibitionData.content ?? "",
+        backgroundColor: exhibitionData.backgroundColor ?? "#ffffff",
+      });
     }
   }, [exhibitionData]);
 
-  const publishExhibition = usePublishExhibition();
-  const updateExhibition = useUpdateExhibition();
+  useEffect(() => {
+    if (isPreviewModalOpen || isDetailsModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isPreviewModalOpen, isDetailsModalOpen]);
 
-  function handlePublish() {
-    if (!exhibition || !window.confirm(t("confirmPublish"))) return;
-    publishExhibition.mutate({ id: exhibition.id });
-  }
-
-  function handleSaveEditorChanges() {
-    if (!exhibition) return;
-    updateExhibition.mutate({
-      id: exhibition.id,
-      name: exhibition.name,
-      content: editorContent
+  async function handleEditorChange(updatedContent: string) {
+    const validHTMLContent = convertToValidHTML(updatedContent);
+    setEditorState((prevState) => {
+      if (!prevState) return null;
+      const isContentChanged = prevState.content !== validHTMLContent;
+      if (isContentChanged) {
+        setIsDirty(true);
+      }
+      return { ...prevState, content: validHTMLContent };
     });
-    setIsDirty(false);
   }
 
-  function handleEditorChange(updatedContent: string) {
-    setEditorContent(updatedContent);
-    setIsDirty(true);
+  function handleBackgroundColorChange(color: string) {
+    setEditorState((prevState) => {
+      if (!prevState) return null;
+      return { ...prevState, backgroundColor: color };
+    });
   }
 
   return (
-    <div className={`${isPreviewModalOpen ? 'pointer-events-none' : ''}`}>
-      <div
-        className={`flex flex-col lg:flex-row justify-between min-h-screen p-4 lg:p-8 space-y-4 lg:space-y-0 lg:space-x-4 ${
-          isPreviewModalOpen ? 'opacity-50' : ''
-        }`}
-        aria-hidden={isPreviewModalOpen}
-      >
-        <div className="flex-1 w-full lg:w-[70%] mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-4">{t("editExhibition")} {id}</h1>
-          <p>{t("status")}: {updateExhibition.isPending ? t("saving") : t("saved")}</p>
-          {exhibition && (
-            <div className="w-full">
-              <ExhibitionContentEditor
-                initialContent={exhibition.content ?? ""}
-                onChange={handleEditorChange}
-              />
-            </div>
-          )}
+    <div>
+      {isPreviewModalOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50"
+          aria-hidden="true"
+        />
+      )}
+      <div className="flex min-h-screen flex-col">
+        <ExhibitionToolbar
+          exhibition={editorState}
+          setBackgroundColor={handleBackgroundColorChange}
+          setIsDetailsModalOpen={setIsDetailsModalOpen}
+          setIsPreviewModalOpen={setIsPreviewModalOpen}
+          setIsDirty={setIsDirty}
+        />
+
+        <div
+          className={`flex flex-1 flex-col justify-between space-y-4 p-4 lg:flex-row lg:space-x-4 lg:space-y-0 lg:p-8 ${
+            isPreviewModalOpen ? "pointer-events-none opacity-50" : ""
+          }`}
+          aria-hidden={isPreviewModalOpen}
+          style={{ backgroundColor: editorState?.backgroundColor ?? "#ffffff" }}
+        >
+          <div className="mx-auto w-full flex-1 lg:w-[70%]">
+            {editorState && (
+              <div className="w-full">
+                <ExhibitionContentEditor
+                  initialContent={editorState.content ?? ""}
+                  onChange={handleEditorChange}
+                  bgColor={editorState?.backgroundColor ?? "#ffffff"}
+                />
+              </div>
+            )}
+          </div>
         </div>
-        {exhibition && (
-          <aside className="w-full lg:w-[30%] mt-4 lg:mt-0 mx-auto">
-            <div className="flex flex-wrap justify-end m-4 gap-2">
-              <button
-                type="button"
-                className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600 text-sm md:text-base"
-                onClick={() => router.push(`/dashboard`)}
-              >
-                {t("exit")}
-              </button>
-              <button
-                type="button"
-                className="bg-gray-500 text-text-light px-4 py-2 rounded-md hover:bg-gray-600 text-sm md:text-base"
-                disabled={updateExhibition.isPending || publishExhibition.isPending}
-                onClick={handleSaveEditorChanges}
-              >
-                {t("saveChanges")}
-              </button>
-              <button
-                type="button"
-                className="bg-blue-500 text-text-light px-4 py-2 rounded-md hover:bg-blue-600 text-sm md:text-base"
-                onClick={() => setIsPreviewModalOpen(true)}
-              >
-                {t("preview")}
-              </button>
-              <button
-                type="button"
-                className="bg-purple-500 text-text-light px-3 py-2 rounded-md hover:bg-purple-600 text-sm md:text-base"
-                onClick={() => router.push(`/dashboard/${id}/quizzes`)}
-              >
-                {t("createQuiz")}
-              </button>
-              <button
-                type="button"
-                className="bg-lime-600 text-text-light px-3 py-2 rounded-md hover:bg-lime-500 disabled:pointer-events-none text-sm md:text-base"
-                disabled={updateExhibition.isPending || publishExhibition.isPending}
-                onClick={handlePublish}
-              >
-                {publishExhibition.isPending ? t("publishing") : t("publish")}
-              </button>
-            </div>
-            <ExhibitionDataForm exhibition={exhibition} />
-          </aside>
-        )}
       </div>
-      {isPreviewModalOpen && exhibition && (
+
+      {isDetailsModalOpen && editorState && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="relative h-[90%] w-[90%] max-w-lg rounded-lg bg-white p-4 shadow-lg md:p-6">
+            <button
+              type="button"
+              className="flex w-full flex-row justify-end text-4xl text-gray-500 hover:text-gray-600"
+              onClick={() => setIsDetailsModalOpen(false)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <ExhibitionTabs
+              exhibition={editorState}
+              onSave={() => setIsDetailsModalOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {isPreviewModalOpen && editorState && (
         <ExhibitionPreviewModal
-          exhibition={exhibition}
+          exhibition={editorState}
           onClose={() => setIsPreviewModalOpen(false)}
         />
       )}

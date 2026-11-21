@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Menu, X, LogIn } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { X } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import i18n from '~/i18n';
+import i18n from "~/i18n";
+import { useSession } from "~/lib/contexts/SessionProvider";
+import { LoginForm } from "./log-in-dropdown";
+import { logout } from "~/server/auth/actions";
 
 export default function SlideInMenu() {
   const { t } = useTranslation();
@@ -15,24 +16,24 @@ export default function SlideInMenu() {
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
 
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -40,31 +41,32 @@ export default function SlideInMenu() {
     try {
       await i18n.changeLanguage(lng);
     } catch (error) {
-      console.error('Error changing language:', error);
+      console.error("Error changing language:", error);
     }
   };
+
+  const { session } = useSession();
 
   return (
     <>
       <Button
         variant="ghost"
-        className="sticky top-8 right-4 z-10 text-2xl text-gray-600"
+        className="sticky right-4 top-8 z-10 text-2xl text-gray-600"
         onClick={() => setIsOpen(true)}
       >
-        ☰        
-        <span className="sr-only">{t('slideInMenu.openMenu')}</span>
+        ☰<span className="sr-only">{t("slideInMenu.openMenu")}</span>
       </Button>
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-9"
+          className="z-9 fixed inset-0 bg-black bg-opacity-50"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <div
-        className={`fixed top-0 right-0 h-full w-[70vw] sm:w-[400px] bg-background p-6 overflow-y-auto transition-transform duration-300 ease-in-out z-[1000] ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed right-0 top-0 z-[1000] h-full w-[70vw] overflow-y-auto bg-background p-6 transition-transform duration-300 ease-in-out sm:w-[400px] ${
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <Button
@@ -74,51 +76,61 @@ export default function SlideInMenu() {
           className="absolute right-4 top-4 z-10"
         >
           <X className="h-4 w-4" />
-          <span className="sr-only">{t('slideInMenu.close')}</span>
+          <span className="sr-only">{t("slideInMenu.close")}</span>
         </Button>
 
-        <h2 className="text-2xl font-bold mb-6">{t('slideInMenu.menu')}</h2>
+        <h2 className="mb-6 text-2xl font-bold">{t("slideInMenu.menu")}</h2>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t('slideInMenu.email')}</Label>
-            <Input id="email" type="email" placeholder="m@example.com" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('slideInMenu.password')}</Label>
-            <Input id="password" type="password" />
-          </div>
-          <Button className="w-full bg-primary-dark text-white">
-            <LogIn className="mr-2 h-4 w-4" /> {t('slideInMenu.logIn')}
+        {session ? (
+          <Button
+            onClick={async () => await logout()}
+            className="flex sm:hidden"
+          >
+            {" "}
+            {t("logout")}
           </Button>
-        </div>
+        ) : (
+          <LoginForm onSubmit={() => setIsOpen(false)} />
+        )}
 
         <div className="mt-8 space-y-2">
-          <Link href="/" className="block border-t border-b border-gray-300 py-2">
-            {t('allExhibitions')}
+          <Link
+            href="/"
+            className="block border-b border-t border-gray-300 py-2"
+          >
+            {t("allExhibitions")}
           </Link>
-          <Link href="/dashboard" className="block border-gray-300">
-            {t('dashboardNav')}
-          </Link>
-          <Link href="/archive" className="block border-t border-b border-gray-300 py-2">
-            {t('archive.title')}
-          </Link>
+          {!!session && (
+            <>
+              <Link href="/dashboard" className="block border-gray-300">
+                {t("dashboardNav")}
+              </Link>
+              <Link
+                href="/dashboard/archive"
+                className="block border-b border-t border-gray-300 py-2"
+              >
+                {t("archive.title")}
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="mt-8 w-full">
           <div className="flex space-x-4">
-            <h3 className="text-lg font-semibold">{t('slideInMenu.language')}</h3>
+            <h3 className="text-lg font-semibold">
+              {t("slideInMenu.language")}
+            </h3>
             <div className="space-x-2">
               <button
-                className={`hover:text-primary-dark text-text-dark text-lg ${i18n.language === 'en' ? 'font-bold' : ''}`}
-                onClick={() => changeLanguage('en')}
+                className={`text-lg text-text-dark hover:text-primary-dark ${i18n.language === "en" ? "font-bold" : ""}`}
+                onClick={() => changeLanguage("en")}
               >
                 ENG
               </button>
               <span className="text-text-dark">|</span>
               <button
-                className={`hover:text-primary-dark text-text-dark text-lg ${i18n.language === 'est' ? 'font-bold' : ''}`}
-                onClick={() => changeLanguage('est')}
+                className={`text-lg text-text-dark hover:text-primary-dark ${i18n.language === "est" ? "font-bold" : ""}`}
+                onClick={() => changeLanguage("est")}
               >
                 EST
               </button>

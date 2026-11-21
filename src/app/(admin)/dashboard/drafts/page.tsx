@@ -1,58 +1,115 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState, useCallback, useMemo } from "react";
 import { api } from "~/trpc/react";
 import PageableExhibitions from "~/app/_components/pageable-cards";
-import ExhibitionCard from "~/app/_components/exhibition-dashboard-cards";
 import CreateExhibitionButton from "~/app/_components/create-exhibition-button";
-import type { Exhibition } from "../../../../lib/types/entities";
 import { useTranslation } from "react-i18next";
+import { DraftCard } from "~/components/ExhibitionCard/cards";
+import FilterDropdown from "~/components/filter-dropdown";
+import type { Exhibition as BaseExhibition } from "~/lib/types/entities";
+
+type Exhibition = BaseExhibition & {
+  categories?: Array<{ id: number; name: string }>;
+};
 
 const DraftsPage = () => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [drafts, setDrafts] = useState<Exhibition[]>([]);
+  const [filterOption, setFilterOption] = useState<string>("updatedDate");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
+  const {
+    data: exhibitions,
+    error,
+    isLoading,
+  } = api.exhibition.getAll.useQuery();
+
+  const drafts = exhibitions?.filter((ex) => ex.status === "draft") ?? [];
+
+  const { data: categories = [] } = api.category.getAll.useQuery();
 
   useEffect(() => {
-    if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished && !exhibition.isArchived));
+    if (error) {
+      console.error("Error fetching drafts:", error);
     }
-  }, [data]);
+  }, [error]);
 
-  const handleExhibitionClick = (id: number) => {
-    router.push(`/dashboard/${id}`);
-  };
+  const handleFilterChange = useCallback((option: string) => {
+    setFilterOption(option);
+  }, []);
+
+  const handleCategoryChange = useCallback((categories: string[]) => {
+    setSelectedCategories(categories);
+  }, []);
+
+  const filteredAndSortedDrafts = useMemo(() => {
+    if (!drafts) return [];
+
+    let filtered = drafts;
+
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter(
+        (draft: Exhibition) =>
+          draft.categories?.some((cat) =>
+            selectedCategories.includes(cat.name),
+          ) ?? false,
+      );
+    }
+
+    return filtered.sort((a: Exhibition, b: Exhibition) => {
+      switch (filterOption) {
+        case "updatedDate":
+          return (
+            new Date(b.updatedAt ?? b.createdAt).getTime() -
+            new Date(a.updatedAt ?? a.createdAt).getTime()
+          );
+        case "alphabetical":
+          return a.name.localeCompare(b.name);
+        default:
+          return 0;
+      }
+    });
+  }, [drafts, selectedCategories, filterOption]);
 
   return (
-    <Suspense fallback={<div>{t('dashboard.loading')}</div>}>
-      <div className="text-text-dark min-h-screen px-4 sm:px-12 relative">
-        <div className="flex items-center mt-12">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="text-4xl text-black rounded-md hover:text-gray-500 transition duration-300 mr-4 mb-10"
-          >
-            ❬
-          </button>
-          <h1 className="text-3xl font-bold text-dark mb-10">{t('dashboard.drafts')}</h1>
+    <Suspense fallback={<div>{t("dashboard.loading")}</div>}>
+      <div className="relative min-h-screen px-4 text-text-dark sm:px-12">
+        <div className="mt-12 flex items-center">
+          <h1 className="text-dark mb-10 text-3xl font-bold">
+            {t("dashboard.drafts")}
+          </h1>
         </div>
 
         <CreateExhibitionButton />
 
         {isLoading ? (
-          <div>{t('dashboard.loading')}</div>
+          <div>{t("dashboard.loading")}</div>
         ) : error ? (
-          <div>{t('dashboard.errorLoading')}</div>
+          <div>{t("dashboard.errorLoading")}</div>
         ) : (
-          <PageableExhibitions
-            title={t('dashboard.allDrafts')}
-            exhibitions={drafts}
-            onExhibitionClick={handleExhibitionClick}
-            showFadeEffect={false}
-            CardComponent={(props) => <ExhibitionCard {...props} onClick={() => handleExhibitionClick(props.exhibition.id)} />}
-          />
+          filteredAndSortedDrafts && (
+            <PageableExhibitions
+              data-testid="exhibition-list"
+              title=""
+              exhibitions={filteredAndSortedDrafts}
+              CardComponent={(props) => <DraftCard {...props} />}
+              FilterComponent={
+                <FilterDropdown
+                  filterOption={filterOption}
+                  setFilterOption={handleFilterChange}
+                  selectedCategories={selectedCategories}
+                  setSelectedCategories={handleCategoryChange}
+                  categories={categories.map(
+                    (cat: { id: number | string; name: string }) => ({
+                      id: cat.id.toString(),
+                      name: cat.name,
+                    }),
+                  )}
+                  exhibitions={drafts}
+                />
+              }
+            />
+          )
         )}
       </div>
     </Suspense>

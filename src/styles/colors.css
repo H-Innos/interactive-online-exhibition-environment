@@ -1,0 +1,71 @@
+[data-text-color="gray"] {
+  color: #808080;
+}
+
+[data-text-color="brown"] {
+  color: #654321;
+}
+
+[data-text-color="red"] {
+  color: #ff0000;
+}
+
+[data-text-color="orange"] {
+  color: #ff8c00;
+}
+
+[data-text-color="yellow"] {
+  color: #ffd700;
+}
+
+[data-text-color="green"] {
+  color: #008000;
+}
+
+[data-text-color="blue"] {
+  color: #0000ff;
+}
+
+[data-text-color="purple"] {
+  color: #800080;
+}
+
+[data-text-color="pink"] {
+  color: #ff69b4;
+}
+
+[data-background-color="gray"] {
+  background-color: #d3d3d3;
+}
+
+[data-background-color="brown"] {
+  background-color: #a0522d;
+}
+
+[data-background-color="red"] {
+  background-color: #ff0000;
+}
+
+[data-background-color="orange"] {
+  background-color: #ffe5b4;
+}
+
+[data-background-color="yellow"] {
+  background-color: #fffacd;
+}
+
+[data-background-color="green"] {
+  background-color: #98fb98;
+}
+
+[data-background-color="blue"] {
+  background-color: #add8e6;
+}
+
+[data-background-color="purple"] {
+  background-color: #dda0dd;
+}
+
+[data-background-color="pink"] {
+  background-color: #ffb6c1;
+}

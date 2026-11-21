@@ -1,13 +1,16 @@
-import React, { useEffect, useRef } from 'react';
-import type { Exhibition } from '~/lib/types/entities';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useRef } from "react";
+import type { Exhibition } from "~/lib/types/entities";
+import { useTranslation } from "react-i18next";
 
 interface ExhibitionPreviewModalProps {
   exhibition: Exhibition;
   onClose: () => void;
 }
 
-const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibition, onClose }) => {
+const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({
+  exhibition,
+  onClose,
+}) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const { t, i18n } = useTranslation();
 
@@ -16,7 +19,7 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
       const doc = iframeRef.current?.contentDocument;
       if (doc) {
         const disableInteractions = () => {
-          const style = doc.createElement('style');
+          const style = doc.createElement("style");
           style.innerHTML = `
             * {
               pointer-events: none !important;
@@ -28,9 +31,9 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
           doc.head.appendChild(style);
         };
 
-        const backButton = doc.createElement('button');
-        backButton.id = 'back-button';
-        backButton.innerHTML = t('backToEditor');
+        const backButton = doc.createElement("button");
+        backButton.id = "back-button";
+        backButton.innerHTML = t("backToEditor");
         backButton.style.cssText = `
           position: fixed;
           top: 20px;
@@ -55,10 +58,10 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
     };
 
     const iframe = iframeRef.current;
-    iframe?.addEventListener('load', handleIframeLoad);
+    iframe?.addEventListener("load", handleIframeLoad);
 
     return () => {
-      iframe?.removeEventListener('load', handleIframeLoad);
+      iframe?.removeEventListener("load", handleIframeLoad);
     };
   }, [onClose, t]);
 
@@ -66,13 +69,13 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
     const updatePreviewText = () => {
       const doc = iframeRef.current?.contentDocument;
       if (doc) {
-        const previewBanner = doc.getElementById('preview-banner');
+        const previewBanner = doc.getElementById("preview-banner");
         if (previewBanner) {
-          previewBanner.innerHTML = t('preview');
+          previewBanner.innerHTML = t("preview");
         }
-        const backButton = doc.getElementById('back-button');
+        const backButton = doc.getElementById("back-button");
         if (backButton) {
-          backButton.innerHTML = t('backToEditor');
+          backButton.innerHTML = t("backToEditor");
         }
       }
     };
@@ -81,12 +84,12 @@ const ExhibitionPreviewModal: React.FC<ExhibitionPreviewModalProps> = ({ exhibit
   }, [i18n.language, t]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="w-[95%] h-[95%] bg-white p-4 rounded-lg shadow-lg relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="relative h-[95%] w-[95%] rounded-lg bg-white p-4 shadow-lg">
         <iframe
           ref={iframeRef}
           src={`/${exhibition.id}`}
-          className="w-full h-full border-2 border-gray-300 rounded-md"
+          className="h-full w-full rounded-md border-2 border-gray-300"
           title="Exhibition Preview"
         />
       </div>

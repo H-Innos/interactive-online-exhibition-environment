@@ -1,38 +1,38 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { X } from 'lucide-react'
-import { cn } from '~/lib/utils'
+import { useState } from "react";
+import Image from "next/image";
+import { X } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 interface RemovableImagePorps {
-  src: string
-  alt: string
-  onClick?: () => void
-  onDelete?: () => void
-  className?: string
+  src: string;
+  alt: string;
+  onClick?: () => void;
+  onDelete?: () => void;
+  className?: string;
 }
 
-export default function RemovableImage({ 
-  src, 
-  alt, 
+export default function RemovableImage({
+  src,
+  alt,
   onClick,
   onDelete,
-  className
+  className,
 }: RemovableImagePorps) {
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onDelete?.()
-  }
+    e.stopPropagation();
+    onDelete?.();
+  };
 
   return (
-    <div 
+    <div
       className={cn(
-        'relative flex-shrink-0 overflow-hidden rounded-md bg-gray-200 group',
-        { 'cursor-pointer': onClick },
-        className
+        "group relative flex-shrink-0 overflow-hidden rounded-md bg-gray-200",
+        { "cursor-pointer": onClick },
+        className,
       )}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
@@ -48,12 +48,12 @@ export default function RemovableImage({
       {isHovered && onDelete && (
         <button
           onClick={handleDelete}
-          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+          className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
           aria-label="Delete thumbnail"
         >
           <X size={16} />
         </button>
       )}
     </div>
-  )
+  );
 }

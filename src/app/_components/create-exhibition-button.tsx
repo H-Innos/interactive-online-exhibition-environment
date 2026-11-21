@@ -21,9 +21,10 @@ const CreateExhibitionButton: React.FC<CreateExhibitionButtonProps> = ({
     <>
       <button
         onClick={openModal}
-        className="bg-primary-dark text-text-light px-4 py-2 rounded-md hover:bg-primary-dark_hover transition duration-300 mb-4"
+        className="mb-4 rounded-md bg-primary-dark px-4 py-2 text-text-light transition duration-300 hover:bg-primary-dark_hover"
+        data-testid="new-exhibition-button"
       >
-        {buttonText ?? t('createExhibition.newExhibition')}
+        {buttonText ?? t("createExhibition.newExhibition")}
       </button>
 
       {isModalOpen && <CreateExhibitionModal onClose={closeModal} />}
