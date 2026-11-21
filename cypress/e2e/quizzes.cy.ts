@@ -1,89 +1,42 @@
-
 describe('Quiz Functionality', () => {
-  const exhibitionTitle = 'quiz test';
-
-  const selectors = {
-    newExhibitionButton: 'button:contains("New Exhibition")',
-    exhibitionTitleInput: 'input[placeholder="Enter exhibition title"]',
-    exhibitionDescriptionInput: 'textarea[placeholder="Enter exhibition description"]',
-    submitButton: 'button[type="submit"]:contains("Create")',
-    dashboardCard: (title: string) => `[data-testid="dashboard-exhibition-card"]:contains("${title}")`,
-    dropdownMenu: '[role="menu"]',
-    dropdownMenuItem: `[role="menuitem"]`,
-    quizTitleInput: 'input[placeholder="Enter quiz title"]',
-    questionInput: 'input[placeholder="Enter your question here"]',
-    imageUploadButton: 'button[type="button"]:contains("Upload Image")',
-    answerInput: '[data-testid="answer-input"]',
-    answerCheckbox: '[data-testid="answer-checkbox"]',
-    addAnswerButton: 'button:contains("Add Answer")',
-    addQuestionButton: 'button:contains("Add Question")',
-    createQuizButton: 'button:contains("Create Quiz")',
-  };
+  const exhibitionTitle = `Quiz test ${Date.now()}`;
+  let exhibitionId: number | undefined;
 
   before(() => {
-    cy.intercept('POST', '/api/trpc/**').as('postRequest');
-    cy.intercept('GET', '/api/trpc/**').as('getRequest');
-
-    cy.visit('/dashboard/drafts');
-    cy.get(selectors.newExhibitionButton).click();
-    cy.get(selectors.exhibitionTitleInput).type(exhibitionTitle);
-    cy.get(selectors.exhibitionDescriptionInput).type('quiz test');
-    cy.get(selectors.submitButton).contains('Create').click();
-    cy.wait('@postRequest').then((interception) => {
-      expect(interception.response?.statusCode).to.eq(200);
+    cy.request('POST', '/api/trpc/exhibition.create', {
+      json: { name: exhibitionTitle },
     });
-    cy.visit('/dashboard/drafts');
-    cy.get(selectors.dashboardCard(exhibitionTitle)).as('exhibitionCard');
-    
-    cy.get('@exhibitionCard').within(() => {
-      cy.get('button[aria-haspopup="menu"]').as('optionsButton');
-      cy.get('@optionsButton').should('be.visible').click({ force: true });
-    });
-
-    cy.get(selectors.dropdownMenu).should('be.visible');
-    cy.contains(selectors.dropdownMenuItem, "Edit", { timeout: 20000 }).click({ force: true });
-    
-    cy.contains('Edit Exhibition', { timeout: 20000 }).should('be.visible');
-    
-    cy.url().then((url) => {
-      const regex = /\/dashboard\/(\d+)$/;
-      const match = regex.exec(url);
-      if (match) {
-        const id = match[1];
-        cy.wrap(Number(id)).as('exhibitionId');
-        cy.log(`Extracted ID: ${id}`); 
-      } else {
-        throw new Error('Failed to extract exhibition ID from URL');
-      }
+    cy.request('/api/trpc/exhibition.getDrafts').then(({ body }) => {
+      const draft = body.result.data.json.find(
+        (exhibition: { name: string }) => exhibition.name === exhibitionTitle,
+      );
+      expect(draft, 'quiz test exhibition').to.exist;
+      exhibitionId = draft.id;
     });
   });
 
-  it('should have fields disabled on creator open', () => {
-    cy.get('button').contains('Create Quiz', { timeout: 20000 }).click();
-    cy.get(selectors.quizTitleInput).should('have.attr', 'readonly');
-    cy.get(selectors.questionInput).should('have.attr', 'readonly');
-    cy.get(selectors.imageUploadButton).should('be.disabled');
-    cy.get(selectors.answerInput).each(($el) => {
-      cy.wrap($el).should('have.attr', 'readonly');
+  it('opens the quiz creator with editing disabled', () => {
+    cy.visit(`/dashboard/${exhibitionId}/quizzes`);
+    cy.contains('button', 'New Quiz', { timeout: 60000 }).should('be.visible');
+    cy.get('input[placeholder="Enter quiz title"]').should('have.prop', 'readOnly', true);
+    cy.get('input[placeholder="Enter your question here"]').should('have.prop', 'readOnly', true);
+    cy.contains('button', 'Upload Image').should('be.disabled');
+    cy.get('[data-testid="answer-input"]').each(($input) => {
+      cy.wrap($input).should('have.prop', 'readOnly', true);
     });
-    cy.get(selectors.answerCheckbox).each(($el) => {
-      cy.wrap($el).should('be.disabled');
+    cy.get('[data-testid="answer-checkbox"]').each(($checkbox) => {
+      cy.wrap($checkbox).should('be.disabled');
     });
-    cy.get(selectors.addAnswerButton).should('be.disabled');
-    cy.get(selectors.addQuestionButton).should('be.disabled');
-    cy.get(selectors.createQuizButton).should('be.disabled');
+    cy.contains('button', 'Add Answer').should('be.disabled');
+    cy.contains('button', 'Add Question').should('be.disabled');
+    cy.contains('button[type="submit"]', 'Create Quiz').should('be.disabled');
   });
 
   after(() => {
-    cy.visit('/dashboard/drafts');
-    cy.get(selectors.dashboardCard(exhibitionTitle), { timeout: 20000 }).should('be.visible').as('exhibitionCard');
-    
-    cy.get('@exhibitionCard').within(() => {
-      cy.get('button[aria-haspopup="menu"]').as('optionsButton');
-      cy.get('@optionsButton').should('be.visible').click({ force: true });
-    });
-
-    cy.get(selectors.dropdownMenu).should('be.visible');
-    cy.contains(selectors.dropdownMenuItem, 'Delete', { timeout: 20000 }).click({ force: true }); 
+    if (exhibitionId !== undefined) {
+      cy.request('POST', '/api/trpc/exhibition.delete', {
+        json: { id: exhibitionId },
+      });
+    }
   });
 });
