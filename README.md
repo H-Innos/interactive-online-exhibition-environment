@@ -48,12 +48,6 @@ Because exhibition space in libraries is limited and some materials must be stor
  7. Run `pnpm dev` and the application will be accessible at http://localhost:3000.
  8. Run `pnpm db:down` to stop the database.
 
-## GitHub Actions
-
-GitHub Actions builds on branch pushes and pull requests targeting `main`. Cypress runs against a disposable PostgreSQL database in Chrome, Firefox, and Edge. CodeQL runs on public repositories. For private repositories with GitHub Code Security enabled, set the repository variable `ENABLE_CODEQL` to `true`.
-
-Vercel's GitHub integration deploys production on pushes to `main`. Apply production database schema changes separately.
-
 ## Licence 
 
 This project is licensed under the BSD 2-Clause License.
@@ -65,4 +59,4 @@ This project was developed as part of the LTAT.05.005 Software Project course as
 
 The University of Tartu's name, logos, trademarks, and other official visual identity assets remain the property of their respective rights holders and are not licensed under the BSD 2-Clause License. 
 
-This repository is maintained independently and is not an official University of Tartu product. 
+This repository is maintained independently and is not an official University of Tartu product.
