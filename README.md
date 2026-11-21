@@ -52,7 +52,7 @@ Because exhibition space in libraries is limited and some materials must be stor
 
 GitHub Actions builds on branch pushes and pull requests targeting `main`. Cypress runs against a disposable PostgreSQL database in Chrome, Firefox, and Edge. CodeQL runs on public repositories. For private repositories with GitHub Code Security enabled, set the repository variable `ENABLE_CODEQL` to `true`.
 
-For production deployments, configure the GitHub `production` environment with the secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`. Set `POSTGRES_URL` in the Vercel project's Production environment. A push to `main` deploys after the build and browser tests pass, then applies the database schema.
+Vercel's GitHub integration deploys production on pushes to `main`. Apply production database schema changes separately.
 
 ## Licence 
 
