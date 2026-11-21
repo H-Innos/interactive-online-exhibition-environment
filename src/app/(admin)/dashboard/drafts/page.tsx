@@ -14,11 +14,11 @@ const DraftsPage = () => {
   const router = useRouter();
   const [drafts, setDrafts] = useState<Exhibition[]>([]);
 
-  const { data, error, isLoading } = api.exhibition.getAll.useQuery();
+  const { data, error, isLoading } = api.exhibition.getDrafts.useQuery();
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished && !exhibition.isArchived));
+      setDrafts(data);
     }
   }, [data]);
 

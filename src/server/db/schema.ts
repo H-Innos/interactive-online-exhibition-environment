@@ -9,6 +9,8 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 
+import { exhibitionStatuses } from "~/lib/types/entities";
+
 export const createTable = pgTableCreator(
   (name) => `interactive-online-exhibition-environment_${name}`
 );
@@ -56,8 +58,7 @@ export const exhibitions = createTable(
     description: text("description").default(""),
     coverImageUrl: varchar("cover_image_url", { length: 512 }).default(""),
     content: text("content").default(""),
-    isPublished: boolean("is_published").default(false).notNull(),
-    isArchived: boolean("is_archived").default(false).notNull(),
+    status: varchar("status", { enum: exhibitionStatuses }).default("draft").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

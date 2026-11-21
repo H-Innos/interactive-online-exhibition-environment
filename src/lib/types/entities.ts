@@ -1,11 +1,13 @@
+export const exhibitionStatuses = ["draft", "published", "archived", "trashed"] as const;
+export type ExhibitionStatus = (typeof exhibitionStatuses)[number];
+
 export type Exhibition = {
   id: number;
   name: string;
   description: string | null;
   coverImageUrl: string | null;
   content: string | null;
-  isPublished: boolean;
-  isArchived: boolean;
+  status: ExhibitionStatus;
   createdAt: Date | string;
   updatedAt: Date | null;
 }

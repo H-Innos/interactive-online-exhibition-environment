@@ -53,6 +53,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Prepare test database
         run: |
+          pnpm db:migrate
           pnpm db:push
           node --input-type=module <<'JS'
           import postgres from 'postgres';
@@ -61,8 +62,8 @@ jobs:
           try {
             await sql`
               INSERT INTO "interactive-online-exhibition-environment_post"
-                (name, description, is_published)
-              VALUES ('Test Published Exhibition', 'Cypress fixture', true)
+                (name, description, status)
+              VALUES ('Test Published Exhibition', 'Cypress fixture', 'published')
             `;
           } finally {
             await sql.end();

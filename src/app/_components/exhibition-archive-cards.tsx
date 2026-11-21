@@ -23,7 +23,7 @@ export default function ArchivedExhibitionCard({ exhibition, onClick }: Archived
   const { t } = useTranslation();
   const handleUnarchive = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (exhibition.isArchived && window.confirm("Are you sure you want to unarchive this exhibition?")) {
+    if (exhibition.status === "archived" && window.confirm("Are you sure you want to unarchive this exhibition?")) {
       unarchiveExhibition.mutate({ id: exhibition.id });
     }
   };

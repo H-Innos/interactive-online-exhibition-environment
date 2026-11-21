@@ -21,8 +21,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (data) {
-      setDrafts(data.filter((exhibition) => !exhibition.isPublished));
-      setPublishedExhibitions(data.filter((exhibition) => exhibition.isPublished));
+      setDrafts(data.filter((exhibition) => exhibition.status === "draft"));
+      setPublishedExhibitions(data.filter((exhibition) => exhibition.status === "published"));
     }
   }, [data]);
 

@@ -23,7 +23,7 @@ const MainPage: React.FC<MainPageProps> = ({}) => {
   useEffect(() => {
     if (data) {
       const publishedExhibitions = data.filter(
-        (exhibition: Exhibition) => exhibition.isPublished
+        (exhibition: Exhibition) => exhibition.status === "published"
       );
       setExhibitions(publishedExhibitions);
     }
