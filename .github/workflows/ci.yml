@@ -1,0 +1,114 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_URL: postgres://postgres:postgres@localhost:5432/exhibitions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+  browser-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, edge]
+    container: cypress/browsers:node-22.11.0-chrome-130.0.6723.69-1-ff-132.0-edge-130.0.2849.56-1
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: exhibitions
+        options: >-
+          --health-cmd "pg_isready -U postgres -d exhibitions"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      POSTGRES_URL: postgres://postgres:postgres@postgres:5432/exhibitions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - name: Prepare test database
+        run: |
+          pnpm db:push
+          node --input-type=module <<'JS'
+          import postgres from 'postgres';
+
+          const sql = postgres(process.env.POSTGRES_URL);
+          try {
+            await sql`
+              INSERT INTO "interactive-online-exhibition-environment_post"
+                (name, description, is_published)
+              VALUES ('Test Published Exhibition', 'Cypress fixture', true)
+            `;
+          } finally {
+            await sql.end();
+          }
+          JS
+      - uses: cypress-io/github-action@v7
+        with:
+          install: false
+          browser: ${{ matrix.browser }}
+          start: pnpm dev
+          wait-on: http://localhost:3000
+          wait-on-timeout: 120
+
+  code-scanning:
+    if: github.event.repository.visibility == 'public' || vars.ENABLE_CODEQL == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+      - uses: github/codeql-action/analyze@v4
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build, browser-tests]
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency: production-deploy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pnpm install --frozen-lockfile
+      - run: npm install --global vercel@latest
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel build --prod --token="$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+          vercel env run -e production --token="$VERCEL_TOKEN" -- pnpm db:push

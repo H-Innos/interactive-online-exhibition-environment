@@ -48,6 +48,12 @@ Because exhibition space in libraries is limited and some materials must be stor
  7. Run `pnpm dev` and the application will be accessible at http://localhost:3000.
  8. Run `pnpm db:down` to stop the database.
 
+## GitHub Actions
+
+GitHub Actions builds on branch pushes and pull requests targeting `main`. Cypress runs against a disposable PostgreSQL database in Chrome, Firefox, and Edge. CodeQL runs on public repositories. For private repositories with GitHub Code Security enabled, set the repository variable `ENABLE_CODEQL` to `true`.
+
+For production deployments, configure the GitHub `production` environment with the secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`. Set `POSTGRES_URL` in the Vercel project's Production environment. A push to `main` deploys after the build and browser tests pass, then applies the database schema.
+
 ## Licence 
 
 This project is licensed under the BSD 2-Clause License.
