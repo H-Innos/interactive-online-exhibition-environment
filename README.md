@@ -47,3 +47,16 @@ Because exhibition space in libraries is limited and some materials must be stor
  6. If this is your first time starting the database, or you have modified the `src/server/db/schema.ts` file, run `pnpm db:push` to update the database schema.
  7. Run `pnpm dev` and the application will be accessible at http://localhost:3000.
  8. Run `pnpm db:down` to stop the database.
+
+## Licence 
+
+This project is licensed under the BSD 2-Clause License.
+See [LICENSE](LICENSE) for details.
+
+## University Branding 
+
+This project was developed as part of the LTAT.05.005 Software Project course as a prototype for the University of Tartu Library. 
+
+The University of Tartu's name, logos, trademarks, and other official visual identity assets remain the property of their respective rights holders and are not licensed under the BSD 2-Clause License. 
+
+This repository is maintained independently and is not an official University of Tartu product. 
