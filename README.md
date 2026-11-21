@@ -70,3 +70,16 @@ POSTGRES_URL=postgres://postgres:postgres@localhost:5432/local-db
 1. Adding gallery and flipbook components. These were started by us and the corresponding branches can be found under Code -> Branches.
 2. Implement the university login to authorize librarians correctly. Make drafts user specific and track user actions for creating and modifying exhibitions.
 3. Change the current media storage from Cloudinary to a bigger solution to handle more data.
+
+## Licence
+
+This project is licensed under the BSD 2-Clause License.
+See [LICENSE](LICENSE) for details.
+
+## University Branding
+
+This project was developed as part of the LTAT.05.005 Software Project course as a prototype for the University of Tartu Library.
+
+The University of Tartu's name, logos, trademarks, and other official visual identity assets remain the property of their respective rights holders and are not licensed under the BSD 2-Clause License.
+
+This repository is maintained independently and is not an official University of Tartu product.
